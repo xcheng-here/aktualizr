@@ -1,6 +1,6 @@
 RootModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-  EXPORTS RootMetadata;
+  EXPORTS RootMetadata, TopLevelRoles, TopLevelRole;
 
   IMPORTS Keyids,
           Length,

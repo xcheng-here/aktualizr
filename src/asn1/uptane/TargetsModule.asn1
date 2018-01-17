@@ -1,6 +1,18 @@
 TargetsModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-  EXPORTS TargetsMetadata, Target;
+  EXPORTS TargetsMetadata, Target,
+          TargetsMetadata,
+          Targets,
+          TargetAndCustom,
+          Target,
+          Custom,
+          EncryptedSymmetricKey,
+          EncryptedSymmetricKeyType,
+          TargetsDelegations,
+          PrioritizedPathsToRoles,
+          PathsToRoles,
+          MultiRoles,
+          MultiRole;
 
   IMPORTS BinaryData,
           Filename,

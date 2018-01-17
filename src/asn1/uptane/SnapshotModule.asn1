@@ -1,6 +1,6 @@
 SnapshotModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-  EXPORTS SnapshotMetadata;
+  EXPORTS SnapshotMetadata, SnapshotMetadataFiles, SnapshotMetadataFile;
 
   IMPORTS Length,
           Hashes,
