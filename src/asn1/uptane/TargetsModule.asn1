@@ -21,9 +21,8 @@ TargetsModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     -- Metadata about unencrypted images on a repository.
     targets         Targets,
     -- Delegations are optional.
-    delegations     TargetsDelegations OPTIONAL,
+    delegations     TargetsDelegations OPTIONAL
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
-    ...
   }
 
   -- Adjust length of SEQUENCE OF to your needs.
@@ -71,8 +70,7 @@ TargetsModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     -- symmetric encryption key is desired for faster decryption of images.
     -- In that case, the director would use the asymmetric ECU key to encrypt
     -- this symmetric key.
-    encryptedSymmetricKey EncryptedSymmetricKey OPTIONAL,
-    ...
+    encryptedSymmetricKey EncryptedSymmetricKey OPTIONAL
   }
   EncryptedSymmetricKey ::= SEQUENCE {
     -- This is the symmetric key type.
@@ -80,7 +78,7 @@ TargetsModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     -- This is the symmetric key encrypted using the asymmetric ECU key.
     encryptedSymmetricKeyValue  BinaryData
   }
-  EncryptedSymmetricKeyType ::= ENUMERATED {aes128, aes192, aes256, ...}
+  EncryptedSymmetricKeyType ::= ENUMERATED {aes128, aes192, aes256}
 
   -- https://github.com/theupdateframework/taps/blob/master/tap3.md
   TargetsDelegations  ::= SEQUENCE {

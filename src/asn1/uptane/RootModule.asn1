@@ -13,9 +13,8 @@ RootModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     numberOfKeys  Length,
     keys          PublicKeys,
     numberOfRoles Length,
-    roles         TopLevelRoles,
+    roles         TopLevelRoles
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
-    ...
   }
   -- Adjust length of SEQUENCE OF to your needs.
   TopLevelRoles ::= SEQUENCE (SIZE(4)) OF TopLevelRole
@@ -26,8 +25,7 @@ RootModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     urls            URLs OPTIONAL,
     numberOfKeyids  Length,
     keyids          Keyids,
-    threshold       Threshold,
-    ...
+    threshold       Threshold
   }
 
 END

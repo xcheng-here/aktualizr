@@ -22,9 +22,8 @@ TimeServerModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   TokensAndTimestamp ::= SEQUENCE {
     numberOfTokens  Length,
     tokens          Tokens,
-    timestamp       UTCDateTime,
+    timestamp       UTCDateTime
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
-    ...
   }
 
 END

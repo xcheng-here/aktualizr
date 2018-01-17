@@ -23,9 +23,8 @@ MapFileModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     name              RepositoryName,
     -- A list of servers where metadata and targets may be downloaded from.
     numberOfServers   Length,
-    servers           URLs,
+    servers           URLs
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
-    ...
   }
   -- Adjust length of SEQUENCE OF to your needs.
   RepositoryNames ::= SEQUENCE (SIZE(2)) OF RepositoryName
@@ -41,9 +40,8 @@ MapFileModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     numberOfRepositories  Length,
     repositories          RepositoryNames,
     -- Whether or not this delegation is terminating.
-    terminating           BOOLEAN DEFAULT FALSE,
+    terminating           BOOLEAN DEFAULT FALSE
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
-    ...
   }
 
 END

@@ -5,21 +5,21 @@ CommonModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   RoleType        ::= ENUMERATED {root, targets, snapshot, timestamp}
 
   -- String types.
-  Filename        ::= VisibleString (SIZE(1..32))
+  Filename        ::= IA5String (SIZE(1..32))
   -- No known path separator allowed in a strict filename.
-  StrictFilename  ::= VisibleString (SIZE(1..32))
+  StrictFilename  ::= IA5String (SIZE(1..32))
                                     (PATTERN "[^/\\]+")
   BitString       ::= BIT STRING    (SIZE(1..1024))
   OctetString     ::= OCTET STRING  (SIZE(1..1024))
   -- Adjust length of SEQUENCE OF to your needs.
   Paths           ::= SEQUENCE (SIZE(1..8)) OF Path
-  Path            ::= VisibleString (SIZE(1..32))
+  Path            ::= IA5String (SIZE(1..32))
                                     (PATTERN "[\w\*\\/]+")
   -- Adjust length of SEQUENCE OF to your needs.
   URLs            ::= SEQUENCE (SIZE(0..8)) OF URL
-  URL             ::= VisibleString (SIZE(1..1024))
+  URL             ::= IA5String (SIZE(1..1024))
   -- A generic identifier for vehicles, primaries, secondaries.
-  Identifier      ::= VisibleString (SIZE(1..32))
+  Identifier      ::= IA5String (SIZE(1..32))
 
   Natural         ::= INTEGER (0..MAX)
   Positive        ::= INTEGER (1..MAX)
@@ -41,7 +41,7 @@ CommonModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     digest        BinaryData
   }
   HashFunction ::= ENUMERATED {sha224, sha256, sha384, sha512, sha512-224,
-                               sha512-256, ...}
+                               sha512-256}
 
   -- Adjust length of SEQUENCE OF to your needs.
   Keyids          ::= SEQUENCE (SIZE(1..8)) OF Keyid
@@ -59,7 +59,7 @@ CommonModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     -- The signature itself.
     value         BinaryData
   }
-  SignatureMethod ::= ENUMERATED {rsassa-pss, ed25519, ...}
+  SignatureMethod ::= ENUMERATED {rsassa-pss, ed25519}
 
   -- Adjust length of SEQUENCE OF to your needs.
   PublicKeys      ::= SEQUENCE (SIZE(1..8)) OF PublicKey
@@ -68,6 +68,6 @@ CommonModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     publicKeyType   PublicKeyType,
     publicKeyValue  BinaryData
   }
-  PublicKeyType   ::= ENUMERATED {rsa, ed25519, ...}
+  PublicKeyType   ::= ENUMERATED {rsa, ed25519}
 
 END

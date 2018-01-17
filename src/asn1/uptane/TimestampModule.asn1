@@ -12,9 +12,8 @@ TimestampModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     version         Version,
     length          Length,
     numberOfHashes  Length,
-    hashes          Hashes,
+    hashes          Hashes
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
-    ...
   }
 
 
