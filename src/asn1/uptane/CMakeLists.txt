@@ -1,0 +1,11 @@
+add_asn1scc_lib(uptane
+    CommonModule
+    ECUModule
+    MapFileModule
+    MetadataModule
+    RootModule
+    SnapshotModule
+    TargetsModule
+    TimeServerModule
+    TimestampModule
+    )

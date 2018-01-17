@@ -1,4 +1,4 @@
-add_asn1c_lib(defs
+add_asn1scc_lib(defs
     common
     secondary_config
     )
