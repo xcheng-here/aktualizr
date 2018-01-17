@@ -7,21 +7,21 @@ TimeServerModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   -- What a primary sends the time server: a token from each of its secondaries.
   SequenceOfTokens ::= SEQUENCE {
     numberOfTokens  Length,
-    tokens          Tokens
+    tokens          TimeTokens
   }
   -- Adjust length of SEQUENCE OF to your needs.
-  Tokens  ::= SEQUENCE (SIZE(1..128)) OF Token
-  Token   ::= INTEGER
+  TimeTokens  ::= SEQUENCE (SIZE(1..128)) OF TimeToken
+  TimeToken   ::= INTEGER
 
   -- What the time server sends in response.
   CurrentTime   ::= SEQUENCE {
-    signed              TokensAndTimestamp,
+    signed              TimeTokensAndTimestamp,
     numberOfSignatures  Length,
     signatures          Signatures
   }
-  TokensAndTimestamp ::= SEQUENCE {
+  TimeTokensAndTimestamp ::= SEQUENCE {
     numberOfTokens  Length,
-    tokens          Tokens,
+    tokens          TimeTokens,
     timestamp       UTCDateTime
     -- https://tools.ietf.org/html/rfc6025#section-2.4.2
   }

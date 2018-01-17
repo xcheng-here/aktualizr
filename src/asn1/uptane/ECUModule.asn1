@@ -9,7 +9,7 @@ ECUModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
           UTCDateTime FROM CommonModule
           Metadata    FROM MetadataModule
           Target      FROM TargetsModule
-          Token       FROM TimeServerModule;
+          TimeToken   FROM TimeServerModule;
 
   -- What a primary sends the director repository.
   VehicleVersionManifest ::= SEQUENCE {
@@ -37,7 +37,7 @@ ECUModule DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   -- What a secondary sends its primary after installation.
   VersionReport ::= SEQUENCE {
     -- Token for the time server.
-    tokenForTimeServer Token,
+    tokenForTimeServer TimeToken,
     -- The ECU version manifest for the director.
     ecuVersionManifest ECUVersionManifest
   }
