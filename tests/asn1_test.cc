@@ -3,31 +3,20 @@
 #include <string>
 
 #include <ImageFile.h>
+#include "asn1/asn1_serialize.h"
 
-static int writeStream (const void *buffer, size_t size, void *arg) {
-  std::string *out = static_cast<std::string*>(arg);
-  *out += std::string(static_cast<const char*>(buffer), size);
-
-  return 0;
-};
 
 TEST(asn1, serialize_simple) {
-  ImageFile_t imgFile;
-  memset(&imgFile, 0, sizeof(imgFile));
+  ImageFile_t *imgFile = static_cast<ImageFile*>(calloc(1, sizeof(*imgFile)));
 
-  OCTET_STRING_fromBuf(&imgFile.filename, "ex.img", -1);
-  imgFile.numberOfBlocks = 1;
-  imgFile.blockSize = 256;
+  OCTET_STRING_fromString(&imgFile->filename, "ex.img");
+  imgFile->numberOfBlocks = 1;
+  imgFile->blockSize = 256;
 
-  std::string out;
+  EXPECT_EQ(asn1::serialize_xer(static_cast<void*>(imgFile), &asn_DEF_ImageFile),
+      "<ImageFile><filename>ex.img</filename><numberOfBlocks>1</numberOfBlocks><blockSize>256</blockSize></ImageFile>");
 
-  //der_encode(&asn_DEF_ImageFile, static_cast<void*>(&imgFile), writeStream, &out);
-  xer_encode(&asn_DEF_ImageFile, static_cast<void*>(&imgFile),
-      XER_F_CANONICAL, writeStream, &out);
-
-  EXPECT_EQ(out, "<ImageFile><filename>ex.img</filename><numberOfBlocks>1</numberOfBlocks><blockSize>256</blockSize></ImageFile>");
-
-  OCTET_STRING_free(&asn_DEF_OCTET_STRING, &imgFile.filename, 1);
+  ASN_STRUCT_FREE(asn_DEF_ImageFile, imgFile);
 }
 
 #ifndef __NO_MAIN__
