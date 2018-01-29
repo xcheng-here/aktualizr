@@ -1,9 +1,9 @@
 Common DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-  Identifier ::= VisibleString (SIZE(1..32))
+  Identifier ::= IA5String (SIZE(1..32))
 
-  FilePath ::= UTF8String (SIZE(1..256))
-  FileName ::= UTF8String  (SIZE(1..128))
+  FilePath ::= IA5String (SIZE(1..256))
+  FileName ::= IA5String  (SIZE(1..128))
 
 END
 

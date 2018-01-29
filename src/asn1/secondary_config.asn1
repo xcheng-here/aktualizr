@@ -15,15 +15,13 @@ SecondaryConfig DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     ecuPublicKey      FileName,
     firmwarePath      FilePath,
     targetNamePath    FilePath,
-    metadataPath      FilePath,
-    ...
+    metadataPath      FilePath
   }
 
   SecondaryType ::= ENUMERATED {
     virtual,
     legacy,
-    uptane,
-    ...
+    uptane
   }
 
   ECUSerial ::= Identifier
