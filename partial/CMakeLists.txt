@@ -42,13 +42,16 @@ if(MACHINE)
 		if(NOT DEFINED UPTANE_HARDWARE_ID)
 			set(UPTANE_HARDWARE_ID 'kea128')
 		endif()
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__START=__thumb_startup -DCLOCK_SETUP=1 -DCAN_ID=${CAN_ID} -DUPTANE_HARDWARE_ID=\\\"${UPTANE_HARDWARE_ID}\\\" -DUPTANE_ECU_SERIAL=\\\"${UPTANE_ECU_SERIAL}\\\" -DBYTE_ORDER_LITTLE -march=armv6-m -mtune=cortex-m0plus -mthumb --sysroot=${NXP_TOOLCHAIN_PATH}/S32DS/arm_ewl2 -specs=ewl_c_noio.specs -g -std=c99 -Wno-main -ffunction-sections -fdata-sections")
-		set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -x assembler-with-cpp -D__START=__thumb_startup -O0 -march=armv6-m -mtune=cortex-m0plus -mthumb -ffunction-sections -fdata-sections --sysroot=${NXP_TOOLCHAIN_PATH}/S32DS/arm_ewl2 -specs=ewl_c_noio.specs")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -D__START=__thumb_startup -DCLOCK_SETUP=1 -DCAN_ID=${CAN_ID} -DUPTANE_HARDWARE_ID=\\\"${UPTANE_HARDWARE_ID}\\\" -DUPTANE_ECU_SERIAL=\\\"${UPTANE_ECU_SERIAL}\\\" -DBYTE_ORDER_LITTLE -march=armv6-m -mtune=cortex-m0plus -mthumb --sysroot=${NXP_TOOLCHAIN_PATH}/S32DS/arm_ewl2 -specs=ewl_c_noio.specs -g -std=c99 -Wno-main -ffunction-sections -fdata-sections")
+        set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -x assembler-with-cpp -DNDEBUG -D__START=__thumb_startup -O0 -march=armv6-m -mtune=cortex-m0plus -mthumb -ffunction-sections -fdata-sections --sysroot=${NXP_TOOLCHAIN_PATH}/S32DS/arm_ewl2 -specs=ewl_c_noio.specs")
 
 		add_library(kea128_lib ${KEA128LIB_SOURCES})
 		add_executable(kea128_ms1.elf machine/kea128/app/ms1.c machine/kea128/app/flash_load.c machine/kea128/app/uds.c machine/kea128/app/isotp_allocate.c machine/kea128/app/script.c machine/kea128/app/example_session.c machine/kea128/app/script.c machine/kea128/app/isotp_dispatch.c  machine/kea128/startup/startup_SKEAZ1284.S)
 		target_link_libraries(kea128_ms1.elf kea128_lib)
 		target_link_libraries(kea128_ms1.elf isotp_lib)
+
+        add_executable(kea128_testasn.elf machine/kea128/testasn/testasn.c machine/kea128/startup/startup_SKEAZ1284.S)
+		target_link_libraries(kea128_testasn.elf kea128_lib uptane_partial_lib)
 
 	endif()
 endif()
@@ -78,6 +81,18 @@ set(UPTANE_HEADERS uptane/crypto.h
 	uptane/uptane_time.h
 	uptane/readjson.h
 	)
+
+set(UPTANE_SOURCES asn1scc/acn.c
+    asn1scc/asn1crt.c
+    asn1scc/common.c
+    asn1scc/real.c
+    asn1scc/secondary_config.c
+    )
+
+set(UPTANE_HEADERS asn1scc/asn1crt.h
+    asn1scc/common.h
+    asn1scc/secondary_config.h
+    )
 
 set(LIBRARY_SOURCES ${C25519_SOURCES} ${UPTANE_SOURCES})
 set(LIBRARY_HEADERS ${C25519_HEADERS} ${UPTANE_HEADERS})
