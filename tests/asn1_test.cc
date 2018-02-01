@@ -2,19 +2,35 @@
 
 #include <string>
 
-#include <ECUModule.h>
+#include "secondary_config.h"
 
 TEST(asn1, serialize_simple) {
-  ImageFile imgFile = {
-    "ex.img", 1, 256,
+  SecondaryConfig conf = {
+    secVirtual,
+    true,
+    "serial",
+    "hwid",
+    "clientdir",
+    "privatekey",
+    "publickey",
+    "fwpath",
+    "targetnamepath",
+    "metadatapath",
   };
   BitStream bitStr;
-  unsigned char buf[ImageFile_REQUIRED_BYTES_FOR_ENCODING];
+  unsigned char buf[SecondaryConfig_REQUIRED_BYTES_FOR_ENCODING];
   int err;
 
-  BitStream_Init(&bitStr, buf, ImageFile_REQUIRED_BYTES_FOR_ENCODING);
+  BitStream_Init(&bitStr, buf, sizeof(buf));
 
-  ImageFile_Encode(&imgFile, &bitStr, &err, 1);
+  SecondaryConfig_Encode(&conf, &bitStr, &err, 1);
+
+  EXPECT_FALSE(err);
+
+  BitStream_AttachBuffer(&bitStr, buf, sizeof(buf));
+  memset(&conf, 0, sizeof(conf));
+
+  SecondaryConfig_Decode(&conf, &bitStr, &err);
 
   EXPECT_FALSE(err);
 }

@@ -19,9 +19,9 @@ SecondaryConfig DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   }
 
   SecondaryType ::= ENUMERATED {
-    virtual,
-    legacy,
-    uptane
+    secVirtual,
+    secLegacy,
+    secUptane
   }
 
   ECUSerial ::= Identifier
