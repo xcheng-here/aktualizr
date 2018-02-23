@@ -16,6 +16,7 @@ set(SOURCES aktualizr.cc
             invstorage.cc
             keymanager.cc
             logging.cc
+            sig_handler.cc
             socketgateway.cc
             sotauptaneclient.cc
             sqlstorage.cc

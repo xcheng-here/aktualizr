@@ -64,19 +64,20 @@ function(add_aktualizr_test)
     else()
         set(WD )
     endif()
-        # Running tests that are both instrumented by gcov and valgrind at
-        # the same time is very expensive.  Disable valgrind when running
-        # under gcov, or when the test is explicitly flagged that it fails
-        # under valgrind (these should be fixed)
-        if(AKTUALIZR_TEST_NO_VALGRIND OR BUILD_WITH_CODE_COVERAGE)
-            add_test(NAME test_${AKTUALIZR_TEST_NAME}
-                     COMMAND t_${AKTUALIZR_TEST_NAME} ${AKTUALIZR_TEST_ARGS}
-                     ${WD})
-        else()
-            add_test(NAME test_${AKTUALIZR_TEST_NAME}
-                     COMMAND ${RUN_VALGRIND} ${CMAKE_CURRENT_BINARY_DIR}/t_${AKTUALIZR_TEST_NAME} ${AKTUALIZR_TEST_ARGS}
-                     ${WD})
-        endif()
+
+    # Running tests that are both instrumented by gcov and valgrind at
+    # the same time is very expensive.  Disable valgrind when running
+    # under gcov, or when the test is explicitly flagged that it fails
+    # under valgrind (these should be fixed)
+    if(AKTUALIZR_TEST_NO_VALGRIND OR BUILD_WITH_CODE_COVERAGE)
+        add_test(NAME test_${AKTUALIZR_TEST_NAME}
+                 COMMAND t_${AKTUALIZR_TEST_NAME} ${AKTUALIZR_TEST_ARGS}
+                 ${WD})
+    else()
+        add_test(NAME test_${AKTUALIZR_TEST_NAME}
+                 COMMAND ${RUN_VALGRIND} ${CMAKE_CURRENT_BINARY_DIR}/t_${AKTUALIZR_TEST_NAME} ${AKTUALIZR_TEST_ARGS}
+                 ${WD})
+    endif()
     add_dependencies(build_tests t_${AKTUALIZR_TEST_NAME})
     set(TEST_SOURCES ${TEST_SOURCES} ${AKTUALIZR_TEST_SOURCES} PARENT_SCOPE)
 endfunction(add_aktualizr_test)
@@ -123,6 +124,8 @@ add_aktualizr_test(NAME keymanager SOURCES keymanager_test.cc PROJECT_WORKING_DI
 
 add_aktualizr_test(NAME packagemanager SOURCES packagemanager_test.cc NO_VALGRIND
                    ARGS ${PROJECT_BINARY_DIR}/ostree_repo)
+
+add_aktualizr_test(NAME sighandler SOURCES sighandler_test.cc)
 
 add_aktualizr_test(NAME socket_gateway SOURCES socketgateway_test.cc
                    ARGS ${PROJECT_SOURCE_DIR}/tests/fake_unix_socket/)

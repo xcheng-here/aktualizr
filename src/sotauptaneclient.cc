@@ -1,6 +1,7 @@
 #include "sotauptaneclient.h"
 
 #include <unistd.h>
+#include <atomic>
 
 #include <boost/make_shared.hpp>
 #include "json/json.h"
@@ -9,6 +10,7 @@
 #include "keymanager.h"
 #include "logging.h"
 #include "packagemanagerfactory.h"
+#include "sig_handler.h"
 #include "uptane/exceptions.h"
 #include "uptane/secondaryconfig.h"
 #include "uptane/secondaryfactory.h"
@@ -134,6 +136,8 @@ void SotaUptaneClient::runForever(command::Channel *commands_channel) {
   reportInstalledPackages();
 
   boost::thread polling_thread(boost::bind(&SotaUptaneClient::run, this, commands_channel));
+
+  SigHandler::get().start([commands_channel] { *commands_channel << boost::make_shared<command::Shutdown>(); });
 
   boost::shared_ptr<command::BaseCommand> command;
   while (*commands_channel >> command) {
