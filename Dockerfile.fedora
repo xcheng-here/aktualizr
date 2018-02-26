@@ -1,0 +1,25 @@
+FROM fedora:27
+
+RUN dnf install -y \
+    autoconf \
+    automake \
+    cmake \
+    make \
+    git \
+    gcc-c++ \
+    gcc \
+    glib2-devel \
+    curl-devel \
+    libarchive-devel \
+    boost-devel \
+    boost-static \
+    openssl-devel \
+    libsodium-devel \
+    sqlite-devel \
+    ostree-devel
+
+CMD cd /src && \
+    mkdir -p build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_OSTREE=On .. && \
+    make -j8
