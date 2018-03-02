@@ -10,7 +10,6 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem.hpp>
 
-#include "asn1-cer.h"
 #include "bootstrap.h"
 #include "exceptions.h"
 #include "utils.h"
@@ -592,12 +591,16 @@ void Config::writeToFile(const boost::filesystem::path& filename) {
   sink << "\n";
 }
 
-std::string TlsConfig::cer_serialize() {
-  std::string res;
-  res = cer_encode_sequence() + cer_encode_string(server, kAsn1Utf8String) +
-        cer_encode_string(server_url_path.string(), kAsn1Utf8String) + cer_encode_integer(ca_source, kAsn1Enum) +
-        cer_encode_integer(pkey_source, kAsn1Enum) + cer_encode_integer(cert_source, kAsn1Enum) + cer_encode_endcons();
-  return res;
+asn1::Serializer& operator<<(asn1::Serializer& ser, CryptoSource cs) {
+  ser << kAsn1Enum << static_cast<int32_t>(cs);
+
+  return ser;
+}
+
+asn1::Serializer& operator<<(asn1::Serializer& ser, const TlsConfig& tls_conf) {
+  ser << asn1::seq << kAsn1Utf8String << tls_conf.server << kAsn1Utf8String << tls_conf.server_url_path.string()
+      << tls_conf.ca_source << tls_conf.pkey_source << tls_conf.cert_source << asn1::endseq;
+  return ser;
 }
 
 void TlsConfig::cer_deserialize(const std::string& cer) {

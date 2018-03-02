@@ -88,5 +88,5 @@ std::string cer_decode_except_crop_enum(const std::string& ber, int32_t* value, 
 std::string cer_encode_endcons();
 std::string cer_encode_sequence();
 std::string cer_encode_length(int32_t len);
-std::string cer_encode_integer(int32_t number, ASN1_UniversalTag subtype);
+std::string cer_encode_integer(int32_t number);
 std::string cer_encode_string(const std::string& contents, ASN1_UniversalTag subtype);

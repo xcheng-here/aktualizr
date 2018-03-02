@@ -44,7 +44,7 @@ std::string cer_encode_length(int32_t len) {
 // shifting signed integers right is UB, make sure it's filled with 1s
 constexpr int32_t shr8(int32_t arg) { return (arg >> 8) | ((arg < 0) ? 0xff000000 : 0x00000000); }
 
-std::string cer_encode_integer(int32_t number, ASN1_UniversalTag subtype) {
+std::string cer_encode_integer(int32_t number) {
   std::string res;
 
   do {
@@ -58,7 +58,6 @@ std::string cer_encode_integer(int32_t number, ASN1_UniversalTag subtype) {
     res.push_back(0xFF);
 
   res.push_back(res.length());
-  res.push_back(subtype);
   std::reverse(res.begin(), res.end());
   return res;
 }
@@ -67,7 +66,6 @@ std::string cer_encode_string(const std::string& contents, ASN1_UniversalTag sub
   size_t len = contents.length();
 
   std::string res;
-  res.push_back(subtype);
 
   if (len <= CER_MAX_PRIMITIVESTRING) {
     res += cer_encode_length(len);
