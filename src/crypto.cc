@@ -280,7 +280,7 @@ bool Crypto::generateRSAKeyPair(KeyType key_type, std::string *public_key, std::
                             RSA_F4, /* exponent - RSA_F4 is defined as 0x10001L */
                             NULL,   /* callback - can be NULL if we aren't displaying progress */
                             NULL    /* callback argument - not needed in this case */
-                            );
+  );
 #else
   BIGNUM *bne = BN_new();
   ret = BN_set_word(bne, RSA_F4);
@@ -292,7 +292,7 @@ bool Crypto::generateRSAKeyPair(KeyType key_type, std::string *public_key, std::
   ret = RSA_generate_key_ex(r, bits, /* number of bits for the key - 2048 is a sensible value */
                             bne,     /* exponent - RSA_F4 is defined as 0x10001L */
                             NULL     /* callback argument - not needed in this case */
-                            );
+  );
   if (ret != 1) {
     RSA_free(r);
     BN_free(bne);

@@ -51,7 +51,7 @@ TEST(PostTest, put_performed) {
   EXPECT_EQ(json["data"]["key"].asString(), "val");
 }
 
-// TODO: add tests for HttpClient::download
+  // TODO: add tests for HttpClient::download
 
 #ifndef __NO_MAIN__
 int main(int argc, char** argv) {

@@ -136,7 +136,7 @@ TEST(UptaneNetwork, no_connection_sqlite) {
 TEST(UptaneNetwork, no_errors_sqlite) {
   EXPECT_TRUE(doInit(kSqlite, "noerrors", "noerrors"));
 }
-// clang-format on
+  // clang-format on
 
 #ifndef __NO_MAIN__
 int main(int argc, char **argv) {

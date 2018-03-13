@@ -17,7 +17,7 @@ TEST(aktualizr_secondary_protocol, run_and_stop) {
   LOG_INFO << "port: " << as.listening_port();
   ASSERT_NE(as.listening_port(), -1);
 
-  as.stop();
+  // as.stop();
 
   th.join();
 }

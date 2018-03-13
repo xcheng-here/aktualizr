@@ -125,5 +125,5 @@ UpdateReport UpdateReport::fromJson(const std::string& json_str) {
   }
   return update_report;
 }
-}
+}  // namespace data
 // vim: set tabstop=2 shiftwidth=2 expandtab:

@@ -100,6 +100,6 @@ struct UpdateReport {
   Json::Value toJson();
   static UpdateReport fromJson(const std::string& json_str);
 };
-}
+}  // namespace data
 
 #endif

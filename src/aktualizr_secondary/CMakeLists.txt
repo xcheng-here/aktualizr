@@ -30,7 +30,6 @@ install(TARGETS aktualizr-secondary
 set(ALL_AKTUALIZR_SECONDARY_HEADERS
     aktualizr_secondary.h
     aktualizr_secondary_config.h
-    aktualizr_secondary_ipc.h
     )
 
 aktualizr_source_file_checks(${AKTUALIZR_SECONDARY_SRC} ${AKTUALIZR_SECONDARY_LIB_SRC} ${ALL_AKTUALIZR_SECONDARY_HEADERS})
