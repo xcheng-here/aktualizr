@@ -1,0 +1,6 @@
+<map id="Uptane::DownloadMetaStruct" name="Uptane::DownloadMetaStruct">
+<area shape="rect" id="node2" href="$class_multi_part_s_h_a256_hasher.html" title="MultiPartSHA256Hasher" alt="" coords="5,81,171,108"/>
+<area shape="rect" id="node3" href="$class_multi_part_hasher.html" title="MultiPartHasher" alt="" coords="143,5,259,32"/>
+<area shape="rect" id="node4" href="$class_multi_part_s_h_a512_hasher.html" title="MultiPartSHA512Hasher" alt="" coords="195,81,360,108"/>
+<area shape="rect" id="node5" href="$class_storage_target_w_handle.html" title="StorageTargetWHandle" alt="" coords="385,81,543,108"/>
+</map>
