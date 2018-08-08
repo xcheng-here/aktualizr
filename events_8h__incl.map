@@ -1,4 +1,4 @@
-<map id="src/libaktualizr/primary/events.h" name="src/libaktualizr/primary/events.h">
+<map id="src/libaktualizr/utilities/events.h" name="src/libaktualizr/utilities/events.h">
 <area shape="rect" id="node4" href="$tuf_8h_source.html" title="uptane/tuf.h" alt="" coords="1335,95,1426,121"/>
 <area shape="rect" id="node25" href="$types_8h.html" title="utilities/types.h" alt="" coords="128,251,239,278"/>
 <area shape="rect" id="node31" href="$channel_8h_source.html" title="utilities/channel.h" alt="" coords="2386,95,2509,121"/>

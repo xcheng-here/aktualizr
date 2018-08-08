@@ -17,6 +17,7 @@ var searchData=
   ['implicitc_3c_20tag_2c_20std_3a_3astring_20_26_20_3e',['ImplicitC&lt; Tag, std::string &amp; &gt;',['../classasn1_1_1_implicit_c_3_01_tag_00_01std_1_1string_01_6_01_4.html',1,'asn1']]],
   ['importconfig',['ImportConfig',['../struct_import_config.html',1,'']]],
   ['initializer',['Initializer',['../class_initializer.html',1,'']]],
+  ['install',['Install',['../class_aktualizr.html#a363317bc22ad02bf5c1636ef42a181fa',1,'Aktualizr']]],
   ['installcomplete',['InstallComplete',['../classevent_1_1_install_complete.html',1,'event']]],
   ['interruptableexecutioncontroller',['InterruptableExecutionController',['../class_interruptable_execution_controller.html',1,'']]],
   ['invalidmetadata',['InvalidMetadata',['../class_uptane_1_1_invalid_metadata.html',1,'Uptane']]],

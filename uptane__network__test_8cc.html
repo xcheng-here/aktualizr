@@ -79,15 +79,14 @@ $(function() {
 <code>#include &quot;http/httpclient.h&quot;</code><br />
 <code>#include &quot;logging/logging.h&quot;</code><br />
 <code>#include &quot;primary/initializer.h&quot;</code><br />
-<code>#include &quot;storage/fsstorage.h&quot;</code><br />
+<code>#include &quot;storage/invstorage.h&quot;</code><br />
 <code>#include &quot;test_utils.h&quot;</code><br />
 <code>#include &quot;uptane/uptanerepository.h&quot;</code><br />
 <code>#include &quot;utilities/utils.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for uptane_network_test.cc:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="uptane__network__test_8cc__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
-</div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="uptane__network__test_8cc__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div>
 <p><a href="uptane__network__test_8cc_source.html">Go to the source code of this file.</a></p>
@@ -97,33 +96,6 @@ Functions</h2></td></tr>
 <tr class="memitem:a0e6ae9791e877747636264b662e0a883"><td class="memItemLeft" align="right" valign="top"><a id="a0e6ae9791e877747636264b662e0a883"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>doTestInit</b> (StorageType storage_type, const std::string &amp;device_register_state, const std::string &amp;ecu_register_state)</td></tr>
 <tr class="separator:a0e6ae9791e877747636264b662e0a883"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a179f061e7905b3a7702056ab667fbb2b"><td class="memItemLeft" align="right" valign="top"><a id="a179f061e7905b3a7702056ab667fbb2b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, device_drop_request)</td></tr>
-<tr class="separator:a179f061e7905b3a7702056ab667fbb2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f8dae61a4284825431ad43bf4812a1b"><td class="memItemLeft" align="right" valign="top"><a id="a2f8dae61a4284825431ad43bf4812a1b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, device_drop_body)</td></tr>
-<tr class="separator:a2f8dae61a4284825431ad43bf4812a1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85eed85ba2c0fa0944fbbe9b7ff7de7d"><td class="memItemLeft" align="right" valign="top"><a id="a85eed85ba2c0fa0944fbbe9b7ff7de7d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, device_503)</td></tr>
-<tr class="separator:a85eed85ba2c0fa0944fbbe9b7ff7de7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29ad4c8103d3401b297809de2e5895ce"><td class="memItemLeft" align="right" valign="top"><a id="a29ad4c8103d3401b297809de2e5895ce"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, device_408)</td></tr>
-<tr class="separator:a29ad4c8103d3401b297809de2e5895ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa906c08845381013e5d7ee133feb149e"><td class="memItemLeft" align="right" valign="top"><a id="aa906c08845381013e5d7ee133feb149e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, ecu_drop_request)</td></tr>
-<tr class="separator:aa906c08845381013e5d7ee133feb149e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a765d4a5a95a3efafb659dd709aeea41f"><td class="memItemLeft" align="right" valign="top"><a id="a765d4a5a95a3efafb659dd709aeea41f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, ecu_503)</td></tr>
-<tr class="separator:a765d4a5a95a3efafb659dd709aeea41f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad32471fa943475e445ec892b58bc2940"><td class="memItemLeft" align="right" valign="top"><a id="ad32471fa943475e445ec892b58bc2940"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, ecu_408)</td></tr>
-<tr class="separator:ad32471fa943475e445ec892b58bc2940"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2cf2b974008dfb993e39ee2d4b6d47e"><td class="memItemLeft" align="right" valign="top"><a id="ac2cf2b974008dfb993e39ee2d4b6d47e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, no_connection)</td></tr>
-<tr class="separator:ac2cf2b974008dfb993e39ee2d4b6d47e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0cd9b76ca9b117748f11ea266d2e4b5"><td class="memItemLeft" align="right" valign="top"><a id="ab0cd9b76ca9b117748f11ea266d2e4b5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, no_errors)</td></tr>
-<tr class="separator:ab0cd9b76ca9b117748f11ea266d2e4b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a651c170a67965b179fd81b6a1673fab4"><td class="memItemLeft" align="right" valign="top"><a id="a651c170a67965b179fd81b6a1673fab4"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (UptaneNetwork, device_drop_request_sqlite)</td></tr>
 <tr class="separator:a651c170a67965b179fd81b6a1673fab4"><td class="memSeparator" colspan="2">&#160;</td></tr>

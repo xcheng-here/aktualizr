@@ -74,40 +74,39 @@ $(function() {
 <div class="dynheader">
 Collaboration diagram for Uptane::DownloadMetaStruct:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="struct_uptane_1_1_download_meta_struct__coll__graph.svg" width="550" height="203"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
-</div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="struct_uptane_1_1_download_meta_struct__coll__graph.svg" width="304" height="127"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a2cc5435ef2da6c98d13c0210df71fe18"><td class="memItemLeft" align="right" valign="top"><a id="a2cc5435ef2da6c98d13c0210df71fe18"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>DownloadMetaStruct</b> (<a class="el" href="class_uptane_1_1_target.html">Target</a> target_in, std::shared_ptr&lt; event::Channel &gt; events_channel_in)</td></tr>
+<tr class="separator:a2cc5435ef2da6c98d13c0210df71fe18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8907fc4346a8d50623ae66b0b757778b"><td class="memItemLeft" align="right" valign="top"><a id="a8907fc4346a8d50623ae66b0b757778b"></a>
 <a class="el" href="class_multi_part_hasher.html">MultiPartHasher</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>hasher</b> ()</td></tr>
 <tr class="separator:a8907fc4346a8d50623ae66b0b757778b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab9c1271797d4fda9e8fa81b8105967e6"><td class="memItemLeft" align="right" valign="top"><a id="ab9c1271797d4fda9e8fa81b8105967e6"></a>
-int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>expected_length</b> {}</td></tr>
-<tr class="separator:ab9c1271797d4fda9e8fa81b8105967e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac74b9e10009ce104eb7c1d7c000121ac"><td class="memItemLeft" align="right" valign="top"><a id="ac74b9e10009ce104eb7c1d7c000121ac"></a>
-int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>downloaded_length</b> {}</td></tr>
-<tr class="separator:ac74b9e10009ce104eb7c1d7c000121ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7311ed32251e4ae36f0fc463e6eb124a"><td class="memItemLeft" align="right" valign="top"><a id="a7311ed32251e4ae36f0fc463e6eb124a"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>downloaded_length</b> {}</td></tr>
+<tr class="separator:a7311ed32251e4ae36f0fc463e6eb124a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15d1bd12a826497284fc48101537a303"><td class="memItemLeft" align="right" valign="top"><a id="a15d1bd12a826497284fc48101537a303"></a>
 <a class="el" href="class_storage_target_w_handle.html">StorageTargetWHandle</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>fhandle</b> {}</td></tr>
 <tr class="separator:a15d1bd12a826497284fc48101537a303"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4bb486dd6497f3b99cb454e5d036835"><td class="memItemLeft" align="right" valign="top"><a id="ac4bb486dd6497f3b99cb454e5d036835"></a>
-Hash::Type&#160;</td><td class="memItemRight" valign="bottom"><b>hash_type</b> {Hash::Type::kUnknownAlgorithm}</td></tr>
-<tr class="separator:ac4bb486dd6497f3b99cb454e5d036835"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8f3b30b8036b669c9d5b5466af7e74b"><td class="memItemLeft" align="right" valign="top"><a id="ac8f3b30b8036b669c9d5b5466af7e74b"></a>
-<a class="el" href="class_multi_part_s_h_a256_hasher.html">MultiPartSHA256Hasher</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sha256_hasher</b></td></tr>
-<tr class="separator:ac8f3b30b8036b669c9d5b5466af7e74b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd065b8a852a46ad675a54c86f82515c"><td class="memItemLeft" align="right" valign="top"><a id="acd065b8a852a46ad675a54c86f82515c"></a>
-<a class="el" href="class_multi_part_s_h_a512_hasher.html">MultiPartSHA512Hasher</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sha512_hasher</b></td></tr>
-<tr class="separator:acd065b8a852a46ad675a54c86f82515c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a70d24a679f761231c67759b255e729"><td class="memItemLeft" align="right" valign="top"><a id="a8a70d24a679f761231c67759b255e729"></a>
+const Hash::Type&#160;</td><td class="memItemRight" valign="bottom"><b>hash_type</b></td></tr>
+<tr class="separator:a8a70d24a679f761231c67759b255e729"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a273d9657b0e85dfe7c88438fe41e93b0"><td class="memItemLeft" align="right" valign="top"><a id="a273d9657b0e85dfe7c88438fe41e93b0"></a>
+std::shared_ptr&lt; event::Channel &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>events_channel</b></td></tr>
+<tr class="separator:a273d9657b0e85dfe7c88438fe41e93b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9840378ce74fb12eb04a75f12918851"><td class="memItemLeft" align="right" valign="top"><a id="ac9840378ce74fb12eb04a75f12918851"></a>
+<a class="el" href="class_uptane_1_1_target.html">Target</a>&#160;</td><td class="memItemRight" valign="bottom"><b>target</b></td></tr>
+<tr class="separator:ac9840378ce74fb12eb04a75f12918851"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="fetcher_8h_source.html#l00015">15</a> of file <a class="el" href="fetcher_8h_source.html">fetcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fetcher_8h_source.html#l00016">16</a> of file <a class="el" href="fetcher_8h_source.html">fetcher.h</a>.</p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/libaktualizr/uptane/<a class="el" href="fetcher_8h_source.html">fetcher.h</a></li>
 </ul>

@@ -8,5 +8,6 @@ var searchData=
   ['discovered_5fendpoint',['discovered_endpoint',['../structopcuabridge_1_1discovery_1_1_client_1_1discovered__endpoint.html',1,'opcuabridge::discovery::Client']]],
   ['discoveryconfig',['DiscoveryConfig',['../struct_discovery_config.html',1,'']]],
   ['downloadcomplete',['DownloadComplete',['../classevent_1_1_download_complete.html',1,'event']]],
-  ['downloadmetastruct',['DownloadMetaStruct',['../struct_uptane_1_1_download_meta_struct.html',1,'Uptane']]]
+  ['downloadmetastruct',['DownloadMetaStruct',['../struct_uptane_1_1_download_meta_struct.html',1,'Uptane']]],
+  ['downloadprogressreport',['DownloadProgressReport',['../classevent_1_1_download_progress_report.html',1,'event']]]
 ];

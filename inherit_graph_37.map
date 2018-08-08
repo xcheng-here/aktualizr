@@ -1,11 +1,13 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classevent_1_1_base_event.html" title="Base class for all event objects. " alt="" coords="5,183,132,209"/>
-<area shape="rect" id="node2" href="$classevent_1_1_download_complete.html" title="The StartDownload command completed successfully. " alt="" coords="201,5,377,32"/>
-<area shape="rect" id="node3" href="$classevent_1_1_error.html" title="An error occurred processing a command. " alt="" coords="244,56,335,83"/>
-<area shape="rect" id="node4" href="$classevent_1_1_fetch_meta_complete.html" title="The FetchMeta command completed successfully. " alt="" coords="199,107,379,133"/>
-<area shape="rect" id="node5" href="$classevent_1_1_install_complete.html" title="The UptaneInstall command completed successfully. " alt="" coords="213,157,366,184"/>
-<area shape="rect" id="node6" href="$classevent_1_1_put_manifest_complete.html" title="The PutManifest command completed successfully. " alt="" coords="195,208,383,235"/>
-<area shape="rect" id="node7" href="$classevent_1_1_send_device_data_complete.html" title="The SendDeviceData command completed successfully. " alt="" coords="181,259,398,285"/>
-<area shape="rect" id="node8" href="$classevent_1_1_update_available.html" title="event::UpdateAvailable" alt="" coords="211,309,368,336"/>
-<area shape="rect" id="node9" href="$classevent_1_1_uptane_timestamp_updated.html" title="event::UptaneTimestampUpdated" alt="" coords="180,360,399,387"/>
+<area shape="rect" id="node1" href="$classevent_1_1_base_event.html" title="Base class for all event objects. " alt="" coords="5,233,132,260"/>
+<area shape="rect" id="node2" href="$classevent_1_1_campaign_check_complete.html" title="event::CampaignCheckComplete" alt="" coords="182,5,397,32"/>
+<area shape="rect" id="node3" href="$classevent_1_1_download_complete.html" title="The StartDownload command completed successfully. " alt="" coords="201,56,377,83"/>
+<area shape="rect" id="node4" href="$classevent_1_1_download_progress_report.html" title="event::DownloadProgressReport" alt="" coords="184,107,395,133"/>
+<area shape="rect" id="node5" href="$classevent_1_1_error.html" title="An error occurred processing a command. " alt="" coords="244,157,335,184"/>
+<area shape="rect" id="node6" href="$classevent_1_1_fetch_meta_complete.html" title="The FetchMeta command completed successfully. " alt="" coords="199,208,379,235"/>
+<area shape="rect" id="node7" href="$classevent_1_1_install_complete.html" title="The UptaneInstall command completed successfully. " alt="" coords="213,259,366,285"/>
+<area shape="rect" id="node8" href="$classevent_1_1_put_manifest_complete.html" title="The PutManifest command completed successfully. " alt="" coords="195,309,383,336"/>
+<area shape="rect" id="node9" href="$classevent_1_1_send_device_data_complete.html" title="The SendDeviceData command completed successfully. " alt="" coords="181,360,398,387"/>
+<area shape="rect" id="node10" href="$classevent_1_1_update_available.html" title="event::UpdateAvailable" alt="" coords="211,411,368,437"/>
+<area shape="rect" id="node11" href="$classevent_1_1_uptane_timestamp_updated.html" title="event::UptaneTimestampUpdated" alt="" coords="180,461,399,488"/>
 </map>

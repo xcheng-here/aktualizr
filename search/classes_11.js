@@ -36,6 +36,7 @@ var searchData=
   ['startdownload',['StartDownload',['../classcommand_1_1_start_download.html',1,'command']]],
   ['statistics',['Statistics',['../class_statistics.html',1,'']]],
   ['storageconfig',['StorageConfig',['../struct_storage_config.html',1,'']]],
+  ['storageexception',['StorageException',['../class_storage_exception.html',1,'']]],
   ['storagetargetrhandle',['StorageTargetRHandle',['../class_storage_target_r_handle.html',1,'']]],
   ['storagetargetwhandle',['StorageTargetWHandle',['../class_storage_target_w_handle.html',1,'']]]
 ];

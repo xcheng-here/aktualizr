@@ -1,6 +1,7 @@
 var searchData=
 [
   ['kalreadyprocessed',['kAlreadyProcessed',['../namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baed7fff9f920b183cd434b831bff0d2c8',1,'data']]],
+  ['kcampaigncheck',['kCampaignCheck',['../types_8h.html#ad54e979f4962bd50735409213e020e1aa5530e31a907435383d73d98887a686a5',1,'types.h']]],
   ['kcheck',['kCheck',['../types_8h.html#ad54e979f4962bd50735409213e020e1aa471d5e7d6d3dc4833d65664394b9a448',1,'types.h']]],
   ['kcreatepartitionfailed',['kCreatePartitionFailed',['../namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba24a2c94f9dad878b9e9d94c55013e7a8',1,'data']]],
   ['kdeletepartitionfailed',['kDeletePartitionFailed',['../namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba3af4ff0bdd861c8386522063ab6c19a5',1,'data']]],

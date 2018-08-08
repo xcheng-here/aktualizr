@@ -9,48 +9,48 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 292)">
 <title>SQLStorage</title>
 <polygon fill="white" stroke="none" points="-4,4 -4,-292 152.5,-292 152.5,4 -4,4"/>
-<!-- Node2 -->
-<g id="node1" class="node"><title>Node2</title>
+<!-- Node3 -->
+<g id="node1" class="node"><title>Node3</title>
 <polygon fill="#bfbfbf" stroke="black" points="4.5,-0.5 4.5,-19.5 74.5,-19.5 74.5,-0.5 4.5,-0.5"/>
 <text text-anchor="middle" x="39.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00">SQLStorage</text>
 </g>
-<!-- Node3 -->
-<g id="node2" class="node"><title>Node3</title>
+<!-- Node4 -->
+<g id="node2" class="node"><title>Node4</title>
 <g id="a_node2"><a xlink:href="class_i_nv_storage.html" target="_top" xlink:title="INvStorage">
 <polygon fill="white" stroke="black" points="6.5,-57.5 6.5,-76.5 72.5,-76.5 72.5,-57.5 6.5,-57.5"/>
 <text text-anchor="middle" x="39.5" y="-64.5" font-family="Helvetica,sans-Serif" font-size="10.00">INvStorage</text>
 </a>
 </g>
 </g>
-<!-- Node3&#45;&gt;Node2 -->
-<g id="edge1" class="edge"><title>Node3&#45;&gt;Node2</title>
+<!-- Node4&#45;&gt;Node3 -->
+<g id="edge1" class="edge"><title>Node4&#45;&gt;Node3</title>
 <path fill="none" stroke="midnightblue" d="M39.5,-47.1166C39.5,-37.8173 39.5,-27.0557 39.5,-19.7149"/>
 <polygon fill="midnightblue" stroke="midnightblue" points="36.0001,-47.4062 39.5,-57.4062 43.0001,-47.4063 36.0001,-47.4062"/>
 </g>
-<!-- Node4 -->
-<g id="node3" class="node"><title>Node4</title>
+<!-- Node5 -->
+<g id="node3" class="node"><title>Node5</title>
 <g id="a_node3"><a xlink:href="struct_storage_config.html" target="_top" xlink:title="StorageConfig">
 <polygon fill="white" stroke="black" points="-7.10543e-15,-124.5 -7.10543e-15,-143.5 79,-143.5 79,-124.5 -7.10543e-15,-124.5"/>
 <text text-anchor="middle" x="39.5" y="-131.5" font-family="Helvetica,sans-Serif" font-size="10.00">StorageConfig</text>
 </a>
 </g>
 </g>
-<!-- Node4&#45;&gt;Node3 -->
-<g id="edge2" class="edge"><title>Node4&#45;&gt;Node3</title>
+<!-- Node5&#45;&gt;Node4 -->
+<g id="edge2" class="edge"><title>Node5&#45;&gt;Node4</title>
 <path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M39.5,-114.037C39.5,-101.67 39.5,-86.1198 39.5,-76.6273"/>
 <polygon fill="#9a32cd" stroke="#9a32cd" points="36.0001,-114.234 39.5,-124.234 43.0001,-114.234 36.0001,-114.234"/>
 <text text-anchor="middle" x="57" y="-98" font-family="Helvetica,sans-Serif" font-size="10.00"> config_</text>
 </g>
-<!-- Node5 -->
-<g id="node4" class="node"><title>Node5</title>
+<!-- Node6 -->
+<g id="node4" class="node"><title>Node6</title>
 <g id="a_node4"><a xlink:href="class_based_path.html" target="_top" xlink:title="BasedPath">
 <polygon fill="white" stroke="black" points="7,-268.5 7,-287.5 72,-287.5 72,-268.5 7,-268.5"/>
 <text text-anchor="middle" x="39.5" y="-275.5" font-family="Helvetica,sans-Serif" font-size="10.00">BasedPath</text>
 </a>
 </g>
 </g>
-<!-- Node5&#45;&gt;Node4 -->
-<g id="edge3" class="edge"><title>Node5&#45;&gt;Node4</title>
+<!-- Node6&#45;&gt;Node5 -->
+<g id="edge3" class="edge"><title>Node6&#45;&gt;Node5</title>
 <path fill="none" stroke="#9a32cd" stroke-dasharray="5,2" d="M39.5,-258.107C39.5,-226.929 39.5,-165.926 39.5,-143.518"/>
 <polygon fill="#9a32cd" stroke="#9a32cd" points="36.0001,-258.117 39.5,-268.117 43.0001,-258.117 36.0001,-258.117"/>
 <text text-anchor="middle" x="94" y="-242" font-family="Helvetica,sans-Serif" font-size="10.00"> uptane_public_key_path</text>

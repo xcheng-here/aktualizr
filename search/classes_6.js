@@ -11,7 +11,5 @@ var searchData=
   ['filesetentryequal',['FileSetEntryEqual',['../structopcuabridge_1_1_file_set_entry_equal.html',1,'opcuabridge']]],
   ['filesetentryhash',['FileSetEntryHash',['../structopcuabridge_1_1_file_set_entry_hash.html',1,'opcuabridge']]],
   ['fixedexecutioncontroller',['FixedExecutionController',['../class_fixed_execution_controller.html',1,'']]],
-  ['fsstorage',['FSStorage',['../class_f_s_storage.html',1,'']]],
-  ['fstargetrhandle',['FSTargetRHandle',['../class_f_s_target_r_handle.html',1,'']]],
-  ['fstargetwhandle',['FSTargetWHandle',['../class_f_s_target_w_handle.html',1,'']]]
+  ['fsstorageread',['FSStorageRead',['../class_f_s_storage_read.html',1,'']]]
 ];

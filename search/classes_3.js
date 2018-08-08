@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['campaigncheck',['CampaignCheck',['../classcommand_1_1_campaign_check.html',1,'command']]],
+  ['campaigncheckcomplete',['CampaignCheckComplete',['../classevent_1_1_campaign_check_complete.html',1,'event']]],
   ['channel',['Channel',['../class_channel.html',1,'']]],
   ['checkforupdate',['CheckForUpdate',['../class_check_for_update.html',1,'']]],
   ['checkforupdatetasks',['CheckForUpdateTasks',['../class_check_for_update_tasks.html',1,'']]],
