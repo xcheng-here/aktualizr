@@ -193,7 +193,8 @@ data::InstallOutcome OstreeManager::install(const Uptane::Target &target) const 
   }
   LOG_INFO << "Performing sync()";
   sync();
-  return data::InstallOutcome(data::UpdateResultCode::kOk, "Installation successful");
+  return data::InstallOutcome(data::UpdateResultCode::kGeneralError, "Installing ostree package failed");
+  // return data::InstallOutcome(data::UpdateResultCode::kOk, "Installation successful");
 }
 
 OstreeManager::OstreeManager(PackageConfig pconfig, std::shared_ptr<INvStorage> storage)
