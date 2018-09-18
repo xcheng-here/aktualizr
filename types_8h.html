@@ -128,11 +128,14 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aaa60924e124da4d51bd4dc74c8f85b158">RunningMode::kFull</a> = 0, 
 <a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa0bb878d7ba78a823a3f9eed47153a5c9">RunningMode::kOnce</a>, 
 <a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa5530e31a907435383d73d98887a686a5">RunningMode::kCampaignCheck</a>, 
-<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa471d5e7d6d3dc4833d65664394b9a448">RunningMode::kCheck</a>, 
+<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa7ae020eca7599e8c37d8b25848f8475d">RunningMode::kCampaignAccept</a>, 
 <br />
-&#160;&#160;<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa55595f9045c4f4f4465679e536a30a97">RunningMode::kDownload</a>, 
+&#160;&#160;<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aac1f33ef361ea710b76b2e6de9ab82d06">RunningMode::kCampaignReject</a>, 
+<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa471d5e7d6d3dc4833d65664394b9a448">RunningMode::kCheck</a>, 
+<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa55595f9045c4f4f4465679e536a30a97">RunningMode::kDownload</a>, 
 <a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aad72d99a5139bb03dffb6eeedda5f2fbe">RunningMode::kInstall</a>, 
-<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa840f73673d401f2e539743e82e167a45">RunningMode::kManual</a>
+<br />
+&#160;&#160;<a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1aa840f73673d401f2e539743e82e167a45">RunningMode::kManual</a>
 <br />
  }<tr class="memdesc:ad54e979f4962bd50735409213e020e1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execution mode to run aktualizr in.  <a href="types_8h.html#ad54e979f4962bd50735409213e020e1a">More...</a><br /></td></tr>
 </td></tr>
@@ -221,6 +224,10 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <p>Checks once for updates, downloads and installs anything found, and then shuts down. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ad54e979f4962bd50735409213e020e1aa5530e31a907435383d73d98887a686a5"></a>kCampaignCheck&#160;</td><td class="fielddoc"><p>Only check for an existing campaign related to the device. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ad54e979f4962bd50735409213e020e1aa7ae020eca7599e8c37d8b25848f8475d"></a>kCampaignAccept&#160;</td><td class="fielddoc"><p>Only accept an existing campaign. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ad54e979f4962bd50735409213e020e1aac1f33ef361ea710b76b2e6de9ab82d06"></a>kCampaignReject&#160;</td><td class="fielddoc"><p>Only reject an existing campaign. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ad54e979f4962bd50735409213e020e1aa471d5e7d6d3dc4833d65664394b9a448"></a>kCheck&#160;</td><td class="fielddoc"><p>Only check for updates. </p>
 <p>Sends a manifest and device data, checks for updates, and then shuts down. </p>

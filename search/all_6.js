@@ -3,7 +3,6 @@ var searchData=
   ['fatalexception',['FatalException',['../class_fatal_exception.html',1,'']]],
   ['fetcher',['Fetcher',['../class_uptane_1_1_fetcher.html',1,'Uptane']]],
   ['fetchfromostreetasks',['FetchFromOstreeTasks',['../class_fetch_from_ostree_tasks.html',1,'']]],
-  ['fetchmeta',['FetchMeta',['../classcommand_1_1_fetch_meta.html',1,'command']]],
   ['fetchmetacomplete',['FetchMetaComplete',['../classevent_1_1_fetch_meta_complete.html',1,'event']]],
   ['fetchmetadata',['FetchMetadata',['../class_aktualizr.html#af44f10351a313ecf05bd691ac1e7aae2',1,'Aktualizr']]],
   ['fetchtask',['FetchTask',['../class_fetch_task.html',1,'']]],

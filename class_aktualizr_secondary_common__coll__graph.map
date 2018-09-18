@@ -1,9 +1,9 @@
 <map id="AktualizrSecondaryCommon" name="AktualizrSecondaryCommon">
-<area shape="rect" id="node3" href="$class_uptane_1_1_target.html" title="Uptane::Target" alt="" coords="196,33,305,59"/>
+<area shape="rect" id="node3" href="$class_uptane_1_1_target.html" title="Uptane::Target" alt="" coords="196,31,305,58"/>
 <area shape="rect" id="node4" href="$class_aktualizr_secondary_config.html" title="AktualizrSecondaryConfig" alt="" coords="921,285,1095,311"/>
 <area shape="rect" id="node5" href="$class_base_config.html" title="BaseConfig" alt="" coords="565,495,656,522"/>
-<area shape="rect" id="node7" href="$struct_storage_config.html" title="StorageConfig" alt="" coords="558,614,663,641"/>
-<area shape="rect" id="node8" href="$class_based_path.html" title="BasedPath" alt="" coords="207,641,294,667"/>
+<area shape="rect" id="node7" href="$struct_storage_config.html" title="StorageConfig" alt="" coords="558,591,663,618"/>
+<area shape="rect" id="node8" href="$class_based_path.html" title="BasedPath" alt="" coords="207,642,294,669"/>
 <area shape="rect" id="node9" href="$struct_aktualizr_secondary_uptane_config.html" title="AktualizrSecondaryUptane\lConfig" alt="" coords="522,277,699,319"/>
 <area shape="rect" id="node10" title="STL class. " alt="" coords="211,313,291,339"/>
 <area shape="rect" id="node13" href="$struct_package_config.html" title="PackageConfig" alt="" coords="555,343,666,370"/>
@@ -12,9 +12,9 @@
 <area shape="rect" id="node12" href="$struct_logger_config.html" title="LoggerConfig" alt="" coords="561,394,660,421"/>
 <area shape="rect" id="node14" href="$struct_aktualizr_secondary_net_config.html" title="AktualizrSecondaryNetConfig" alt="" coords="513,226,708,253"/>
 <area shape="rect" id="node16" href="$class_uptane_1_1_hardware_identifier.html" title="Uptane::HardwareIdentifier" alt="" coords="919,335,1097,362"/>
-<area shape="rect" id="node17" href="$class_uptane_1_1_targets.html" title="Uptane::Targets" alt="" coords="950,89,1066,115"/>
+<area shape="rect" id="node17" href="$class_uptane_1_1_targets.html" title="Uptane::Targets" alt="" coords="950,85,1066,111"/>
 <area shape="rect" id="node18" href="$class_uptane_1_1_base_meta.html" title="Uptane::BaseMeta" alt="" coords="545,123,676,150"/>
-<area shape="rect" id="node23" href="$class_uptane_1_1_root.html" title="Uptane::Root" alt="" coords="958,139,1058,166"/>
+<area shape="rect" id="node23" href="$class_uptane_1_1_root.html" title="Uptane::Root" alt="" coords="958,135,1058,162"/>
 <area shape="rect" id="node19" href="$class_uptane_1_1_time_stamp.html" title="Uptane::TimeStamp" alt="" coords="181,123,320,150"/>
 <area shape="rect" id="node21" href="$class_key_manager.html" title="KeyManager" alt="" coords="961,386,1055,413"/>
 <area shape="rect" id="node22" href="$class_uptane_1_1_ecu_serial.html" title="Uptane::EcuSerial" alt="" coords="944,437,1072,463"/>

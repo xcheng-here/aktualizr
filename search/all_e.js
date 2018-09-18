@@ -4,8 +4,6 @@ var searchData=
   ['opcuasecondary',['OpcuaSecondary',['../class_uptane_1_1_opcua_secondary.html',1,'Uptane']]],
   ['opcuaserversecondarydelegate',['OpcuaServerSecondaryDelegate',['../class_opcua_server_secondary_delegate.html',1,'']]],
   ['operationresult',['OperationResult',['../structdata_1_1_operation_result.html',1,'data']]],
-  ['operator_3c_3c',['operator&lt;&lt;',['../class_channel.html#a776b3bc14f8e14fd86815c94d6e41823',1,'Channel']]],
-  ['operator_3e_3e',['operator&gt;&gt;',['../class_channel.html#a630228fef251d225c66a5f7d9d0912ec',1,'Channel']]],
   ['originalmanifest',['OriginalManifest',['../classopcuabridge_1_1_original_manifest.html',1,'opcuabridge']]],
   ['ostreecommitparseerror',['OSTreeCommitParseError',['../class_o_s_tree_commit_parse_error.html',1,'']]],
   ['ostreedirrepo',['OSTreeDirRepo',['../class_o_s_tree_dir_repo.html',1,'']]],

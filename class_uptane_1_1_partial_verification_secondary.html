@@ -101,26 +101,34 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>getRootVersion</b> (bo
 <tr class="memitem:a6e98d3a898e9d422c575f2b0fd93916c"><td class="memItemLeft" align="right" valign="top"><a id="a6e98d3a898e9d422c575f2b0fd93916c"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>putRoot</b> (const std::string &amp;root, bool director) override</td></tr>
 <tr class="separator:a6e98d3a898e9d422c575f2b0fd93916c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affea74908dc413752d042697d6d1ef65"><td class="memItemLeft" align="right" valign="top"><a id="affea74908dc413752d042697d6d1ef65"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>sendFirmware</b> (const std::string &amp;data) override</td></tr>
-<tr class="separator:affea74908dc413752d042697d6d1ef65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad246aac46849d0e42b443b0760fcc9ee"><td class="memItemLeft" align="right" valign="top"><a id="ad246aac46849d0e42b443b0760fcc9ee"></a>
+std::future&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sendFirmwareAsync</b> (const std::shared_ptr&lt; std::string &gt; &amp;data) override</td></tr>
+<tr class="separator:ad246aac46849d0e42b443b0760fcc9ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5255e7d4c38d5c33150c78edcd7724d2"><td class="memItemLeft" align="right" valign="top"><a id="a5255e7d4c38d5c33150c78edcd7724d2"></a>
 Json::Value&#160;</td><td class="memItemRight" valign="bottom"><b>getManifest</b> () override</td></tr>
 <tr class="separator:a5255e7d4c38d5c33150c78edcd7724d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_uptane_1_1_secondary_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_uptane_1_1_secondary_interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_uptane_1_1_secondary_interface.html">Uptane::SecondaryInterface</a></td></tr>
-<tr class="memitem:ade5da876d91b817432881627ceb9e71b inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memItemLeft" align="right" valign="top"><a id="ade5da876d91b817432881627ceb9e71b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SecondaryInterface</b> (const <a class="el" href="class_uptane_1_1_secondary_config.html">SecondaryConfig</a> &amp;sconfig_in)</td></tr>
-<tr class="separator:ade5da876d91b817432881627ceb9e71b inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4c908c329eee63a284b91da2916bc35 inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memItemLeft" align="right" valign="top"><a id="ac4c908c329eee63a284b91da2916bc35"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SecondaryInterface</b> (<a class="el" href="class_uptane_1_1_secondary_config.html">SecondaryConfig</a> sconfig_in)</td></tr>
+<tr class="separator:ac4c908c329eee63a284b91da2916bc35 inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adeb71f9694cb8622ffe85b5aa59a0346 inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memItemLeft" align="right" valign="top"><a id="adeb71f9694cb8622ffe85b5aa59a0346"></a>
 virtual <a class="el" href="class_uptane_1_1_hardware_identifier.html">Uptane::HardwareIdentifier</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getHwId</b> ()</td></tr>
 <tr class="separator:adeb71f9694cb8622ffe85b5aa59a0346 inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ab6416eb823ac3fa65c615f05f5eb39 inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memItemLeft" align="right" valign="top"><a id="a0ab6416eb823ac3fa65c615f05f5eb39"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addEventsChannel</b> (std::shared_ptr&lt; event::Channel &gt; channel)</td></tr>
+<tr class="separator:a0ab6416eb823ac3fa65c615f05f5eb39 inherit pub_methods_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_attribs_class_uptane_1_1_secondary_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_class_uptane_1_1_secondary_interface')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="class_uptane_1_1_secondary_interface.html">Uptane::SecondaryInterface</a></td></tr>
-<tr class="memitem:a5945b5324962f1d533e12538fa6b563c inherit pub_attribs_class_uptane_1_1_secondary_interface"><td class="memItemLeft" align="right" valign="top"><a id="a5945b5324962f1d533e12538fa6b563c"></a>
-const <a class="el" href="class_uptane_1_1_secondary_config.html">SecondaryConfig</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>sconfig</b></td></tr>
-<tr class="separator:a5945b5324962f1d533e12538fa6b563c inherit pub_attribs_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a470aebed44d524bdda1a347cad9ee73c inherit pub_attribs_class_uptane_1_1_secondary_interface"><td class="memItemLeft" align="right" valign="top"><a id="a470aebed44d524bdda1a347cad9ee73c"></a>
+const <a class="el" href="class_uptane_1_1_secondary_config.html">SecondaryConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><b>sconfig</b></td></tr>
+<tr class="separator:a470aebed44d524bdda1a347cad9ee73c inherit pub_attribs_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_uptane_1_1_secondary_interface"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_uptane_1_1_secondary_interface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_uptane_1_1_secondary_interface.html">Uptane::SecondaryInterface</a></td></tr>
+<tr class="memitem:a90700772a30abe688ce1369ada9ad2ee inherit pro_methods_class_uptane_1_1_secondary_interface"><td class="memTemplParams" colspan="2"><a id="a90700772a30abe688ce1369ada9ad2ee"></a>
+template&lt;class T , class... Args&gt; </td></tr>
+<tr class="memitem:a90700772a30abe688ce1369ada9ad2ee inherit pro_methods_class_uptane_1_1_secondary_interface"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>sendEvent</b> (Args &amp;&amp;... args)</td></tr>
+<tr class="separator:a90700772a30abe688ce1369ada9ad2ee inherit pro_methods_class_uptane_1_1_secondary_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">

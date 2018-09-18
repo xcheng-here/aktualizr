@@ -1,6 +1,6 @@
 <map id="AktualizrSecondaryConfig" name="AktualizrSecondaryConfig">
 <area shape="rect" id="node2" href="$class_base_config.html" title="BaseConfig" alt="" coords="561,62,652,89"/>
-<area shape="rect" id="node4" href="$struct_storage_config.html" title="StorageConfig" alt="" coords="554,162,659,189"/>
+<area shape="rect" id="node4" href="$struct_storage_config.html" title="StorageConfig" alt="" coords="554,161,659,187"/>
 <area shape="rect" id="node5" href="$class_based_path.html" title="BasedPath" alt="" coords="205,161,292,187"/>
 <area shape="rect" id="node6" href="$struct_aktualizr_secondary_uptane_config.html" title="AktualizrSecondaryUptane\lConfig" alt="" coords="518,213,695,255"/>
 <area shape="rect" id="node7" title="STL class. " alt="" coords="209,281,289,307"/>

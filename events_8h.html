@@ -73,8 +73,8 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;map&gt;</code><br />
 <code>#include &lt;json/json.h&gt;</code><br />
+<code>#include &lt;boost/signals2.hpp&gt;</code><br />
 <code>#include &quot;uptane/tuf.h&quot;</code><br />
-<code>#include &quot;utilities/channel.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="types_8h_source.html">utilities/types.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for events.h:</div>
@@ -84,7 +84,7 @@ Include dependency graph for events.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="events_8h__dep__incl.svg" width="100%" height="551"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="events_8h__dep__incl.svg" width="100%" height="600"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
 </div>
 </div>
 <p><a href="events_8h_source.html">Go to the source code of this file.</a></p>
@@ -98,27 +98,43 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An error occurred processing a command.  <a href="classevent_1_1_error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_fetch_meta_complete.html">event::FetchMetaComplete</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The FetchMeta command completed successfully.  <a href="classevent_1_1_fetch_meta_complete.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Metadata has been successfully fetched from the server.  <a href="classevent_1_1_fetch_meta_complete.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_send_device_data_complete.html">event::SendDeviceDataComplete</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The SendDeviceData command completed successfully.  <a href="classevent_1_1_send_device_data_complete.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device data has been successfully sent to the server.  <a href="classevent_1_1_send_device_data_complete.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_put_manifest_complete.html">event::PutManifestComplete</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The PutManifest command completed successfully.  <a href="classevent_1_1_put_manifest_complete.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A manifest has been successfully sent to the server.  <a href="classevent_1_1_put_manifest_complete.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_no_update_available.html">event::NoUpdateAvailable</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">No update is available for download from the server.  <a href="classevent_1_1_no_update_available.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_update_available.html">event::UpdateAvailable</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An update is available for download from the server.  <a href="classevent_1_1_update_available.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_uptane_timestamp_updated.html">event::UptaneTimestampUpdated</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_nothing_to_download.html">event::NothingToDownload</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nothing to download from the server.  <a href="classevent_1_1_nothing_to_download.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_download_progress_report.html">event::DownloadProgressReport</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A report for a download in progress.  <a href="classevent_1_1_download_progress_report.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_download_complete.html">event::DownloadComplete</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The StartDownload command completed successfully.  <a href="classevent_1_1_download_complete.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An update has been successfully downloaded.  <a href="classevent_1_1_download_complete.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_install_started.html">event::InstallStarted</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An ECU has begun installation of an update.  <a href="classevent_1_1_install_started.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_install_complete.html">event::InstallComplete</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UptaneInstall command completed successfully.  <a href="classevent_1_1_install_complete.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An update attempt on an ECU is finished.  <a href="classevent_1_1_install_complete.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_all_installs_complete.html">event::AllInstallsComplete</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">All ECU update attempts have completed.  <a href="classevent_1_1_all_installs_complete.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_campaign_check_complete.html">event::CampaignCheckComplete</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The server has been successfully queried for available campaigns.  <a href="classevent_1_1_campaign_check_complete.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_1_1_campaign_accept_complete.html">event::CampaignAcceptComplete</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A campaign has been successfully accepted.  <a href="classevent_1_1_campaign_accept_complete.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -129,9 +145,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ae504c1fb9b45824c38860120d538770f"><td class="memItemLeft" align="right" valign="top"><a id="ae504c1fb9b45824c38860120d538770f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>event::Channel</b> = <a class="el" href="class_channel.html">Channel</a>&lt; std::shared_ptr&lt; BaseEvent &gt; &gt;</td></tr>
-<tr class="separator:ae504c1fb9b45824c38860120d538770f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c88588ce68417f2ee69c5742be1b183"><td class="memItemLeft" align="right" valign="top"><a id="a7c88588ce68417f2ee69c5742be1b183"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>event::Channel</b> = boost::signals2::signal&lt; void(std::shared_ptr&lt; <a class="el" href="classevent_1_1_base_event.html">event::BaseEvent</a> &gt;)&gt;</td></tr>
+<tr class="separator:a7c88588ce68417f2ee69c5742be1b183"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

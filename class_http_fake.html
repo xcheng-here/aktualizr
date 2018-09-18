@@ -86,8 +86,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a43dc59e1b8c16d8a4880c5c1bdf7ed1b"><td class="memItemLeft" align="right" valign="top"><a id="a43dc59e1b8c16d8a4880c5c1bdf7ed1b"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setCerts</b> (const std::string &amp;ca, CryptoSource ca_source, const std::string &amp;cert, CryptoSource cert_source, const std::string &amp;pkey, CryptoSource pkey_source)</td></tr>
 <tr class="separator:a43dc59e1b8c16d8a4880c5c1bdf7ed1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cc150be03a2107220506f46e1f76dc1"><td class="memItemLeft" align="right" valign="top"><a id="a2cc150be03a2107220506f46e1f76dc1"></a>
-<a class="el" href="struct_http_response.html">HttpResponse</a>&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> (const std::string &amp;url, int64_t maxsize)</td></tr>
+<tr class="memitem:a2cc150be03a2107220506f46e1f76dc1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_http_response.html">HttpResponse</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_http_fake.html#a2cc150be03a2107220506f46e1f76dc1">get</a> (const std::string &amp;url, int64_t maxsize)</td></tr>
+<tr class="memdesc:a2cc150be03a2107220506f46e1f76dc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The noupdates parts are only used by Uptane.FetchNoUpdates.  <a href="#a2cc150be03a2107220506f46e1f76dc1">More...</a><br /></td></tr>
 <tr class="separator:a2cc150be03a2107220506f46e1f76dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa28199b6619b55a1f01dcbf73701e803"><td class="memItemLeft" align="right" valign="top"><a id="aa28199b6619b55a1f01dcbf73701e803"></a>
 <a class="el" href="struct_http_response.html">HttpResponse</a>&#160;</td><td class="memItemRight" valign="bottom"><b>post</b> (const std::string &amp;url, const Json::Value &amp;data)</td></tr>
@@ -130,7 +130,52 @@ static constexpr int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>k
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="httpfake_8h_source.html#l00018">18</a> of file <a class="el" href="httpfake_8h_source.html">httpfake.h</a>.</p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a2cc150be03a2107220506f46e1f76dc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cc150be03a2107220506f46e1f76dc1">&#9670;&nbsp;</a></span>get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_http_response.html">HttpResponse</a> HttpFake::get </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>url</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int64_t&#160;</td>
+          <td class="paramname"><em>maxsize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The noupdates parts are only used by Uptane.FetchNoUpdates. </p>
+<p>The multisec parts are only used by Uptane.InstallMultipleSecondaries. The unstable parts are only used by Uptane.restoreVerify, although they mostly use the same hasupdates files.</p>
+<p>All other <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a> tests use the hasupdates set. </p>
+
+<p>Implements <a class="el" href="class_http_interface.html">HttpInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="httpfake_8h_source.html#l00049">49</a> of file <a class="el" href="httpfake_8h_source.html">httpfake.h</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>tests/<a class="el" href="httpfake_8h_source.html">httpfake.h</a></li>
 </ul>
 </div><!-- contents -->

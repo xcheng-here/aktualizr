@@ -5,7 +5,6 @@ var searchData=
   ['badcredentialsjson',['BadCredentialsJson',['../class_bad_credentials_json.html',1,'']]],
   ['badecuid',['BadEcuId',['../class_uptane_1_1_bad_ecu_id.html',1,'Uptane']]],
   ['badkeyid',['BadKeyId',['../class_uptane_1_1_bad_key_id.html',1,'Uptane']]],
-  ['basecommand',['BaseCommand',['../classcommand_1_1_base_command.html',1,'command']]],
   ['baseconfig',['BaseConfig',['../class_base_config.html',1,'']]],
   ['basedpath',['BasedPath',['../class_based_path.html',1,'']]],
   ['baseevent',['BaseEvent',['../classevent_1_1_base_event.html',1,'event']]],

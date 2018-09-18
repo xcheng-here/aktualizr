@@ -60,6 +60,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_aktualizr-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -83,16 +84,23 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a14ce79a4aee5fc5dab589dd475201b3b"><td class="memItemLeft" align="right" valign="top"><a id="a14ce79a4aee5fc5dab589dd475201b3b"></a>
 <a class="el" href="class_aktualizr.html">Aktualizr</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="class_aktualizr.html">Aktualizr</a> &amp;)=delete</td></tr>
 <tr class="separator:a14ce79a4aee5fc5dab589dd475201b3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b21e74b235a298edb0aa7950a50d804"><td class="memItemLeft" align="right" valign="top"><a id="a5b21e74b235a298edb0aa7950a50d804"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Initialize</b> ()</td></tr>
+<tr class="separator:a5b21e74b235a298edb0aa7950a50d804"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91d4439da4989edcb882f359e462a733"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a91d4439da4989edcb882f359e462a733">Run</a> ()</td></tr>
-<tr class="memdesc:a91d4439da4989edcb882f359e462a733"><td class="mdescLeft">&#160;</td><td class="mdescRight">Launch aktualizr.  <a href="#a91d4439da4989edcb882f359e462a733">More...</a><br /></td></tr>
+<tr class="memdesc:a91d4439da4989edcb882f359e462a733"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run aktualizr indefinitely until a Shutdown event is received.  <a href="#a91d4439da4989edcb882f359e462a733">More...</a><br /></td></tr>
 <tr class="separator:a91d4439da4989edcb882f359e462a733"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab244f4c923e07387022f21e97aa3c080"><td class="memItemLeft" align="right" valign="top"><a id="ab244f4c923e07387022f21e97aa3c080"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#ab244f4c923e07387022f21e97aa3c080">Shutdown</a> ()</td></tr>
-<tr class="memdesc:ab244f4c923e07387022f21e97aa3c080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously shutdown <a class="el" href="class_aktualizr.html" title="This class provides the main APIs necessary for launching and controlling libaktualizr. ">Aktualizr</a>. <br /></td></tr>
+<tr class="memdesc:ab244f4c923e07387022f21e97aa3c080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously shut aktualizr down. <br /></td></tr>
 <tr class="separator:ab244f4c923e07387022f21e97aa3c080"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab958d50b384fe342e7277480d1844c84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#ab958d50b384fe342e7277480d1844c84">CampaignCheck</a> ()</td></tr>
 <tr class="memdesc:ab958d50b384fe342e7277480d1844c84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously perform a check for campaigns.  <a href="#ab958d50b384fe342e7277480d1844c84">More...</a><br /></td></tr>
 <tr class="separator:ab958d50b384fe342e7277480d1844c84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13f0af767aec582ec2b1482ce904d4e2"><td class="memItemLeft" align="right" valign="top"><a id="a13f0af767aec582ec2b1482ce904d4e2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a13f0af767aec582ec2b1482ce904d4e2">CampaignAccept</a> (const std::string &amp;campaign_id)</td></tr>
+<tr class="memdesc:a13f0af767aec582ec2b1482ce904d4e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously accept a campaign for the current device Campaigns are a concept outside of <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a>, and allow for user approval of updates before the contents of the update are known. <br /></td></tr>
+<tr class="separator:a13f0af767aec582ec2b1482ce904d4e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5128f41df32e41340a7da54bcdd30f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#ae5128f41df32e41340a7da54bcdd30f8">SendDeviceData</a> ()</td></tr>
 <tr class="memdesc:ae5128f41df32e41340a7da54bcdd30f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously send local device data to the server.  <a href="#ae5128f41df32e41340a7da54bcdd30f8">More...</a><br /></td></tr>
 <tr class="separator:ae5128f41df32e41340a7da54bcdd30f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -102,14 +110,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ad32a758aec26155e138fa8faed57c8e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#ad32a758aec26155e138fa8faed57c8e4">CheckUpdates</a> ()</td></tr>
 <tr class="memdesc:ad32a758aec26155e138fa8faed57c8e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously load already-fetched <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a> metadata from disk.  <a href="#ad32a758aec26155e138fa8faed57c8e4">More...</a><br /></td></tr>
 <tr class="separator:ad32a758aec26155e138fa8faed57c8e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1249ef91c0680eec1c5f5e6631e6681d"><td class="memItemLeft" align="right" valign="top"><a id="a1249ef91c0680eec1c5f5e6631e6681d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a1249ef91c0680eec1c5f5e6631e6681d">Download</a> (std::vector&lt; <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &gt; updates)</td></tr>
-<tr class="memdesc:a1249ef91c0680eec1c5f5e6631e6681d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously download targets. <br /></td></tr>
-<tr class="separator:a1249ef91c0680eec1c5f5e6631e6681d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a363317bc22ad02bf5c1636ef42a181fa"><td class="memItemLeft" align="right" valign="top"><a id="a363317bc22ad02bf5c1636ef42a181fa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a363317bc22ad02bf5c1636ef42a181fa">Install</a> (std::vector&lt; <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &gt; updates)</td></tr>
-<tr class="memdesc:a363317bc22ad02bf5c1636ef42a181fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously install targets. <br /></td></tr>
-<tr class="separator:a363317bc22ad02bf5c1636ef42a181fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c70e9545f54e69f85585bbda513a89b"><td class="memItemLeft" align="right" valign="top"><a id="a0c70e9545f54e69f85585bbda513a89b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a0c70e9545f54e69f85585bbda513a89b">Download</a> (const std::vector&lt; <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &gt; &amp;updates)</td></tr>
+<tr class="memdesc:a0c70e9545f54e69f85585bbda513a89b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously download targets. <br /></td></tr>
+<tr class="separator:a0c70e9545f54e69f85585bbda513a89b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53f51e7121830f0e90a1ae34acb2af43"><td class="memItemLeft" align="right" valign="top"><a id="a53f51e7121830f0e90a1ae34acb2af43"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a53f51e7121830f0e90a1ae34acb2af43">Install</a> (const std::vector&lt; <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &gt; &amp;updates)</td></tr>
+<tr class="memdesc:a53f51e7121830f0e90a1ae34acb2af43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronously install targets. <br /></td></tr>
+<tr class="separator:a53f51e7121830f0e90a1ae34acb2af43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca0c292b8b91aa92f1f6739e106f1375"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#aca0c292b8b91aa92f1f6739e106f1375">UptaneCycle</a> ()</td></tr>
+<tr class="memdesc:aca0c292b8b91aa92f1f6739e106f1375"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronously run an uptane cycle.  <a href="#aca0c292b8b91aa92f1f6739e106f1375">More...</a><br /></td></tr>
+<tr class="separator:aca0c292b8b91aa92f1f6739e106f1375"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad433bb3340ec534e1557289f0399e518"><td class="memItemLeft" align="right" valign="top"><a id="ad433bb3340ec534e1557289f0399e518"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#ad433bb3340ec534e1557289f0399e518">AddSecondary</a> (const std::shared_ptr&lt; <a class="el" href="class_uptane_1_1_secondary_interface.html">Uptane::SecondaryInterface</a> &gt; &amp;secondary)</td></tr>
+<tr class="memdesc:ad433bb3340ec534e1557289f0399e518"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add new secondary to aktualizr. <br /></td></tr>
+<tr class="separator:ad433bb3340ec534e1557289f0399e518"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1481a4c4b6b4c9933ce62d40773faf90"><td class="memItemLeft" align="right" valign="top">boost::signals2::connection&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a1481a4c4b6b4c9933ce62d40773faf90">SetSignalHandler</a> (std::function&lt; void(std::shared_ptr&lt; <a class="el" href="classevent_1_1_base_event.html">event::BaseEvent</a> &gt;)&gt; &amp;handler)</td></tr>
 <tr class="memdesc:a1481a4c4b6b4c9933ce62d40773faf90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide a function to receive event notifications.  <a href="#a1481a4c4b6b4c9933ce62d40773faf90">More...</a><br /></td></tr>
 <tr class="separator:a1481a4c4b6b4c9933ce62d40773faf90"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -117,7 +132,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class provides the main APIs necessary for launching and controlling libaktualizr. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8h_source.html#l00017">17</a> of file <a class="el" href="aktualizr_8h_source.html">aktualizr.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8h_source.html#l00021">21</a> of file <a class="el" href="aktualizr_8h_source.html">aktualizr.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a630ad4b774157242e61d0d040cb97e0d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a630ad4b774157242e61d0d040cb97e0d">&#9670;&nbsp;</a></span>Aktualizr()</h2>
@@ -146,7 +161,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p><a class="el" href="class_aktualizr.html" title="This class provides the main APIs necessary for launching and controlling libaktualizr. ">Aktualizr</a> requires a configuration object. </p>
 <p>Examples can be found in the config directory. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00017">17</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00014">14</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>
@@ -169,7 +184,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Asynchronously perform a check for campaigns. </p>
 <p>Campaigns are a concept outside of <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a>, and allow for user approval of updates before the contents of the update are known. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00053">53</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00142">142</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>
@@ -191,7 +206,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Asynchronously load already-fetched <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a> metadata from disk. </p>
 <p>This is only needed when the metadata fetch and downloads/installation are in separate aktualizr runs. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00059">59</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00150">150</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>
@@ -213,7 +228,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Asynchronously fetch <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a> metadata. </p>
 <p>This collects a client manifest, PUTs it to the director, then updates the <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a> metadata, including root and targets. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00057">57</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00148">148</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>
@@ -232,10 +247,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 
-<p>Launch aktualizr. </p>
-<p>Depending on the <a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1a">RunningMode</a> in the configuration, this may run indefinitely, so you may want to run this on its own thread. </p>
+<p>Run aktualizr indefinitely until a Shutdown event is received. </p>
+<p>Intended to be used with the Full <a class="el" href="types_8h.html#ad54e979f4962bd50735409213e020e1a">RunningMode</a> setting. You may want to run this on its own thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00036">36</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00127">127</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>
@@ -257,7 +272,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Asynchronously send local device data to the server. </p>
 <p>This includes network status, installed packages, hardware etc. </p>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00055">55</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00146">146</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>
@@ -286,7 +301,29 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a signal connection object, which can be disconnected if desired. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00069">69</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00156">156</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+
+</div>
+</div>
+<a id="aca0c292b8b91aa92f1f6739e106f1375"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca0c292b8b91aa92f1f6739e106f1375">&#9670;&nbsp;</a></span>UptaneCycle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Aktualizr::UptaneCycle </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Synchronously run an uptane cycle. </p>
+<p>Behaviour depends on the configured running mode (full cycle, check and download or check and install) </p>
+
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00113">113</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>

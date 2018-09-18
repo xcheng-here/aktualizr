@@ -1,19 +1,20 @@
 <map id="src/libaktualizr/asn1/asn1_test.cc" name="src/libaktualizr/asn1/asn1_test.cc">
-<area shape="rect" id="node5" href="$asn1__message_8h_source.html" title="asn1/asn1_message.h" alt="" coords="2097,95,2250,121"/>
-<area shape="rect" id="node9" href="$config_8h_source.html" title="config/config.h" alt="" coords="1157,95,1264,121"/>
-<area shape="rect" id="node18" href="$asn1-cerstream_8h_source.html" title="asn1/asn1&#45;cerstream.h" alt="" coords="1613,169,1768,196"/>
-<area shape="rect" id="node23" href="$bootloader_8h_source.html" title="bootloader/bootloader.h" alt="" coords="2045,326,2203,353"/>
-<area shape="rect" id="node26" href="$keymanager__config_8h_source.html" title="crypto/keymanager_config.h" alt="" coords="304,169,491,196"/>
-<area shape="rect" id="node27" href="$p11__config_8h_source.html" title="crypto/p11_config.h" alt="" coords="569,244,705,271"/>
-<area shape="rect" id="node28" href="$config__utils_8h_source.html" title="utilities/config_utils.h" alt="" coords="981,326,1125,353"/>
-<area shape="rect" id="node31" href="$logging__config_8h_source.html" title="logging_config.h" alt="" coords="1917,483,2033,509"/>
-<area shape="rect" id="node32" href="$types_8h.html" title="types.h" alt="" coords="511,408,577,435"/>
-<area shape="rect" id="node38" href="$packagemanagerconfig_8h_source.html" title="package_manager/packagemanagerconfig.h" alt="" coords="1453,244,1731,271"/>
-<area shape="rect" id="node40" href="$storage__config_8h_source.html" title="storage/storage_config.h" alt="" coords="851,244,1016,271"/>
-<area shape="rect" id="node41" href="$telemetryconfig_8h_source.html" title="telemetry/telemetryconfig.h" alt="" coords="1249,244,1429,271"/>
-<area shape="rect" id="node42" href="$secondaryconfig_8h_source.html" title="uptane/secondaryconfig.h" alt="" coords="203,326,373,353"/>
-<area shape="rect" id="node19" href="$asn1-cer_8h_source.html" title="asn1/asn1&#45;cer.h" alt="" coords="1755,244,1869,271"/>
-<area shape="rect" id="node24" href="$bootloader__config_8h_source.html" title="bootloader_config.h" alt="" coords="2057,483,2191,509"/>
-<area shape="rect" id="node29" href="$logging_8h_source.html" title="logging/logging.h" alt="" coords="1915,408,2034,435"/>
-<area shape="rect" id="node34" href="$utils_8h_source.html" title="utils.h" alt="" coords="954,408,1011,435"/>
+<area shape="rect" id="node5" href="$asn1__message_8h_source.html" title="asn1/asn1_message.h" alt="" coords="2228,95,2381,121"/>
+<area shape="rect" id="node9" href="$config_8h_source.html" title="config/config.h" alt="" coords="709,95,815,121"/>
+<area shape="rect" id="node18" href="$asn1-cerstream_8h_source.html" title="asn1/asn1&#45;cerstream.h" alt="" coords="1982,244,2137,271"/>
+<area shape="rect" id="node23" href="$bootloader_8h_source.html" title="bootloader/bootloader.h" alt="" coords="175,408,333,435"/>
+<area shape="rect" id="node26" href="$keymanager__config_8h_source.html" title="crypto/keymanager_config.h" alt="" coords="1709,169,1895,196"/>
+<area shape="rect" id="node27" href="$p11__config_8h_source.html" title="crypto/p11_config.h" alt="" coords="1495,244,1631,271"/>
+<area shape="rect" id="node28" href="$config__utils_8h_source.html" title="utilities/config_utils.h" alt="" coords="1095,326,1239,353"/>
+<area shape="rect" id="node31" href="$logging__config_8h_source.html" title="logging_config.h" alt="" coords="693,483,809,509"/>
+<area shape="rect" id="node32" href="$types_8h.html" title="types.h" alt="" coords="1677,408,1743,435"/>
+<area shape="rect" id="node39" href="$packagemanagerconfig_8h_source.html" title="package_manager/packagemanagerconfig.h" alt="" coords="853,244,1130,271"/>
+<area shape="rect" id="node41" href="$storage__config_8h_source.html" title="storage/storage_config.h" alt="" coords="663,244,829,271"/>
+<area shape="rect" id="node42" href="$telemetryconfig_8h_source.html" title="telemetry/telemetryconfig.h" alt="" coords="459,244,639,271"/>
+<area shape="rect" id="node43" href="$secondaryconfig_8h_source.html" title="uptane/secondaryconfig.h" alt="" coords="1227,244,1398,271"/>
+<area shape="rect" id="node19" href="$asn1-cer_8h_source.html" title="asn1/asn1&#45;cer.h" alt="" coords="1437,326,1551,353"/>
+<area shape="rect" id="node24" href="$bootloader__config_8h_source.html" title="bootloader_config.h" alt="" coords="535,483,669,509"/>
+<area shape="rect" id="node29" href="$logging_8h_source.html" title="logging/logging.h" alt="" coords="981,408,1100,435"/>
+<area shape="rect" id="node34" href="$utils_8h_source.html" title="utils.h" alt="" coords="1381,408,1439,435"/>
+<area shape="rect" id="node45" href="$utilities_2exceptions_8h_source.html" title="utilities/exceptions.h" alt="" coords="879,326,1021,353"/>
 </map>

@@ -17,6 +17,7 @@ var searchData=
   ['importconfig',['ImportConfig',['../struct_import_config.html',1,'']]],
   ['initializer',['Initializer',['../class_initializer.html',1,'']]],
   ['installcomplete',['InstallComplete',['../classevent_1_1_install_complete.html',1,'event']]],
+  ['installstarted',['InstallStarted',['../classevent_1_1_install_started.html',1,'event']]],
   ['interruptableexecutioncontroller',['InterruptableExecutionController',['../class_interruptable_execution_controller.html',1,'']]],
   ['invalidmetadata',['InvalidMetadata',['../class_uptane_1_1_invalid_metadata.html',1,'Uptane']]],
   ['invstorage',['INvStorage',['../class_i_nv_storage.html',1,'']]],
