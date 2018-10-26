@@ -1,5 +1,4 @@
 <map id="Uptane::ManagedSecondary" name="Uptane::ManagedSecondary">
-<area shape="rect" id="node3" href="$class_uptane_1_1_legacy_secondary.html" title="Uptane::LegacySecondary" alt="" coords="5,155,181,181"/>
-<area shape="rect" id="node4" href="$class_uptane_1_1_virtual_secondary.html" title="Uptane::VirtualSecondary" alt="" coords="205,155,376,181"/>
-<area shape="rect" id="node2" href="$class_uptane_1_1_secondary_interface.html" title="Uptane::SecondaryInterface" alt="" coords="99,5,285,32"/>
+<area shape="rect" id="node3" href="$class_uptane_1_1_virtual_secondary.html" title="Uptane::VirtualSecondary" alt="" coords="13,155,184,181"/>
+<area shape="rect" id="node2" href="$class_uptane_1_1_secondary_interface.html" title="Uptane::SecondaryInterface" alt="" coords="6,5,191,32"/>
 </map>

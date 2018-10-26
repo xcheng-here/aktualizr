@@ -7,7 +7,9 @@ var searchData=
   ['directorrepository',['DirectorRepository',['../class_uptane_1_1_director_repository.html',1,'Uptane']]],
   ['discovered_5fendpoint',['discovered_endpoint',['../structopcuabridge_1_1discovery_1_1_client_1_1discovered__endpoint.html',1,'opcuabridge::discovery::Client']]],
   ['discoveryconfig',['DiscoveryConfig',['../struct_discovery_config.html',1,'']]],
-  ['downloadcomplete',['DownloadComplete',['../classevent_1_1_download_complete.html',1,'event']]],
+  ['downloadcompletereport',['DownloadCompleteReport',['../class_download_complete_report.html',1,'']]],
   ['downloadmetastruct',['DownloadMetaStruct',['../struct_uptane_1_1_download_meta_struct.html',1,'Uptane']]],
-  ['downloadprogressreport',['DownloadProgressReport',['../classevent_1_1_download_progress_report.html',1,'event']]]
+  ['downloadprogressreport',['DownloadProgressReport',['../classevent_1_1_download_progress_report.html',1,'event']]],
+  ['downloadresult',['DownloadResult',['../class_download_result.html',1,'']]],
+  ['downloadtargetcomplete',['DownloadTargetComplete',['../classevent_1_1_download_target_complete.html',1,'event']]]
 ];

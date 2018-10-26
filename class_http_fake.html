@@ -70,19 +70,21 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for HttpFake:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_http_fake__inherit__graph.svg" width="110" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_http_fake__inherit__graph.svg" width="110" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for HttpFake:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_http_fake__coll__graph.svg" width="238" height="232"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_http_fake__coll__graph.svg" width="238" height="232"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac04b04002bb74c87f81632d9c3257d11"><td class="memItemLeft" align="right" valign="top"><a id="ac04b04002bb74c87f81632d9c3257d11"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>HttpFake</b> (const boost::filesystem::path &amp;test_dir_in, const bool is_initialized=false)</td></tr>
-<tr class="separator:ac04b04002bb74c87f81632d9c3257d11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28b747d6c19416f915ee4ccb33c2e878"><td class="memItemLeft" align="right" valign="top"><a id="a28b747d6c19416f915ee4ccb33c2e878"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>HttpFake</b> (const boost::filesystem::path &amp;test_dir_in)</td></tr>
+<tr class="separator:a28b747d6c19416f915ee4ccb33c2e878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43dc59e1b8c16d8a4880c5c1bdf7ed1b"><td class="memItemLeft" align="right" valign="top"><a id="a43dc59e1b8c16d8a4880c5c1bdf7ed1b"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setCerts</b> (const std::string &amp;ca, CryptoSource ca_source, const std::string &amp;cert, CryptoSource cert_source, const std::string &amp;pkey, CryptoSource pkey_source)</td></tr>
 <tr class="separator:a43dc59e1b8c16d8a4880c5c1bdf7ed1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -113,6 +115,24 @@ const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>tls_serv
 <tr class="memitem:aa83d105286169b8c78aeb76835fb5961"><td class="memItemLeft" align="right" valign="top"><a id="aa83d105286169b8c78aeb76835fb5961"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>events_seen</b> = 0</td></tr>
 <tr class="separator:aa83d105286169b8c78aeb76835fb5961"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64e46a1ef01487c8a43d02a7ea103782"><td class="memItemLeft" align="right" valign="top"><a id="a64e46a1ef01487c8a43d02a7ea103782"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>devices_count</b> = 0</td></tr>
+<tr class="separator:a64e46a1ef01487c8a43d02a7ea103782"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20bb6b13cdf46a7e8fdeb1f7c533b0d9"><td class="memItemLeft" align="right" valign="top"><a id="a20bb6b13cdf46a7e8fdeb1f7c533b0d9"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ecus_count</b> = 0</td></tr>
+<tr class="separator:a20bb6b13cdf46a7e8fdeb1f7c533b0d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4abc6d65aa84b7e53b2878d943942df1"><td class="memItemLeft" align="right" valign="top"><a id="a4abc6d65aa84b7e53b2878d943942df1"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>manifest_count</b> = 0</td></tr>
+<tr class="separator:a4abc6d65aa84b7e53b2878d943942df1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60b3fa4b1dd01fc03e4399e3534dd5e0"><td class="memItemLeft" align="right" valign="top"><a id="a60b3fa4b1dd01fc03e4399e3534dd5e0"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>installed_count</b> = 0</td></tr>
+<tr class="separator:a60b3fa4b1dd01fc03e4399e3534dd5e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a293b66ea7e9896c98b4c1458b33380d7"><td class="memItemLeft" align="right" valign="top"><a id="a293b66ea7e9896c98b4c1458b33380d7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>system_info_count</b> = 0</td></tr>
+<tr class="separator:a293b66ea7e9896c98b4c1458b33380d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1dc47c2075c0895c299e40fb57ce0b38"><td class="memItemLeft" align="right" valign="top"><a id="a1dc47c2075c0895c299e40fb57ce0b38"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>network_count</b> = 0</td></tr>
+<tr class="separator:a1dc47c2075c0895c299e40fb57ce0b38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -129,7 +149,7 @@ static constexpr int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>k
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="httpfake_8h_source.html#l00018">18</a> of file <a class="el" href="httpfake_8h_source.html">httpfake.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="httpfake_8h_source.html#l00020">20</a> of file <a class="el" href="httpfake_8h_source.html">httpfake.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a2cc150be03a2107220506f46e1f76dc1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2cc150be03a2107220506f46e1f76dc1">&#9670;&nbsp;</a></span>get()</h2>

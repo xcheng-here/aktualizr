@@ -86,39 +86,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6d12300e03f3ad000d9f16c17a8c3923"><td class="memItemLeft" align="right" valign="top"><a id="a6d12300e03f3ad000d9f16c17a8c3923"></a>
 <a class="el" href="class_o_s_tree_object.html">OSTreeObject</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="class_o_s_tree_object.html">OSTreeObject</a> &amp;)=delete</td></tr>
 <tr class="separator:a6d12300e03f3ad000d9f16c17a8c3923"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a431921af81b111d0506ff48f98cf1b05"><td class="memItemLeft" align="right" valign="top"><a id="a431921af81b111d0506ff48f98cf1b05"></a>
-PresenceOnServer&#160;</td><td class="memItemRight" valign="bottom"><b>is_on_server</b> () const</td></tr>
-<tr class="separator:a431921af81b111d0506ff48f98cf1b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7b3571b9deb5b962fd083aa7b116ed7"><td class="memItemLeft" align="right" valign="top"><a id="aa7b3571b9deb5b962fd083aa7b116ed7"></a>
-CurrentOp&#160;</td><td class="memItemRight" valign="bottom"><b>operation</b> () const</td></tr>
-<tr class="separator:aa7b3571b9deb5b962fd083aa7b116ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2947fc67fe517303b4c22c0679bdbb88"><td class="memItemLeft" align="right" valign="top"><a id="a2947fc67fe517303b4c22c0679bdbb88"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>CurlDone</b> (CURLM *curl_multi_handle, <a class="el" href="class_request_pool.html">RequestPool</a> &amp;pool)</td></tr>
-<tr class="separator:a2947fc67fe517303b4c22c0679bdbb88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6521c949aec7c9f2a6273115b5e5313"><td class="memItemLeft" align="right" valign="top"><a id="ab6521c949aec7c9f2a6273115b5e5313"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>NotifyParents</b> (<a class="el" href="class_request_pool.html">RequestPool</a> &amp;pool)</td></tr>
+<tr class="separator:ab6521c949aec7c9f2a6273115b5e5313"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4346577547305e6d0f0c2230601b0d8"><td class="memItemLeft" align="right" valign="top"><a id="af4346577547305e6d0f0c2230601b0d8"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>MakeTestRequest</b> (const <a class="el" href="class_treehub_server.html">TreehubServer</a> &amp;push_target, CURLM *curl_multi_handle)</td></tr>
 <tr class="separator:af4346577547305e6d0f0c2230601b0d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad60baacefaa0cc242987d59a68fe2053"><td class="memItemLeft" align="right" valign="top"><a id="ad60baacefaa0cc242987d59a68fe2053"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Upload</b> (const <a class="el" href="class_treehub_server.html">TreehubServer</a> &amp;push_target, CURLM *curl_multi_handle, bool dryrun)</td></tr>
 <tr class="separator:ad60baacefaa0cc242987d59a68fe2053"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8aa14bf7518a84ec40ff71031b8e0c16"><td class="memItemLeft" align="right" valign="top"><a id="a8aa14bf7518a84ec40ff71031b8e0c16"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>AddParent</b> (<a class="el" href="class_o_s_tree_object.html">OSTreeObject</a> *parent, std::list&lt; OSTreeObject::ptr &gt;::iterator parent_it)</td></tr>
-<tr class="separator:a8aa14bf7518a84ec40ff71031b8e0c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2947fc67fe517303b4c22c0679bdbb88"><td class="memItemLeft" align="right" valign="top"><a id="a2947fc67fe517303b4c22c0679bdbb88"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>CurlDone</b> (CURLM *curl_multi_handle, <a class="el" href="class_request_pool.html">RequestPool</a> &amp;pool)</td></tr>
+<tr class="separator:a2947fc67fe517303b4c22c0679bdbb88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a431921af81b111d0506ff48f98cf1b05"><td class="memItemLeft" align="right" valign="top"><a id="a431921af81b111d0506ff48f98cf1b05"></a>
+PresenceOnServer&#160;</td><td class="memItemRight" valign="bottom"><b>is_on_server</b> () const</td></tr>
+<tr class="separator:a431921af81b111d0506ff48f98cf1b05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7b3571b9deb5b962fd083aa7b116ed7"><td class="memItemLeft" align="right" valign="top"><a id="aa7b3571b9deb5b962fd083aa7b116ed7"></a>
+CurrentOp&#160;</td><td class="memItemRight" valign="bottom"><b>operation</b> () const</td></tr>
+<tr class="separator:aa7b3571b9deb5b962fd083aa7b116ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b09eeb7f72e47975d5d543e84f5e652"><td class="memItemLeft" align="right" valign="top"><a id="a8b09eeb7f72e47975d5d543e84f5e652"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>children_ready</b> ()</td></tr>
 <tr class="separator:a8b09eeb7f72e47975d5d543e84f5e652"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7b9ad63caa1e3d83b1cd6d8536400fa"><td class="memItemLeft" align="right" valign="top"><a id="aa7b9ad63caa1e3d83b1cd6d8536400fa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>PopulateChildren</b> ()</td></tr>
-<tr class="separator:aa7b9ad63caa1e3d83b1cd6d8536400fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69098008b226a8923bb1c837646cfada"><td class="memItemLeft" align="right" valign="top"><a id="a69098008b226a8923bb1c837646cfada"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>QueryChildren</b> (<a class="el" href="class_request_pool.html">RequestPool</a> &amp;pool)</td></tr>
-<tr class="separator:a69098008b226a8923bb1c837646cfada"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6521c949aec7c9f2a6273115b5e5313"><td class="memItemLeft" align="right" valign="top"><a id="ab6521c949aec7c9f2a6273115b5e5313"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>NotifyParents</b> (<a class="el" href="class_request_pool.html">RequestPool</a> &amp;pool)</td></tr>
-<tr class="separator:ab6521c949aec7c9f2a6273115b5e5313"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49638db49a09133c32b68a06a6db2236"><td class="memItemLeft" align="right" valign="top"><a id="a49638db49a09133c32b68a06a6db2236"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>ChildNotify</b> (std::list&lt; OSTreeObject::ptr &gt;::iterator child_it)</td></tr>
-<tr class="separator:a49638db49a09133c32b68a06a6db2236"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c51a186a7b943c56fa4b03fbabaf4a4"><td class="memItemLeft" align="right" valign="top"><a id="a4c51a186a7b943c56fa4b03fbabaf4a4"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>LaunchNotify</b> ()</td></tr>
 <tr class="separator:a4c51a186a7b943c56fa4b03fbabaf4a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,7 +131,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="ostree__object_8h_source.html#l00028">28</a> of file <a class="el" href="ostree__object_8h_source.html">ostree_object.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ostree__object_8h_source.html#l00029">29</a> of file <a class="el" href="ostree__object_8h_source.html">ostree_object.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/sota_tools/<a class="el" href="ostree__object_8h_source.html">ostree_object.h</a></li>
 <li>src/sota_tools/<a class="el" href="ostree__object_8cc_source.html">ostree_object.cc</a></li>

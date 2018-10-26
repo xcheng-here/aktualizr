@@ -1,7 +1,8 @@
 <map id="src/libaktualizr/utilities/events.h" name="src/libaktualizr/utilities/events.h">
-<area shape="rect" id="node5" href="$tuf_8h_source.html" title="uptane/tuf.h" alt="" coords="1236,95,1326,121"/>
-<area shape="rect" id="node26" href="$types_8h.html" title="utilities/types.h" alt="" coords="2123,251,2234,278"/>
-<area shape="rect" id="node9" href="$uptane_2exceptions_8h_source.html" title="uptane/exceptions.h" alt="" coords="41,169,180,196"/>
-<area shape="rect" id="node13" href="$crypto_8h_source.html" title="crypto/crypto.h" alt="" coords="1108,169,1217,196"/>
-<area shape="rect" id="node28" href="$utils_8h_source.html" title="utilities/utils.h" alt="" coords="1444,251,1547,278"/>
+<area shape="rect" id="node5" href="$tuf_8h_source.html" title="uptane/tuf.h" alt="" coords="1905,169,1996,196"/>
+<area shape="rect" id="node25" href="$types_8h.html" title="utilities/types.h" alt="" coords="1911,326,2022,353"/>
+<area shape="rect" id="node32" href="$results_8h.html" title="utilities/results.h" alt="" coords="1991,95,2108,121"/>
+<area shape="rect" id="node9" href="$uptane_2exceptions_8h_source.html" title="uptane/exceptions.h" alt="" coords="2113,244,2252,271"/>
+<area shape="rect" id="node12" href="$crypto_8h_source.html" title="crypto/crypto.h" alt="" coords="1115,244,1224,271"/>
+<area shape="rect" id="node28" href="$utils_8h_source.html" title="utilities/utils.h" alt="" coords="1785,326,1887,353"/>
 </map>

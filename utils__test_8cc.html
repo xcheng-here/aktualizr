@@ -82,7 +82,8 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utils_test.cc:</div>
 <div class="dyncontent">
-<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="utils__test_8cc__incl.svg" width="100%" height="462"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div></div>
+<div class="center"><div class="zoom"><iframe scrolling="no" frameborder="0" src="utils__test_8cc__incl.svg" width="100%" height="462"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
 </div>
 </div>
 <p><a href="utils__test_8cc_source.html">Go to the source code of this file.</a></p>
@@ -105,6 +106,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>PrettyNameOk</b> (con
 &#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (<a class="el" href="struct_utils.html">Utils</a>, getHostname)</td></tr>
 <tr class="separator:a7e0e0fcbdc833bd8cead772ed2fcd1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a934e1f2dff9e02fef098d3296bb6f484"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utils__test_8cc.html#a934e1f2dff9e02fef098d3296bb6f484">TEST</a> (<a class="el" href="struct_utils.html">Utils</a>, GenPrettyNameSane)</td></tr>
+<tr class="memdesc:a934e1f2dff9e02fef098d3296bb6f484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check that aktualizr can generate a pet name.  <a href="#a934e1f2dff9e02fef098d3296bb6f484">More...</a><br /></td></tr>
 <tr class="separator:a934e1f2dff9e02fef098d3296bb6f484"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a082f7eaa5d14f9bbd854b0203dfa49ca"><td class="memItemLeft" align="right" valign="top"><a id="a082f7eaa5d14f9bbd854b0203dfa49ca"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>TEST</b> (<a class="el" href="struct_utils.html">Utils</a>, RandomUuidSane)</td></tr>
@@ -193,9 +195,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="verify"><dt><b><a class="el" href="verify.html#_verify000018">Verifies requirement:</a></b></dt><dd><a href="https://advancedtelematic.atlassian.net/browse/TST-144">TST-144</a> Check that aktualizr can generate a pet name </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utils__test_8cc_source.html#l00063">63</a> of file <a class="el" href="utils__test_8cc_source.html">utils_test.cc</a>.</p>
+<p>Check that aktualizr can generate a pet name. </p>
+<p>Try 100 times and check that no duplicate names are produced. Tolerate 1 duplicate, since we have actually seen it before and it is statistically not unreasonable with our current inputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="utils__test_8cc_source.html#l00067">67</a> of file <a class="el" href="utils__test_8cc_source.html">utils_test.cc</a>.</p>
 
 </div>
 </div>

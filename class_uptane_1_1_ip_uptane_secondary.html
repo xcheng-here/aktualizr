@@ -73,18 +73,20 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for Uptane::IpUptaneSecondary:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_uptane_1_1_ip_uptane_secondary__inherit__graph.svg" width="198" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_uptane_1_1_ip_uptane_secondary__inherit__graph.svg" width="198" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for Uptane::IpUptaneSecondary:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="class_uptane_1_1_ip_uptane_secondary__coll__graph.svg" width="204" height="442"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="class_uptane_1_1_ip_uptane_secondary__coll__graph.svg" width="204" height="442"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8094316443111b7e01743a0fab138b5e"><td class="memItemLeft" align="right" valign="top"><a id="a8094316443111b7e01743a0fab138b5e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>IpUptaneSecondary</b> (const <a class="el" href="class_uptane_1_1_secondary_config.html">SecondaryConfig</a> &amp;<a class="el" href="uptane__network__test_8cc.html#a1f30d1050ee88367a5345f826b9910a5">conf</a>)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>IpUptaneSecondary</b> (const <a class="el" href="class_uptane_1_1_secondary_config.html">SecondaryConfig</a> &amp;conf)</td></tr>
 <tr class="separator:a8094316443111b7e01743a0fab138b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0eaa67e21979334d8fdd0b0534fe1323"><td class="memItemLeft" align="right" valign="top"><a id="a0eaa67e21979334d8fdd0b0534fe1323"></a>
 <a class="el" href="class_public_key.html">PublicKey</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getPublicKey</b> () override</td></tr>
@@ -98,9 +100,9 @@ int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getRootVersion</b>
 <tr class="memitem:aa53f39984225cfef88fdbea58a375f8e"><td class="memItemLeft" align="right" valign="top"><a id="aa53f39984225cfef88fdbea58a375f8e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>putRoot</b> (const std::string &amp;, bool) override</td></tr>
 <tr class="separator:aa53f39984225cfef88fdbea58a375f8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29255d373df0926f5421bf23e870766f"><td class="memItemLeft" align="right" valign="top"><a id="a29255d373df0926f5421bf23e870766f"></a>
-std::future&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sendFirmwareAsync</b> (const std::shared_ptr&lt; std::string &gt; &amp;data) override</td></tr>
-<tr class="separator:a29255d373df0926f5421bf23e870766f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af86bf05c7d0d88f4c1f7d7cc460a3395"><td class="memItemLeft" align="right" valign="top"><a id="af86bf05c7d0d88f4c1f7d7cc460a3395"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>sendFirmware</b> (const std::shared_ptr&lt; std::string &gt; &amp;data) override</td></tr>
+<tr class="separator:af86bf05c7d0d88f4c1f7d7cc460a3395"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a809dee6001fc483a69c379b9442403"><td class="memItemLeft" align="right" valign="top"><a id="a2a809dee6001fc483a69c379b9442403"></a>
 Json::Value&#160;</td><td class="memItemRight" valign="bottom"><b>getManifest</b> () override</td></tr>
 <tr class="separator:a2a809dee6001fc483a69c379b9442403"><td class="memSeparator" colspan="2">&#160;</td></tr>

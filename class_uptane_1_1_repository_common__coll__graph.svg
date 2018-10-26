@@ -49,9 +49,9 @@
 <!-- Node6 -->
 <g id="node4" class="node">
 <title>Node6</title>
-<g id="a_node4"><a xlink:href="class_uptane_1_1_time_stamp.html" target="_top" xlink:title="Uptane::TimeStamp">
-<polygon fill="#ffffff" stroke="#000000" points="18.5,-191.5 18.5,-210.5 122.5,-210.5 122.5,-191.5 18.5,-191.5"/>
-<text text-anchor="middle" x="70.5" y="-198.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Uptane::TimeStamp</text>
+<g id="a_node4"><a xlink:href="class_time_stamp.html" target="_top" xlink:title="TimeStamp">
+<polygon fill="#ffffff" stroke="#000000" points="37,-191.5 37,-210.5 104,-210.5 104,-191.5 37,-191.5"/>
+<text text-anchor="middle" x="70.5" y="-198.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">TimeStamp</text>
 </a>
 </g>
 </g>

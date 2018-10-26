@@ -11,6 +11,7 @@ var searchData=
   ['ostreehttprepo',['OSTreeHttpRepo',['../class_o_s_tree_http_repo.html',1,'']]],
   ['ostreemanager',['OstreeManager',['../class_ostree_manager.html',1,'']]],
   ['ostreeobject',['OSTreeObject',['../class_o_s_tree_object.html',1,'']]],
+  ['ostreeobject_5frequest_5ftest',['OstreeObject_Request_Test',['../class_ostree_object___request___test.html',1,'']]],
   ['ostreeobjectmissing',['OSTreeObjectMissing',['../class_o_s_tree_object_missing.html',1,'']]],
   ['ostreeref',['OSTreeRef',['../class_o_s_tree_ref.html',1,'']]],
   ['ostreerepo',['OSTreeRepo',['../class_o_s_tree_repo.html',1,'']]],
