@@ -9,7 +9,7 @@ var searchData=
   ['checkforupdate',['CheckForUpdate',['../class_check_for_update.html',1,'']]],
   ['checkforupdatetasks',['CheckForUpdateTasks',['../class_check_for_update_tasks.html',1,'']]],
   ['checkupdates',['CheckUpdates',['../class_aktualizr.html#a75d1394ec60ae012e5f07d55797f2f9f',1,'Aktualizr']]],
-  ['client',['Client',['../classopcuabridge_1_1_client.html',1,'opcuabridge::Client'],['../classopcuabridge_1_1discovery_1_1_client.html',1,'opcuabridge::discovery::Client']]],
+  ['client',['Client',['../classopcuabridge_1_1discovery_1_1_client.html',1,'opcuabridge::discovery::Client'],['../classopcuabridge_1_1_client.html',1,'opcuabridge::Client']]],
   ['config',['Config',['../class_config.html',1,'']]],
   ['configuration',['Configuration',['../classopcuabridge_1_1_configuration.html',1,'opcuabridge']]],
   ['consume',['Consume',['../class_dequeue_buffer.html#a9afbcf548ee67b4f6856029025d2b495',1,'DequeueBuffer']]],

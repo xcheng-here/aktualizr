@@ -7,6 +7,12 @@ var searchData=
   ['histogram',['Histogram',['../class_histogram.html',1,'']]],
   ['httpclient',['HttpClient',['../class_http_client.html',1,'']]],
   ['httpfake',['HttpFake',['../class_http_fake.html',1,'']]],
+  ['httpfakecampaign',['HttpFakeCampaign',['../class_http_fake_campaign.html',1,'']]],
+  ['httpfakeeventcounter',['HttpFakeEventCounter',['../class_http_fake_event_counter.html',1,'']]],
+  ['httpfakenocorrelationid',['HttpFakeNoCorrelationId',['../class_http_fake_no_correlation_id.html',1,'']]],
+  ['httpfakeprov',['HttpFakeProv',['../class_http_fake_prov.html',1,'']]],
+  ['httpfakerq',['HttpFakeRq',['../class_http_fake_rq.html',1,'']]],
+  ['httpfakeunstable',['HttpFakeUnstable',['../class_http_fake_unstable.html',1,'']]],
   ['httpinterface',['HttpInterface',['../class_http_interface.html',1,'']]],
   ['httpresponse',['HttpResponse',['../struct_http_response.html',1,'']]]
 ];

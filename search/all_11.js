@@ -12,7 +12,7 @@ var searchData=
   ['serialcompare',['SerialCompare',['../class_serial_compare.html',1,'']]],
   ['serialize_5ffield',['serialize_field',['../structopcuabridge_1_1utility_1_1serialize__field.html',1,'opcuabridge::utility']]],
   ['serializer',['Serializer',['../classasn1_1_1_serializer.html',1,'asn1']]],
-  ['server',['Server',['../classopcuabridge_1_1_server.html',1,'opcuabridge::Server'],['../classopcuabridge_1_1discovery_1_1_server.html',1,'opcuabridge::discovery::Server']]],
+  ['server',['Server',['../classopcuabridge_1_1discovery_1_1_server.html',1,'opcuabridge::discovery::Server'],['../classopcuabridge_1_1_server.html',1,'opcuabridge::Server']]],
   ['servercredentials',['ServerCredentials',['../class_server_credentials.html',1,'']]],
   ['serverdelegate',['ServerDelegate',['../classopcuabridge_1_1_server_delegate.html',1,'opcuabridge']]],
   ['servermodel',['ServerModel',['../structopcuabridge_1_1_server_model.html',1,'opcuabridge']]],
