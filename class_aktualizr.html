@@ -108,6 +108,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ace0e9acc4b6c186ec8440f1a12019ed0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_download_result.html">DownloadResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#ace0e9acc4b6c186ec8440f1a12019ed0">Download</a> (const std::vector&lt; <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &gt; &amp;updates)</td></tr>
 <tr class="memdesc:ace0e9acc4b6c186ec8440f1a12019ed0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Download targets.  <a href="#ace0e9acc4b6c186ec8440f1a12019ed0">More...</a><br /></td></tr>
 <tr class="separator:ace0e9acc4b6c186ec8440f1a12019ed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac38e8ca27781a9d9acd4ebd285e9289"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="class_storage_target_r_handle.html">StorageTargetRHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#aac38e8ca27781a9d9acd4ebd285e9289">GetStoredTarget</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aac38e8ca27781a9d9acd4ebd285e9289"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get target downloaded in Download call.  <a href="#aac38e8ca27781a9d9acd4ebd285e9289">More...</a><br /></td></tr>
+<tr class="separator:aac38e8ca27781a9d9acd4ebd285e9289"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9569fa8f1b83e35ad577909c91559be3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_install_result.html">InstallResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_aktualizr.html#a9569fa8f1b83e35ad577909c91559be3">Install</a> (const std::vector&lt; <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &gt; &amp;updates)</td></tr>
 <tr class="memdesc:a9569fa8f1b83e35ad577909c91559be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Install targets.  <a href="#a9569fa8f1b83e35ad577909c91559be3">More...</a><br /></td></tr>
 <tr class="separator:a9569fa8f1b83e35ad577909c91559be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -290,6 +293,35 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="section return"><dt>Returns</dt><dd>Information about download results. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00092">92</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
+
+</div>
+</div>
+<a id="aac38e8ca27781a9d9acd4ebd285e9289"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac38e8ca27781a9d9acd4ebd285e9289">&#9670;&nbsp;</a></span>GetStoredTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="class_storage_target_r_handle.html">StorageTargetRHandle</a> &gt; Aktualizr::GetStoredTarget </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get target downloaded in Download call. </p>
+<p>Returned target is guaranteed to be verified and up-to-date according to the <a class="el" href="namespace_uptane.html" title="Base data types that are used in The Update Framework (TUF), part of UPTANE. ">Uptane</a> metadata downloaded in CheckUpdates call. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>Name of the binary in the storage </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Handle to the stored binary. nullptr if none is found. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="aktualizr_8cc_source.html#l00108">108</a> of file <a class="el" href="aktualizr_8cc_source.html">aktualizr.cc</a>.</p>
 
 </div>
 </div>

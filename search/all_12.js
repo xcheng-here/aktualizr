@@ -11,7 +11,7 @@ var searchData=
   ['temporaryfile',['TemporaryFile',['../class_temporary_file.html',1,'']]],
   ['tempsqldb',['TempSQLDb',['../struct_temp_s_q_l_db.html',1,'']]],
   ['test',['TEST',['../uptane__implicit__test_8cc.html#a419e8cd6f606ba3a60db7e73e0903237',1,'TEST(UptaneImplicit, ImplicitFailure):&#160;uptane_implicit_test.cc'],['../uptane__implicit__test_8cc.html#a6e9ec29eaba3307d6a1231c637f1048c',1,'TEST(UptaneImplicit, ImplicitIncomplete):&#160;uptane_implicit_test.cc'],['../uptane__implicit__test_8cc.html#ae965630169deaad6333afe6e6758674c',1,'TEST(UptaneImplicit, ImplicitProvision):&#160;uptane_implicit_test.cc'],['../utils__test_8cc.html#a934e1f2dff9e02fef098d3296bb6f484',1,'TEST(Utils, GenPrettyNameSane):&#160;utils_test.cc']]],
-  ['testhelperprocess',['TestHelperProcess',['../class_test_helper_process.html',1,'']]],
+  ['testhelperprocess',['TestHelperProcess',['../class_test_helper_process.html',1,'TestHelperProcess'],['../class_test_helper_process.html#a3aa3c1d77dcf9b025703b402ccada2f5',1,'TestHelperProcess::TestHelperProcess()']]],
   ['testutils',['TestUtils',['../struct_test_utils.html',1,'']]],
   ['tightprocess',['TightProcess',['../struct_tight_process.html',1,'']]],
   ['timer',['Timer',['../class_timer.html',1,'']]],
