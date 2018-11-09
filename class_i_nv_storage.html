@@ -206,12 +206,15 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>loadInstallat
 <tr class="memitem:a084a58b9b99a629e7c4e4b2b4e203bd2"><td class="memItemLeft" align="right" valign="top"><a id="a084a58b9b99a629e7c4e4b2b4e203bd2"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>clearInstallationResult</b> ()=0</td></tr>
 <tr class="separator:a084a58b9b99a629e7c4e4b2b4e203bd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fb22283f69465ffd376a66ef827ce97"><td class="memItemLeft" align="right" valign="top"><a id="a2fb22283f69465ffd376a66ef827ce97"></a>
-virtual std::unique_ptr&lt; <a class="el" href="class_storage_target_w_handle.html">StorageTargetWHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>allocateTargetFile</b> (bool from_director, const std::string &amp;filename, size_t size)=0</td></tr>
-<tr class="separator:a2fb22283f69465ffd376a66ef827ce97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a211edf5f786ececc9c3cb722f114499c"><td class="memItemLeft" align="right" valign="top"><a id="a211edf5f786ececc9c3cb722f114499c"></a>
-virtual std::unique_ptr&lt; <a class="el" href="class_storage_target_r_handle.html">StorageTargetRHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>openTargetFile</b> (const std::string &amp;filename)=0</td></tr>
-<tr class="separator:a211edf5f786ececc9c3cb722f114499c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89ea0dcfedeea437b576ec8a86b1923c"><td class="memItemLeft" align="right" valign="top"><a id="a89ea0dcfedeea437b576ec8a86b1923c"></a>
+virtual boost::optional&lt; std::pair&lt; int64_t, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>checkTargetFile</b> (const <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &amp;target) const =0</td></tr>
+<tr class="separator:a89ea0dcfedeea437b576ec8a86b1923c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f78b73613fadd492802fb51d9303408"><td class="memItemLeft" align="right" valign="top"><a id="a4f78b73613fadd492802fb51d9303408"></a>
+virtual std::unique_ptr&lt; <a class="el" href="class_storage_target_w_handle.html">StorageTargetWHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>allocateTargetFile</b> (bool from_director, const <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &amp;target)=0</td></tr>
+<tr class="separator:a4f78b73613fadd492802fb51d9303408"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6df3000e6f2d18fe05e83dab13ba0dc4"><td class="memItemLeft" align="right" valign="top"><a id="a6df3000e6f2d18fe05e83dab13ba0dc4"></a>
+virtual std::unique_ptr&lt; <a class="el" href="class_storage_target_r_handle.html">StorageTargetRHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>openTargetFile</b> (const <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &amp;target)=0</td></tr>
+<tr class="separator:a6df3000e6f2d18fe05e83dab13ba0dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8d43c713e3c598a4c5de4efe03b30dd"><td class="memItemLeft" align="right" valign="top"><a id="af8d43c713e3c598a4c5de4efe03b30dd"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>removeTargetFile</b> (const std::string &amp;filename)=0</td></tr>
 <tr class="separator:af8d43c713e3c598a4c5de4efe03b30dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -245,7 +248,7 @@ const <a class="el" href="struct_storage_config.html">StorageConfig</a> &amp;&#1
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="invstorage_8h_source.html#l00093">93</a> of file <a class="el" href="invstorage_8h_source.html">invstorage.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="invstorage_8h_source.html#l00097">97</a> of file <a class="el" href="invstorage_8h_source.html">invstorage.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/libaktualizr/storage/<a class="el" href="invstorage_8h_source.html">invstorage.h</a></li>
 <li>src/libaktualizr/storage/<a class="el" href="invstorage_8cc_source.html">invstorage.cc</a></li>

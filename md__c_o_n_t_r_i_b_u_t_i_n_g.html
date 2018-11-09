@@ -66,7 +66,7 @@ $(function() {
 <div class="textblock"><p>We welcome code contributions from the community and are very happy to receive feedback, issue reports and code in the form of pull requests.</p>
 <h2>Issue Tracker </h2>
 <p>This project uses the Github issue tracker. Please report bugs, issues and feature requests here</p>
-<h2>Contributing Code </h2>
+<h2>Code quality and style </h2>
 <p>All code should be developed according to the <a href="https://google.github.io/styleguide/cppguide.html">Google C++ style guide</a>. In addition, the code should conform to the following guidelines:</p>
 <ul>
 <li>Code should be covered by tests<ul>
@@ -109,7 +109,10 @@ $(function() {
 </ul>
 <h2>Making a Pull Request </h2>
 <p>When you start developing a feature, please create a feature branch that includes the type of branch, the ID of the issue, and a brief description. For example <code>feat/9/https-support</code>, <code>bugfix/11/fix-token-expiry</code> or <code>refactor/13/tidy-up-imports</code>. Please do not mix feature development, bugfixes and refactoring into the same branch.</p>
-<p>When your feature is ready, push the branch and make a pull request. We will review the request and give you feedback. Once the code passes the review it can be merged into master and the branch can be deleted. </p>
+<p>When your feature is ready, push the branch and make a pull request. We will review the request and give you feedback. Once the code passes the review it can be merged into master and the branch can be deleted.</p>
+<h2>Developer Certificate of Origin (DCO) </h2>
+<p>All commits in pull requests must contain a <code>Signed-off-by:</code> line to indicate that the developer has agreed to the terms of the <a href="https://developercertificate.org">Developer Certificate of Origin</a> (see <a href="README.adoc">readme</a> for more details). A simple way to achieve that is to use the <code>-s</code> flag of <code>git commit</code>.</p>
+<p>New pull requests will automatically be checked by the <a href="https://probot.github.io/apps/dco/">probot/dco</a>. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

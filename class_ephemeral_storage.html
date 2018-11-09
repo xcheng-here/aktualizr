@@ -203,12 +203,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>loadInstallationResul
 <tr class="memitem:a6c6687a726e172181c042852d41f3504 inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="a6c6687a726e172181c042852d41f3504"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clearInstallationResult</b> () override</td></tr>
 <tr class="separator:a6c6687a726e172181c042852d41f3504 inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac01e40be3af703edcbd3c2474a3c4532 inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="ac01e40be3af703edcbd3c2474a3c4532"></a>
-std::unique_ptr&lt; <a class="el" href="class_storage_target_w_handle.html">StorageTargetWHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>allocateTargetFile</b> (bool from_director, const std::string &amp;filename, size_t size) override</td></tr>
-<tr class="separator:ac01e40be3af703edcbd3c2474a3c4532 inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95f985e4737f51b70233f56a3f902272 inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="a95f985e4737f51b70233f56a3f902272"></a>
-std::unique_ptr&lt; <a class="el" href="class_storage_target_r_handle.html">StorageTargetRHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>openTargetFile</b> (const std::string &amp;filename) override</td></tr>
-<tr class="separator:a95f985e4737f51b70233f56a3f902272 inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b52ec574d107f6d573bbd59e6e6aefa inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="a4b52ec574d107f6d573bbd59e6e6aefa"></a>
+std::unique_ptr&lt; <a class="el" href="class_storage_target_w_handle.html">StorageTargetWHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>allocateTargetFile</b> (bool from_director, const <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &amp;target) override</td></tr>
+<tr class="separator:a4b52ec574d107f6d573bbd59e6e6aefa inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a969fd264a9bb0e65ef9b1b2d4a63bbef inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="a969fd264a9bb0e65ef9b1b2d4a63bbef"></a>
+std::unique_ptr&lt; <a class="el" href="class_storage_target_r_handle.html">StorageTargetRHandle</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>openTargetFile</b> (const <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &amp;target) override</td></tr>
+<tr class="separator:a969fd264a9bb0e65ef9b1b2d4a63bbef inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cecfa2d8b4e9c2b006dd2098441397b inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="a3cecfa2d8b4e9c2b006dd2098441397b"></a>
+boost::optional&lt; std::pair&lt; int64_t, size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>checkTargetFile</b> (const <a class="el" href="class_uptane_1_1_target.html">Uptane::Target</a> &amp;target) const override</td></tr>
+<tr class="separator:a3cecfa2d8b4e9c2b006dd2098441397b inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0aa87421cead291219d01cfa7710fe1d inherit pub_methods_class_s_q_l_storage"><td class="memItemLeft" align="right" valign="top"><a id="a0aa87421cead291219d01cfa7710fe1d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>removeTargetFile</b> (const std::string &amp;filename) override</td></tr>
 <tr class="separator:a0aa87421cead291219d01cfa7710fe1d inherit pub_methods_class_s_q_l_storage"><td class="memSeparator" colspan="2">&#160;</td></tr>
