@@ -14,6 +14,7 @@ var searchData=
   ['aktualizrsecondarywithdiscovery',['AktualizrSecondaryWithDiscovery',['../class_aktualizr_secondary_with_discovery.html',1,'']]],
   ['alldownloadscomplete',['AllDownloadsComplete',['../classevent_1_1_all_downloads_complete.html',1,'event']]],
   ['allinstallscomplete',['AllInstallsComplete',['../classevent_1_1_all_installs_complete.html',1,'event']]],
+  ['apiqueue',['ApiQueue',['../class_api_queue.html',1,'']]],
   ['archive_5fstate',['archive_state',['../structarchive__state.html',1,'']]],
   ['asn1message',['Asn1Message',['../class_asn1_message.html',1,'']]],
   ['asn1sub',['Asn1Sub',['../class_asn1_sub.html',1,'']]]

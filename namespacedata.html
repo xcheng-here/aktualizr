@@ -91,31 +91,31 @@ typedef std::pair&lt; <a class="el" href="namespacedata.html#a6e18d093ccf31d11cb
 Enumerations</h2></td></tr>
 <tr class="memitem:a6e18d093ccf31d11cb6ecd5a2bc5ad7b"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7b">UpdateResultCode</a> { <br />
 &#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bae69fa9a656f76dd8a4d89f21992b2d3a">UpdateResultCode::kOk</a> = 0, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baed7fff9f920b183cd434b831bff0d2c8">UpdateResultCode::kAlreadyProcessed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bac8e9ada430d5f1bed3f90628e9c2766c">UpdateResultCode::kDependencyFailure</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bad8f434f2bfdc5abac58b9c2b64d69e9b">UpdateResultCode::kValidationFailed</a>, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baed7fff9f920b183cd434b831bff0d2c8">UpdateResultCode::kAlreadyProcessed</a> = 1, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bac8e9ada430d5f1bed3f90628e9c2766c">UpdateResultCode::kDependencyFailure</a> = 2, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bad8f434f2bfdc5abac58b9c2b64d69e9b">UpdateResultCode::kValidationFailed</a> = 3, 
 <br />
-&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba6280293ae10368e4f5f25cc91c8d4af5">UpdateResultCode::kInstallFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba01ba28f040764f96857310d8cee53644">UpdateResultCode::kUpgradeFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bacee4f65b6535664201e7440e5a5aa08b">UpdateResultCode::kRemovalFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baef898e72effee36fe477c2c9ff008602">UpdateResultCode::kFlashFailed</a>, 
+&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba6280293ae10368e4f5f25cc91c8d4af5">UpdateResultCode::kInstallFailed</a> = 4, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba01ba28f040764f96857310d8cee53644">UpdateResultCode::kUpgradeFailed</a> = 5, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bacee4f65b6535664201e7440e5a5aa08b">UpdateResultCode::kRemovalFailed</a> = 6, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baef898e72effee36fe477c2c9ff008602">UpdateResultCode::kFlashFailed</a> = 7, 
 <br />
-&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba24a2c94f9dad878b9e9d94c55013e7a8">UpdateResultCode::kCreatePartitionFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba3af4ff0bdd861c8386522063ab6c19a5">UpdateResultCode::kDeletePartitionFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baf3700d254cafffe097a5ae0236b6750d">UpdateResultCode::kResizePartitionFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba633f5f94ec781fa73f0223dc3fd3254f">UpdateResultCode::kWritePartitionFailed</a>, 
+&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba24a2c94f9dad878b9e9d94c55013e7a8">UpdateResultCode::kCreatePartitionFailed</a> = 8, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba3af4ff0bdd861c8386522063ab6c19a5">UpdateResultCode::kDeletePartitionFailed</a> = 9, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7baf3700d254cafffe097a5ae0236b6750d">UpdateResultCode::kResizePartitionFailed</a> = 10, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba633f5f94ec781fa73f0223dc3fd3254f">UpdateResultCode::kWritePartitionFailed</a> = 11, 
 <br />
-&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba66689174638d4243665c66433766e8c7">UpdateResultCode::kPatchPartitionFailed</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba4c87971536d73c1fd5188c52aeb3b1dd">UpdateResultCode::kUserDeclined</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bae64b3392482fad4b18025641ed3c769e">UpdateResultCode::kSoftwareBlacklisted</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bae4ee1742f06047076c3e7dfa2e844c38">UpdateResultCode::kDiskFull</a>, 
+&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba66689174638d4243665c66433766e8c7">UpdateResultCode::kPatchPartitionFailed</a> = 12, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba4c87971536d73c1fd5188c52aeb3b1dd">UpdateResultCode::kUserDeclined</a> = 13, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bae64b3392482fad4b18025641ed3c769e">UpdateResultCode::kSoftwareBlacklisted</a> = 14, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bae4ee1742f06047076c3e7dfa2e844c38">UpdateResultCode::kDiskFull</a> = 15, 
 <br />
-&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bab096e4f92f6c4184d188166e8f156fbb">UpdateResultCode::kNotFound</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba5228033638fcb299d3f15f6a5b195560">UpdateResultCode::kOldVersion</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bafcd417a134c251034b0d61b07c826394">UpdateResultCode::kInternalError</a>, 
-<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba133cecba135fb1c756e7ebfbdd840024">UpdateResultCode::kGeneralError</a>, 
+&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bab096e4f92f6c4184d188166e8f156fbb">UpdateResultCode::kNotFound</a> = 16, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba5228033638fcb299d3f15f6a5b195560">UpdateResultCode::kOldVersion</a> = 17, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7bafcd417a134c251034b0d61b07c826394">UpdateResultCode::kInternalError</a> = 18, 
+<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba133cecba135fb1c756e7ebfbdd840024">UpdateResultCode::kGeneralError</a> = 19, 
 <br />
-&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba0d09a587502569598e6e97d5ae834a08">UpdateResultCode::kInProgress</a>
+&#160;&#160;<a class="el" href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7ba0d09a587502569598e6e97d5ae834a08">UpdateResultCode::kInProgress</a> = 20
 <br />
  }<tr class="memdesc:a6e18d093ccf31d11cb6ecd5a2bc5ad7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Result of an update.  <a href="namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7b">More...</a><br /></td></tr>
 </td></tr>
