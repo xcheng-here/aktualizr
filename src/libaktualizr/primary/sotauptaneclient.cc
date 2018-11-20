@@ -832,6 +832,18 @@ UpdateCheckResult SotaUptaneClient::checkUpdates() {
   return result;
 }
 
+void SotaUptaneClient::reportInstallationStarted(const Uptane::EcuSerial& ecu) {
+  const std::string &correlation_id = director_repo.getCorrelationId();
+  report_queue->enqueue(
+      std_::make_unique<EcuInstallationStartedReport>(ecu, correlation_id));
+}
+
+void SotaUptaneClient::reportInstallationComplete(const Uptane::EcuSerial& ecu) {
+  const std::string &correlation_id = director_repo.getCorrelationId();
+  report_queue->enqueue(
+      std_::make_unique<EcuInstallationCompletedReport>(ecu, correlation_id, true));
+}
+
 InstallResult SotaUptaneClient::uptaneInstall(const std::vector<Uptane::Target> &updates) {
   InstallResult result;
   // Uptane step 5 (send time to all ECUs) is not implemented yet.

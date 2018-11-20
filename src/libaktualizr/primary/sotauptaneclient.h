@@ -55,6 +55,9 @@ class SotaUptaneClient {
   CampaignCheckResult campaignCheck();
   void campaignAccept(const std::string &campaign_id);
 
+  void reportInstallationStarted(const Uptane::EcuSerial& ecu);
+  void reportInstallationComplete(const Uptane::EcuSerial& ecu);
+
  private:
   FRIEND_TEST(Aktualizr, FullNoUpdates);
   FRIEND_TEST(Aktualizr, FullMultipleSecondaries);

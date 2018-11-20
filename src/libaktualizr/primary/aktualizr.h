@@ -179,6 +179,9 @@ class Aktualizr {
    */
   boost::signals2::connection SetSignalHandler(std::function<void(std::shared_ptr<event::BaseEvent>)>& handler);
 
+  void ReportInstallationStarted(const Uptane::EcuSerial& ecu);
+  void ReportInstallationComplete(const Uptane::EcuSerial& ecu);
+
  private:
   FRIEND_TEST(Aktualizr, FullNoUpdates);
   FRIEND_TEST(Aktualizr, FullWithUpdates);

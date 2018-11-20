@@ -175,3 +175,11 @@ std::unique_ptr<StorageTargetRHandle> Aktualizr::GetStoredTarget(const Uptane::T
     return std::unique_ptr<StorageTargetRHandle>();
   }
 }
+
+void Aktualizr::ReportInstallationStarted(const Uptane::EcuSerial& ecu) {
+  uptane_client_->reportInstallationStarted(ecu);
+}
+
+void Aktualizr::ReportInstallationComplete(const Uptane::EcuSerial& ecu) {
+  uptane_client_->reportInstallationComplete(ecu);
+}
