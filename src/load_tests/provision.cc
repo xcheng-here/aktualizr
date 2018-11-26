@@ -5,6 +5,7 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "config/config.h"
+#include "primary/aktualizr.h"
 #include "context.h"
 #include "executor.h"
 #include "http/httpclient.h"
@@ -30,30 +31,25 @@ path writeDeviceConfig(const ptree &cfgTemplate, const path &deviceBaseDir, cons
   path cfgFilePath{deviceBaseDir};
   cfgFilePath /= "sota.toml";
   deviceCfg.put_child("storage.path", ptree("\"" + deviceBaseDir.native() + "\""));
-  deviceCfg.put_child("storage.type", ptree("\"filesystem\""));
-  deviceCfg.put_child("uptane.primary_ecu_serial", ptree("\"" + to_string(deviceId) + "\""));
+  deviceCfg.put_child("storage.type", ptree("\"sqlite\""));
+  deviceCfg.put_child("provision.primary_ecu_serial", ptree("\"" + to_string(deviceId) + "\""));
   boost::property_tree::ini_parser::write_ini(cfgFilePath.native(), deviceCfg);
   return cfgFilePath;
 }
 
 class ProvisionDeviceTask {
   Config config;
-  std::shared_ptr<INvStorage> storage;
-  std::shared_ptr<HttpClient> httpClient;
+  std::shared_ptr<Aktualizr> aktualizr;
 
  public:
   ProvisionDeviceTask(const Config cfg)
-      : config{cfg}, storage{INvStorage::newStorage(config.storage)}, httpClient{std::make_shared<HttpClient>()} {
+      : config{cfg}, aktualizr{std::make_shared<Aktualizr>(config) } {
     logger_set_threshold(boost::log::trivial::severity_level::trace);
   }
 
   void operator()() {
-    Uptane::Manifest manifest{config, storage};
-    auto client = SotaUptaneClient::newTestClient(config, storage, httpClient);
     try {
-      client->initialize();
-      auto signed_manifest = manifest.signManifest(client->AssembleManifest());
-      httpClient->put(config.uptane.director_server + "/manifest", signed_manifest);
+      aktualizr->Initialize();
     } catch (std::exception &err) {
       LOG_ERROR << "Failed to register device " << config.storage.path << ": " << err.what();
     } catch (...) {

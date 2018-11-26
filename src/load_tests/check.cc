@@ -5,12 +5,15 @@
 
 #include "context.h"
 #include "executor.h"
+#include "primary/aktualizr.h"
 #include "primary/reportqueue.h"
 #include "primary/sotauptaneclient.h"
 #include "storage/invstorage.h"
 #include "storage/sqlstorage.h"
 #include "uptane/uptanerepository.h"
 #include "utilities/events.h"
+
+namespace fs = boost::filesystem;
 
 class EphemeralStorage : public SQLStorage {
  public:
@@ -33,34 +36,25 @@ class EphemeralStorage : public SQLStorage {
 
 class CheckForUpdate {
   Config config;
+  std::shared_ptr<Aktualizr> aktualizr;
 
-  std::shared_ptr<INvStorage> storage;
-
-  std::shared_ptr<HttpClient> httpClient;
-
+  static Config copyConfig(const Config src) {
+    Config copy {src};
+    const fs::path srcDb = src.storage.sqldb_path.get(src.storage.path);
+    const fs::path dstDb = fs::temp_directory_path() / fs::unique_path();
+    fs::copy(srcDb, dstDb);
+    copy.storage.sqldb_path = BasedPath{dstDb};
+    LOG_DEBUG << "Copied " << srcDb << " to " << dstDb;
+    return copy;
+  }
  public:
   CheckForUpdate(Config config_)
-      : config{config_},
-        storage{EphemeralStorage::newStorage(config.storage)},
-        httpClient{std::make_shared<HttpClient>()} {}
+      : config {copyConfig(config_)}, aktualizr{std::make_shared<Aktualizr>(config)} {}
 
   void operator()() {
-    LOG_DEBUG << "Updating a device in " << config.storage.path.native();
-    auto client = SotaUptaneClient::newTestClient(config, storage, httpClient);
     try {
-      std::string pkey;
-      std::string cert;
-      std::string ca;
-      if (storage->loadTlsCreds(&ca, &cert, &pkey)) {
-        httpClient->setCerts(ca, CryptoSource::kFile, cert, CryptoSource::kFile, pkey, CryptoSource::kFile);
-        LOG_DEBUG << "Getting targets";
-        client->updateMeta();
-      } else {
-        LOG_ERROR << "Unable to load device's credentials";
-      }
-      /* repo.authenticate(); */
-    } catch (const Uptane::MissingRepo &e) {
-      LOG_DEBUG << e.what();
+      aktualizr->Initialize();
+      aktualizr->CampaignCheck();
     } catch (const std::exception &e) {
       LOG_ERROR << "Unable to get new targets: " << e.what();
     } catch (...) {
