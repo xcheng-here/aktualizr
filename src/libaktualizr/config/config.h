@@ -96,7 +96,7 @@ struct DiscoveryConfig {
  */
 class Config : public BaseConfig {
  public:
-  Config();
+  Config() = default;
   explicit Config(const boost::program_options::variables_map& cmd);
   explicit Config(const boost::filesystem::path& filename);
   explicit Config(const std::vector<boost::filesystem::path>& config_dirs);

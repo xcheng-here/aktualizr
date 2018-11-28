@@ -101,8 +101,6 @@ std::ostream& operator<<(std::ostream& os, const Config& cfg) {
   return os;
 }
 
-Config::Config() {}
-
 Config::Config(const boost::filesystem::path& filename) {
   updateFromToml(filename);
   postUpdateValues();

@@ -5,6 +5,10 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get -y install debian-archive-keyring
 RUN apt-get update && apt-get install -y \
+  iproute2 \
+  curl \
+  dnsmasq \
+  openssl \
   libarchive13 \
   libc6 \
   libcurl4 \

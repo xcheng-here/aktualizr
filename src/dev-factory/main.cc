@@ -52,7 +52,7 @@ po::variables_map parse_options(int argc, char *argv[]) {
   }
 }
 
-std::string generate_device_id(void) {
+std::string generate_device_id() {
   std::string prefix{"LB3TS90D1X1"};
   std::uniform_int_distribution<int> dist(0, 999999);
   std::random_device rd;

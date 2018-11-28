@@ -60,7 +60,7 @@ HttpClient::HttpClient() : user_agent(std::string("Aktualizr/") + AKTUALIZR_VERS
   curlEasySetoptWrapper(curl, CURLOPT_WRITEFUNCTION, writeString);
   curlEasySetoptWrapper(curl, CURLOPT_WRITEDATA, NULL);
 
-  curlEasySetoptWrapper(curl, CURLOPT_VERBOSE, get_curlopt_verbose());
+  curlEasySetoptWrapper(curl, CURLOPT_VERBOSE, 1);
 
   headers = curl_slist_append(headers, "Content-Type: application/json");
   headers = curl_slist_append(headers, "Accept: */*");
