@@ -2,6 +2,7 @@ var searchData=
 [
   ['ecudownloadcompletedreport',['EcuDownloadCompletedReport',['../class_ecu_download_completed_report.html',1,'']]],
   ['ecudownloadstartedreport',['EcuDownloadStartedReport',['../class_ecu_download_started_report.html',1,'']]],
+  ['ecuinstallationappliedreport',['EcuInstallationAppliedReport',['../class_ecu_installation_applied_report.html',1,'']]],
   ['ecuinstallationcompletedreport',['EcuInstallationCompletedReport',['../class_ecu_installation_completed_report.html',1,'']]],
   ['ecuinstallationstartedreport',['EcuInstallationStartedReport',['../class_ecu_installation_started_report.html',1,'']]],
   ['ecuserial',['EcuSerial',['../class_uptane_1_1_ecu_serial.html',1,'Uptane']]],

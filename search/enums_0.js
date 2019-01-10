@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['downloadstatus',['DownloadStatus',['../results_8h.html#a94adddfc2f3e728ded5d766ae68627d9',1,'results.h']]]
+  ['downloadstatus',['DownloadStatus',['../results_8h.html#ada058945e94af0378eb716c8152d4502',1,'result']]]
 ];

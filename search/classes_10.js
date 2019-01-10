@@ -7,6 +7,7 @@ var searchData=
   ['reportevent',['ReportEvent',['../class_report_event.html',1,'']]],
   ['reportqueue',['ReportQueue',['../class_report_queue.html',1,'']]],
   ['repositorycommon',['RepositoryCommon',['../class_uptane_1_1_repository_common.html',1,'Uptane']]],
+  ['repositorytype',['RepositoryType',['../class_uptane_1_1_repository_type.html',1,'Uptane']]],
   ['requestpool',['RequestPool',['../class_request_pool.html',1,'']]],
   ['role',['Role',['../class_uptane_1_1_role.html',1,'Uptane']]],
   ['root',['Root',['../class_uptane_1_1_root.html',1,'Uptane']]]
