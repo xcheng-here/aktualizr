@@ -18,7 +18,7 @@ if (BUILD_OPCUA)
     add_subdirectory("opcuabridge")
 endif (BUILD_OPCUA)
 
-add_library(aktualizr_static_lib STATIC
+add_library(aktualizr_static_lib SHARED
     $<TARGET_OBJECTS:asn1>
     $<TARGET_OBJECTS:asn1_lib>
     $<TARGET_OBJECTS:bootloader>

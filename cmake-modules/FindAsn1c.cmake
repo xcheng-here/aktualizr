@@ -53,6 +53,5 @@ function(compile_asn1_lib)
         PUBLIC ${ASN1_GEN_DIR})
     include_directories(${ASN1_GEN_DIR})
     target_compile_options(asn1_lib
-        PRIVATE "-Wno-error"
-        PRIVATE "-w")
+        PRIVATE -Wno-error -fPIC -w)
 endfunction()
