@@ -63,18 +63,25 @@ class Aktualizr {
   Aktualizr(const Aktualizr&) = delete;
   Aktualizr& operator=(const Aktualizr&) = delete;
 
+  /**
+   * Add new secondary to aktualizr. Must be called before Initialize.
+   * @param secondary An object to perform installation on a secondary ECU.
+   */
+  void AddSecondary(const std::shared_ptr<Uptane::SecondaryInterface>& secondary);
+
+  /**
+   * Provide a function to receive event notifications.
+   * @param handler a function that can receive event objects.
+   * @return a signal connection object, which can be disconnected if desired.
+   */
+  boost::signals2::connection SetSignalHandler(std::function<void(std::shared_ptr<event::BaseEvent>)>& handler);
+
   /*
    * Initialize aktualizr. Any secondaries should be added before making this
    * call. This will provision with the server if required. This must be called
    * before using any other aktualizr functions except AddSecondary.
    */
   void Initialize();
-
-  /**
-   * Asynchronously run aktualizr indefinitely until Shutdown is called.
-   * @return Empty std::future object
-   */
-  std::future<void> RunForever();
 
   /**
    * Asynchronously shut aktualizr down.
@@ -156,17 +163,10 @@ class Aktualizr {
   void UptaneCycle();
 
   /**
-   * Add new secondary to aktualizr. Must be called before Initialize.
-   * @param secondary An object to perform installation on a secondary ECU.
+   * Asynchronously run aktualizr indefinitely until Shutdown is called.
+   * @return Empty std::future object
    */
-  void AddSecondary(const std::shared_ptr<Uptane::SecondaryInterface>& secondary);
-
-  /**
-   * Provide a function to receive event notifications.
-   * @param handler a function that can receive event objects.
-   * @return a signal connection object, which can be disconnected if desired.
-   */
-  boost::signals2::connection SetSignalHandler(std::function<void(std::shared_ptr<event::BaseEvent>)>& handler);
+  std::future<void> RunForever();
 
  private:
   FRIEND_TEST(Aktualizr, FullNoUpdates);
