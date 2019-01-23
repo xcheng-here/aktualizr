@@ -1,0 +1,124 @@
+= Key concepts
+
+Libaktualizr provides a C++ API for getting information about currently running OTA campaigns and available updates, as well as downloading and installing the updates.
+
+Most of the API calls, unless specified otherwise, are asynchronous and return `std::future`. The commands will be posted to the command queue and executed sequentially in a separate thread in the same order as the issued calls.
+
+== API
+
+=== General management and configuration
+
+[source,cpp]
+Aktualizr::Aktualizr(Config &config)
+
+Constructs an Aktualizr instance based on the provided Config. Config should at least contain information about the credentials for communication with the backend, and about the local storage which will be used to store updates and metadata.
+
+IMPORTANT: Consider an Aktualizr(std::filesystem::path config) constructor.
+
+.A minimalist config
+[NOTE]
+====
+ [provision]
+ provision_path = "/home/ota/credentials.zip"
+ primary_ecu_hardware_id = "TCU"
+ [storage]
+ path = "sota-prov"
+ [pacman]
+ type = "none"
+====
+More information on configuration can be found in <<docs/configuration.adoc>>
+
+
+[source,cpp]
+void Aktualizr::AddSecondary(const std::shared_ptr<Uptane::SecondaryInterface> &secondary)
+
+description
+
+[source,cpp]
+boost::signals2::connection Aktualizr::SetSignalHandler(std::function<void(shared_ptr<event::BaseEvent>)> &handler)
+
+description
+
+[source,cpp]
+void Aktualizr::Initialize()
+
+description
+
+[source,cpp]
+void Aktualizr::Pause()
+
+Requests the currently running command to pause, if possible. If Pauses the currently executed command, if possible, and freezes the execution queueAll subsequently issued
+
+[source,cpp]
+void Aktualizr::Resume()
+
+description
+
+[source,cpp]
+void Aktualizr::Abort()
+
+IMPORTANT: new
+
+description
+
+[source,cpp]
+void Aktualizr::Shutdown()
+
+WARNING: to be removed
+
+[source,cpp]
+Aktualizr::~Aktualizr(Config &config)
+
+description
+
+=== Updates management
+
+[source,cpp]
+std::future<void> Aktualizr::SendDeviceData()
+
+description
+
+[source,cpp]
+std::future<result::UpdateCheck> Aktualizr::CheckUpdates()
+
+description
+
+[source,cpp]
+std::future<result::Download> Aktualizr::Download(const std::vector<Uptane::Target> &updates)
+
+description
+
+[source,cpp]
+std::future<result::Install> Aktualizr::Install(const std::vector<Uptane::Target> &updates)
+
+description
+
+[source,cpp]
+std::unique_ptr<StorageTargetRHandle> Aktualizr::GetStoredTarget(const Uptane::Target &target) {
+
+CAUTION: consider removing or refactoring.
+
+=== Campaign management
+
+[source,cpp]
+std::future<result::CampaignCheck> Aktualizr::CampaignCheck()
+
+description
+
+[source,cpp]
+std::future<void> Aktualizr::CampaignAccept(const std::string &campaign_id)
+
+description
+
+=== Miscellaneous
+
+[source,cpp]
+void Aktualizr::UptaneCycle()
+
+description
+
+[source,cpp]
+std::future<void> Aktualizr::RunForever()
+
+description
+
