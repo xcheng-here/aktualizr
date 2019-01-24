@@ -6,23 +6,25 @@ Most of the API calls, unless specified otherwise, are asynchronous and return `
 
 == API
 
-=== General management and configuration
+=== General management, configuration and control flow
 
 [source,cpp]
 Aktualizr::Aktualizr(Config &config)
 
-Constructs an Aktualizr instance based on the provided Config. Config should at least contain information about the credentials for communication with the backend, and about the local storage which will be used to store updates and metadata.
+Constructs an Aktualizr instance based on the provided Config.
+A minimal config should contain path to the credentials for communication
+with the backend, and to the local storage which will be used to store updates and metadata.
 
 IMPORTANT: Consider an Aktualizr(std::filesystem::path config) constructor.
 
-.A minimalist config
+.An example of a minimal config
 [NOTE]
 ====
  [provision]
  provision_path = "/home/ota/credentials.zip"
  primary_ecu_hardware_id = "TCU"
  [storage]
- path = "sota-prov"
+ path = "/home/ota/sota-prov"
  [pacman]
  type = "none"
 ====
@@ -47,10 +49,21 @@ description
 [source,cpp]
 void Aktualizr::Pause()
 
-Requests the currently running command to pause, if possible. If Pauses the currently executed command, if possible, and freezes the execution queueAll subsequently issued
+Requests the currently running command to pause and freezes the command queue.
+All commands that were scheduled after the currently executes command will wait
+in the command queue until Resume() is issued.
+Commands that are issued after Pause() will be put on a command queue,
+but not executed until Resume().
+
+The Pause() function returns immediately, while the paused command still may be running.
+
+The function has no effect in case execution was already paused.
 
 [source,cpp]
 void Aktualizr::Resume()
+
+Resumes the execution of a previously paused command and all subsequent commands in the command queue.
+Returns immediately. The function has no effect if the execution is not paused.
 
 description
 
@@ -59,7 +72,13 @@ void Aktualizr::Abort()
 
 IMPORTANT: new
 
-description
+Requests the currently running command to abort and flushes the command queue.
+The Abort() function will block until the command queue is empty and no command
+is in executed state.
+
+Can also be called on a previously paused instance, but doesn't change it's paused state.
+If a paused command was aborted, next time it will start the execution
+from the place it was paused.
 
 [source,cpp]
 void Aktualizr::Shutdown()
@@ -71,7 +90,7 @@ Aktualizr::~Aktualizr(Config &config)
 
 description
 
-=== Updates management
+=== Update management commands
 
 [source,cpp]
 std::future<void> Aktualizr::SendDeviceData()
@@ -98,7 +117,7 @@ std::unique_ptr<StorageTargetRHandle> Aktualizr::GetStoredTarget(const Uptane::T
 
 CAUTION: consider removing or refactoring.
 
-=== Campaign management
+=== Campaign management commands
 
 [source,cpp]
 std::future<result::CampaignCheck> Aktualizr::CampaignCheck()
