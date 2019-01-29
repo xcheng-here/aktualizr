@@ -1,0 +1,51 @@
+= Getting started
+
+Aktualizr is a {cpp} application that implements client-side functionality for
+HERE OTA Connect system based on the Uptane security framework<<anchor-1,[1]>>.
+While it is possible to use Aktualizr as a standalone CLI application,
+using it as a {cpp} library from a custom application provides user with
+more flexibility and customization.
+
+This guide focuses on integrating Aktualizr functionality into a
+custom application, in other words it focuses on using libaktualizr.
+
+== How to build libaktualizr
+
+Libaktualizr is an open-source software distributed
+under the Mozilla Public License 2.0 and is located on github:
+https://github.com/advancedtelematic/aktualizr
+
+The project is intended to be build on a Linux system.
+File README.adoc located in the project root directory contains
+extended description on how to build it as well as the list of
+build and run-time dependencies.
+Please, refer to this list and install all the dependencies before
+proceeding to the next step.
+
+These are the steps needed to locally build a Release version of libaktualizr:
+[source,bash]
+$ git clone --recursive https://github.com/advancedtelematic/aktualizr.git
+$ cd aktualizr
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+
+Note the `--recursive` flag in the `git clone` command, it is needed
+to recursively clone all the *git submodule* repositories.
+
+After the build is finished, the resulting library can be found as
+`${PROJECT_ROOT}/build/src/libaktualizr/libaktualizr_static_lib.a`.
+
+== Integrating libaktualizr into your application
+
+
+
+
+
+
+
+
+=== References
+[[anchor-1]]
+[1] https://docs.ota.here.com/concepts/ats-garage-security-with-uptane.html

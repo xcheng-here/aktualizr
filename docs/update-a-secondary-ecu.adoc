@@ -1,0 +1,13 @@
+
+.An example of a minimal config
+[NOTE]
+====
+ [provision]
+ provision_path = "/home/ota/credentials.zip"
+ primary_ecu_hardware_id = "TCU"
+ [storage]
+ path = "/home/ota/sota-prov"
+ [pacman]
+ type = "none"
+====
+More information on configuration can be found in <<docs/configuration.adoc>>
