@@ -11,7 +11,7 @@ custom application, in other words it focuses on using libaktualizr.
 
 == How to build libaktualizr
 
-Libaktualizr is an open-source software distributed
+Aktualizr is an open-source software distributed
 under the Mozilla Public License 2.0 and is located on github:
 https://github.com/advancedtelematic/aktualizr
 
@@ -39,7 +39,63 @@ After the build is finished, the resulting library can be found as
 
 == Integrating libaktualizr into your application
 
+=== Building libaktualizr in-tree
+The easiest way to integrate with libaktualizr, is to add it as a subdirectory
+to your cmake project. To do that you just need to clone the aktualizr into your
+project directory:
+[source,bash]
+$ git clone --recursive https://github.com/advancedtelematic/aktualizr.git
 
+and add it to your CMakeLists.txt:
+[source,cmake]
+add_subdirectory(aktualizr)
+
+This will automatically add needed entries to `INCLUDE_DIRECTORIES` variable,
+create `AKTUALIZR_EXTERNAL_LIBS` variable, which contains the list of external
+libraries required for linking with libaktualizr, and will create
+`aktualizr_static_lib` target. When building your application these libraries
+should be added with
+[source,cmake]
+target_link_libraries(your-app aktualizr_static_lib ${AKTUALIZR_EXTERNAL_LIBS})
+
+You also might need to add the following line if you are using boost libraries:
+[source,cmake]
+add_definitions(-DBOOST_LOG_DYN_LINK)
+
+=== Building libaktualizr out-of-tree
+If you don't want to make libaktualizr part of your cmake project, it's also
+possible to build libaktualizr out-of-tree. In this case you will need
+to specify the required libraries and includes for your application manually:
+[source,cmake]
+target_link_libraries(your-app ${AKTUALIZR_PROJECT_DIR}/build/src/libaktualizr/libaktualizr_static_lib.a)
+target_link_libraries(your-app pthread)
+target_link_libraries(your-app archive)
+target_link_libraries(your-app boost_atomic)
+target_link_libraries(your-app boost_chrono)
+target_link_libraries(your-app boost_date_time)
+target_link_libraries(your-app boost_filesystem)
+target_link_libraries(your-app boost_log)
+target_link_libraries(your-app boost_log_setup)
+target_link_libraries(your-app boost_program_options)
+target_link_libraries(your-app boost_regex)
+target_link_libraries(your-app boost_system)
+target_link_libraries(your-app boost_thread)
+target_link_libraries(your-app crypto)
+target_link_libraries(your-app curl)
+target_link_libraries(your-app sodium)
+target_link_libraries(your-app sqlite3)
+target_link_libraries(your-app ssl)
+
+target_include_directories(your-app PRIVATE ${AKTUALIZR_PROJECT_DIR}/src/libaktualizr)
+target_include_directories(your-app PRIVATE ${AKTUALIZR_PROJECT_DIR}/third_party/jsoncpp)
+
+add_definitions(-DBOOST_LOG_DYN_LINK)
+
+=== Non-cmake builds
+
+If you are using a build system other than cmake, you will be building
+libaktualizr out-of-tree. Please refer to your system's documentation on how to
+specify additional libraries and include directories for the target application.
 
 
 

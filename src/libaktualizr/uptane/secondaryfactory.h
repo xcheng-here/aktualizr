@@ -2,7 +2,9 @@
 #define UPTANE_SECONDARYFACTORY_H_
 
 #include "ipuptanesecondary.h"
+#ifdef ISOTP_SECONDARY_ENABLED
 #include "isotpsecondary.h"
+#endif
 #include "logging/logging.h"
 #include "uptane/ipuptanesecondary.h"
 #include "uptane/opcuasecondary.h"

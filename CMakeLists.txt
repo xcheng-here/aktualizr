@@ -444,7 +444,7 @@ if (ENABLE_SANITIZERS)
         )
 endif()
 
-message(STATUS "
+message(STATUS "AKTUALIZR_EXTERNAL_LIBS: ${AKTUALIZR_EXTERNAL_LIBS}")
 
 # apply custom compiler flags
 foreach(compiler_flag ${custom_compiler_flags})
