@@ -1,13 +1,48 @@
+= Update a secondary ECU
+:page-layout: page
+:page-categories: [using-libaktualizr]
+:page-date: 2018-11-28 14:06:25
+:page-order: 6
+:icons: font
 
-.An example of a minimal config
-[NOTE]
-====
- [provision]
- provision_path = "/home/ota/credentials.zip"
- primary_ecu_hardware_id = "TCU"
- [storage]
- path = "/home/ota/sota-prov"
- [pacman]
- type = "none"
-====
-More information on configuration can be found in <<docs/configuration.adoc>>
+This page shows an example of how to use libaktualizr API to update
+a secondary ECU.
+
+[code,cpp]
+----
+boost::filesystem::path cfg_path("/var/sota/sota_local.toml");
+Aktualizr aktualizr(cfg_path);
+----
+This will create a new aktualizr instance based on the provided config file.
+Next, we should configure a secondary and add it to aktualizr:
+[code, cpp]
+----
+Uptane::SecondaryConfig sconfig;
+sconfig.secondary_type = Uptane::SecondaryType::kVirtual;
+sconfig.ecu_serial = "9b6abd606a761074df0092606465ddc9";
+sconfig.ecu_hardware_id = "TCU";
+sconfig.full_client_dir = "/var/sota/ecus/tcu";
+sconfig.ecu_private_key = "sec.private";
+sconfig.ecu_public_key = "sec.public";
+sconfig.target_name_path = "target_name";
+sconfig.metadata_path = "/var/sota/ecus/tcu/metadata";
+auto secondary = std::make_shared<Uptane::VirtualSecondary>(sconfig);
+aktualizr.AddSecondary(secondary);
+----
+
+After that we are ready to call Initialize, which will provision the device on
+a backend:
+[code, cpp]
+----
+aktualizr.Initialize();
+---
+
+
+
+
+
+
+
+
+
+
