@@ -15,6 +15,7 @@ var searchData=
   ['aktualizrsecondarywithdiscovery',['AktualizrSecondaryWithDiscovery',['../class_aktualizr_secondary_with_discovery.html',1,'']]],
   ['alldownloadscomplete',['AllDownloadsComplete',['../classevent_1_1_all_downloads_complete.html',1,'event']]],
   ['allinstallscomplete',['AllInstallsComplete',['../classevent_1_1_all_installs_complete.html',1,'event']]],
+  ['android_5flog_5fsink',['android_log_sink',['../classandroid__log__sink.html',1,'']]],
   ['apiqueue',['ApiQueue',['../class_api_queue.html',1,'']]],
   ['apply_5fdefault',['apply_default',['../classaccumulator__type.html#aaf911606efda4997fc598ce6d08c52ea',1,'accumulator_type']]],
   ['archive_5fstate',['archive_state',['../structarchive__state.html',1,'']]],

@@ -112,11 +112,15 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_uptane_1_1_ip_uptane_secondary.html">IpUptaneSecondary</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_uptane_1_1_iso_tp_secondary.html">IsoTpSecondary</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_uptane_1_1_managed_secondary.html">ManagedSecondary</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_uptane_1_1_manifest.html">Manifest</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_uptane_1_1_meta_pack.html">MetaPack</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_uptane_1_1_meta_with_keys.html">MetaWithKeys</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_uptane_1_1_missing_repo.html">MissingRepo</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,16 +188,17 @@ Enumerations</h2></td></tr>
 <b>kOpcuaUptane</b>, 
 <b>kIpUptane</b>, 
 <br />
-&#160;&#160;<b>kVirtualUptane</b>
+&#160;&#160;<b>kVirtualUptane</b>, 
+<b>kIsoTpUptane</b>
 <br />
  }</td></tr>
 <tr class="separator:a41fb898480290e45e111f3a24f17d343"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aeb7107b3bf1d6e29f5efbeb321d0864a"><td class="memItemLeft" align="right" valign="top"><a id="aeb7107b3bf1d6e29f5efbeb321d0864a"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="class_uptane_1_1_role.html">Role</a> &amp;t)</td></tr>
-<tr class="separator:aeb7107b3bf1d6e29f5efbeb321d0864a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b9eb9f87922e062af209b1c3b655c21"><td class="memItemLeft" align="right" valign="top"><a id="a1b9eb9f87922e062af209b1c3b655c21"></a>
+std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="class_uptane_1_1_role.html">Role</a> &amp;role)</td></tr>
+<tr class="separator:a1b9eb9f87922e062af209b1c3b655c21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaac801824b63a2acc622878ef001c59d"><td class="memItemLeft" align="right" valign="top"><a id="aaac801824b63a2acc622878ef001c59d"></a>
 std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="class_uptane_1_1_version.html">Version</a> &amp;v)</td></tr>
 <tr class="separator:aaac801824b63a2acc622878ef001c59d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -230,6 +235,9 @@ constexpr int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>kMaxSnap
 <tr class="memitem:a40c6b9246efb4971f72f047317207184"><td class="memItemLeft" align="right" valign="top"><a id="a40c6b9246efb4971f72f047317207184"></a>
 constexpr int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>kMaxImagesTargetsSize</b> = 1024 * 1024</td></tr>
 <tr class="separator:a40c6b9246efb4971f72f047317207184"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a047516c2d591c5b6281e1c9ee2caea3b"><td class="memItemLeft" align="right" valign="top"><a id="a047516c2d591c5b6281e1c9ee2caea3b"></a>
+constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>kDelegationsMaxDepth</b> = 5</td></tr>
+<tr class="separator:a047516c2d591c5b6281e1c9ee2caea3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base data types that are used in The Update Framework (TUF), part of UPTANE. </p>

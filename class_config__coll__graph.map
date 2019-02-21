@@ -11,7 +11,7 @@
 <area shape="rect" id="node13" href="$struct_network_config.html" title="NetworkConfig" alt="" coords="961,490,1070,517"/>
 <area shape="rect" id="node14" href="$struct_p11_config.html" title="P11Config" alt="" coords="486,571,569,598"/>
 <area shape="rect" id="node15" href="$struct_uptane_config.html" title="UptaneConfig" alt="" coords="1122,602,1225,629"/>
-<area shape="rect" id="node17" href="$class_uptane_1_1_secondary_config.html" title="Uptane::SecondaryConfig" alt="" coords="441,723,613,750"/>
+<area shape="rect" id="node17" href="$class_uptane_1_1_secondary_config.html" title="Uptane::SecondaryConfig" alt="" coords="441,737,613,763"/>
 <area shape="rect" id="node9" title="STL class. " alt="" coords="5,491,132,532"/>
 <area shape="rect" id="node10" href="$struct_logger_config.html" title="LoggerConfig" alt="" coords="1124,653,1223,679"/>
 <area shape="rect" id="node18" href="$struct_telemetry_config.html" title="TelemetryConfig" alt="" coords="1114,703,1233,730"/>

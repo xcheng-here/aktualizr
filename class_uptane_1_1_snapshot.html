@@ -86,18 +86,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aafb5b91d3e977e5de90350a6da86950f"><td class="memItemLeft" align="right" valign="top"><a id="aafb5b91d3e977e5de90350a6da86950f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Snapshot</b> (const Json::Value &amp;json)</td></tr>
 <tr class="separator:aafb5b91d3e977e5de90350a6da86950f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5aa1dd5ee3ec07f785afcac646441d57"><td class="memItemLeft" align="right" valign="top"><a id="a5aa1dd5ee3ec07f785afcac646441d57"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Snapshot</b> (<a class="el" href="class_uptane_1_1_repository_type.html">RepositoryType</a> repo, const Json::Value &amp;json, <a class="el" href="class_uptane_1_1_root.html">Root</a> &amp;root)</td></tr>
-<tr class="separator:a5aa1dd5ee3ec07f785afcac646441d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a708382becc6321929c2773b50a2d6ed3"><td class="memItemLeft" align="right" valign="top"><a id="a708382becc6321929c2773b50a2d6ed3"></a>
-std::vector&lt; <a class="el" href="class_uptane_1_1_hash.html">Hash</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>targets_hashes</b> () const</td></tr>
-<tr class="separator:a708382becc6321929c2773b50a2d6ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a2c140d088deef49b2e667002c60043"><td class="memItemLeft" align="right" valign="top"><a id="a9a2c140d088deef49b2e667002c60043"></a>
-int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>targets_size</b> () const</td></tr>
-<tr class="separator:a9a2c140d088deef49b2e667002c60043"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2deb3e18bc614d981168b00ed7df5e62"><td class="memItemLeft" align="right" valign="top"><a id="a2deb3e18bc614d981168b00ed7df5e62"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>targets_version</b> () const</td></tr>
-<tr class="separator:a2deb3e18bc614d981168b00ed7df5e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a4852c6d8424cce3b8ac6c496d288a7"><td class="memItemLeft" align="right" valign="top"><a id="a7a4852c6d8424cce3b8ac6c496d288a7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Snapshot</b> (<a class="el" href="class_uptane_1_1_repository_type.html">RepositoryType</a> repo, const Json::Value &amp;json, const std::shared_ptr&lt; <a class="el" href="class_uptane_1_1_meta_with_keys.html">MetaWithKeys</a> &gt; &amp;signer)</td></tr>
+<tr class="separator:a7a4852c6d8424cce3b8ac6c496d288a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadc5603a5d71f86f7a619f6021052b89"><td class="memItemLeft" align="right" valign="top"><a id="aadc5603a5d71f86f7a619f6021052b89"></a>
+std::vector&lt; <a class="el" href="class_uptane_1_1_hash.html">Hash</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>role_hashes</b> (const <a class="el" href="class_uptane_1_1_role.html">Uptane::Role</a> &amp;role) const</td></tr>
+<tr class="separator:aadc5603a5d71f86f7a619f6021052b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a745dbad73eab819eda487f49ea2ad9fd"><td class="memItemLeft" align="right" valign="top"><a id="a745dbad73eab819eda487f49ea2ad9fd"></a>
+int64_t&#160;</td><td class="memItemRight" valign="bottom"><b>role_size</b> (const <a class="el" href="class_uptane_1_1_role.html">Uptane::Role</a> &amp;role) const</td></tr>
+<tr class="separator:a745dbad73eab819eda487f49ea2ad9fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e294fe0e8cfbc49e4e2abed8aa55064"><td class="memItemLeft" align="right" valign="top"><a id="a5e294fe0e8cfbc49e4e2abed8aa55064"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>role_version</b> (const <a class="el" href="class_uptane_1_1_role.html">Uptane::Role</a> &amp;role) const</td></tr>
+<tr class="separator:a5e294fe0e8cfbc49e4e2abed8aa55064"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b13800e9cc5452a0a8b73c7e0388b90"><td class="memItemLeft" align="right" valign="top"><a id="a5b13800e9cc5452a0a8b73c7e0388b90"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="class_uptane_1_1_snapshot.html">Snapshot</a> &amp;rhs) const</td></tr>
 <tr class="separator:a5b13800e9cc5452a0a8b73c7e0388b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -105,9 +105,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const
 <tr class="memitem:a8364cf74da2aea155961360e21671d2e inherit pub_methods_class_uptane_1_1_base_meta"><td class="memItemLeft" align="right" valign="top"><a id="a8364cf74da2aea155961360e21671d2e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BaseMeta</b> (const Json::Value &amp;json)</td></tr>
 <tr class="separator:a8364cf74da2aea155961360e21671d2e inherit pub_methods_class_uptane_1_1_base_meta"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e6e0ceb18765d2398ed61435729e919 inherit pub_methods_class_uptane_1_1_base_meta"><td class="memItemLeft" align="right" valign="top"><a id="a4e6e0ceb18765d2398ed61435729e919"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BaseMeta</b> (<a class="el" href="class_uptane_1_1_repository_type.html">RepositoryType</a> repo, const Json::Value &amp;json, <a class="el" href="class_uptane_1_1_root.html">Root</a> &amp;root)</td></tr>
-<tr class="separator:a4e6e0ceb18765d2398ed61435729e919 inherit pub_methods_class_uptane_1_1_base_meta"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8e6124a947036b83d9582b6ef5fd2ba inherit pub_methods_class_uptane_1_1_base_meta"><td class="memItemLeft" align="right" valign="top"><a id="ae8e6124a947036b83d9582b6ef5fd2ba"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BaseMeta</b> (<a class="el" href="class_uptane_1_1_repository_type.html">RepositoryType</a> repo, const <a class="el" href="class_uptane_1_1_role.html">Role</a> &amp;role, const Json::Value &amp;json, const std::shared_ptr&lt; <a class="el" href="class_uptane_1_1_meta_with_keys.html">MetaWithKeys</a> &gt; &amp;signer)</td></tr>
+<tr class="separator:ae8e6124a947036b83d9582b6ef5fd2ba inherit pub_methods_class_uptane_1_1_base_meta"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c29653299453f3d7c164d522c7fbb6a inherit pub_methods_class_uptane_1_1_base_meta"><td class="memItemLeft" align="right" valign="top"><a id="a2c29653299453f3d7c164d522c7fbb6a"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>version</b> () const</td></tr>
 <tr class="separator:a2c29653299453f3d7c164d522c7fbb6a inherit pub_methods_class_uptane_1_1_base_meta"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,7 +139,7 @@ Json::Value&#160;</td><td class="memItemRight" valign="bottom"><b>original_objec
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="tuf_8h_source.html#l00370">370</a> of file <a class="el" href="tuf_8h_source.html">tuf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tuf_8h_source.html#l00465">465</a> of file <a class="el" href="tuf_8h_source.html">tuf.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/libaktualizr/uptane/<a class="el" href="tuf_8h_source.html">tuf.h</a></li>
 <li>src/libaktualizr/uptane/<a class="el" href="tuf_8cc_source.html">tuf.cc</a></li>

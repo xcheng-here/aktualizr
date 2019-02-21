@@ -3,7 +3,6 @@ var searchData=
   ['oauth2',['OAuth2',['../class_o_auth2.html',1,'']]],
   ['opcuasecondary',['OpcuaSecondary',['../class_uptane_1_1_opcua_secondary.html',1,'Uptane']]],
   ['opcuaserversecondarydelegate',['OpcuaServerSecondaryDelegate',['../class_opcua_server_secondary_delegate.html',1,'']]],
-  ['operationresult',['OperationResult',['../structdata_1_1_operation_result.html',1,'data']]],
   ['originalmanifest',['OriginalManifest',['../classopcuabridge_1_1_original_manifest.html',1,'opcuabridge']]],
   ['ostreecommitparseerror',['OSTreeCommitParseError',['../class_o_s_tree_commit_parse_error.html',1,'']]],
   ['ostreedirrepo',['OSTreeDirRepo',['../class_o_s_tree_dir_repo.html',1,'']]],

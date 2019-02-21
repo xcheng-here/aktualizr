@@ -2,11 +2,10 @@ var searchData=
 [
   ['unboundedexecutioncontroller',['UnboundedExecutionController',['../class_unbounded_execution_controller.html',1,'']]],
   ['unmetthreshold',['UnmetThreshold',['../class_uptane_1_1_unmet_threshold.html',1,'Uptane']]],
-  ['unpacksignedobject',['UnpackSignedObject',['../class_uptane_1_1_root.html#ae3c63988f7920fc22baf9a5dae8ca808',1,'Uptane::Root']]],
+  ['unpacksignedobject',['UnpackSignedObject',['../class_uptane_1_1_meta_with_keys.html#ac594176881a14f71e36a4c251a89ccce',1,'Uptane::MetaWithKeys::UnpackSignedObject()'],['../class_uptane_1_1_root.html#ad66acafeed18ea2fb4496fb6049a997f',1,'Uptane::Root::UnpackSignedObject()']]],
   ['updatecheck',['UpdateCheck',['../classresult_1_1_update_check.html',1,'result']]],
   ['updatecheckcomplete',['UpdateCheckComplete',['../classevent_1_1_update_check_complete.html',1,'event']]],
-  ['updateresultcode',['UpdateResultCode',['../namespacedata.html#a6e18d093ccf31d11cb6ecd5a2bc5ad7b',1,'data']]],
-  ['updatestatus',['UpdateStatus',['../results_8h.html#a8841d6f3805c41d14fa2fc3a48dc5bc5',1,'result']]],
+  ['updatestatus',['UpdateStatus',['../namespaceresult.html#a8841d6f3805c41d14fa2fc3a48dc5bc5',1,'result']]],
   ['uptane',['Uptane',['../namespace_uptane.html',1,'']]],
   ['uptane_5fimplicit_5ftest_2ecc',['uptane_implicit_test.cc',['../uptane__implicit__test_8cc.html',1,'']]],
   ['uptane_5fnetwork_5ftest_2ecc',['uptane_network_test.cc',['../uptane__network__test_8cc.html',1,'']]],

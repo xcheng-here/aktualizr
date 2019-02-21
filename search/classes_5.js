@@ -5,6 +5,7 @@ var searchData=
   ['ecuinstallationappliedreport',['EcuInstallationAppliedReport',['../class_ecu_installation_applied_report.html',1,'']]],
   ['ecuinstallationcompletedreport',['EcuInstallationCompletedReport',['../class_ecu_installation_completed_report.html',1,'']]],
   ['ecuinstallationstartedreport',['EcuInstallationStartedReport',['../class_ecu_installation_started_report.html',1,'']]],
+  ['ecureport',['EcuReport',['../classresult_1_1_install_1_1_ecu_report.html',1,'result::Install']]],
   ['ecuserial',['EcuSerial',['../class_uptane_1_1_ecu_serial.html',1,'Uptane']]],
   ['ecuversionmanifest',['ECUVersionManifest',['../classopcuabridge_1_1_e_c_u_version_manifest.html',1,'opcuabridge']]],
   ['ecuversionmanifestsigned',['ECUVersionManifestSigned',['../classopcuabridge_1_1_e_c_u_version_manifest_signed.html',1,'opcuabridge']]],

@@ -19,7 +19,7 @@ var searchData=
   ['importconfig',['ImportConfig',['../struct_import_config.html',1,'']]],
   ['initializer',['Initializer',['../class_initializer.html',1,'']]],
   ['install',['Install',['../classresult_1_1_install.html',1,'result::Install'],['../class_aktualizr.html#a3bad025e8c846f7e46949141c6097c67',1,'Aktualizr::Install()']]],
-  ['installreport',['InstallReport',['../classresult_1_1_install_report.html',1,'result']]],
+  ['installationresult',['InstallationResult',['../structdata_1_1_installation_result.html',1,'data']]],
   ['installstarted',['InstallStarted',['../classevent_1_1_install_started.html',1,'event']]],
   ['installtargetcomplete',['InstallTargetComplete',['../classevent_1_1_install_target_complete.html',1,'event']]],
   ['interruptableexecutioncontroller',['InterruptableExecutionController',['../class_interruptable_execution_controller.html',1,'']]],
@@ -30,5 +30,6 @@ var searchData=
   ['ipuptanesecondary',['IpUptaneSecondary',['../class_uptane_1_1_ip_uptane_secondary.html',1,'Uptane']]],
   ['is_5fcomposing',['is_composing',['../classaccumulator__type.html#ab7af1cc2a8b32ff517b667e463d0fa48',1,'accumulator_type']]],
   ['is_5frequired',['is_required',['../classaccumulator__type.html#afbc761fcc172e811121547f72a026ea1',1,'accumulator_type']]],
-  ['isostree',['IsOstree',['../class_uptane_1_1_target.html#a3cb159cb07df896667288794df362cb8',1,'Uptane::Target']]]
+  ['isostree',['IsOstree',['../class_uptane_1_1_target.html#a3cb159cb07df896667288794df362cb8',1,'Uptane::Target']]],
+  ['isotpsecondary',['IsoTpSecondary',['../class_uptane_1_1_iso_tp_secondary.html',1,'Uptane']]]
 ];
