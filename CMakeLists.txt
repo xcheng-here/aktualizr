@@ -60,7 +60,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # find all required libraries
 set(BOOST_COMPONENTS log_setup log filesystem program_options)
 set(Boost_USE_STATIC_LIBS OFF)
-add_definitions(-DBOOST_LOG_DYN_LINK)
+add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_LOG_DYN_LINK)
 
 if(BUILD_OPCUA)
     list(APPEND BOOST_COMPONENTS serialization iostreams)
@@ -155,9 +155,6 @@ if(FAULT_INJECTION)
     add_definitions(-DFIU_ENABLE)
     link_libraries(fiu dl)
 endif(FAULT_INJECTION)
-
-# set symbols used when compiling
-#add_definitions(-DBOOST_LOG_DYN_LINK)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
 
