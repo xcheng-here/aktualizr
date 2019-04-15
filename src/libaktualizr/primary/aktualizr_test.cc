@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <future>
+#include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -43,6 +44,7 @@ void verifyNothingInstalled(const Json::Value& manifest) {
       "noimage");
 }
 
+#if 0
 static Uptane::SecondaryConfig virtual_configuration(const boost::filesystem::path& client_dir) {
   Uptane::SecondaryConfig ecu_config;
 
@@ -59,7 +61,6 @@ static Uptane::SecondaryConfig virtual_configuration(const boost::filesystem::pa
 
   return ecu_config;
 }
-
 int num_events_FullNoUpdates = 0;
 std::future<void> future_FullNoUpdates{};
 std::promise<void> promise_FullNoUpdates{};
@@ -204,6 +205,7 @@ TEST(Aktualizr, DeviceInstallationResult) {
   EXPECT_EQ(res_json["success"], false);
 }
 
+#endif
 class HttpFakeEventCounter : public HttpFake {
  public:
   HttpFakeEventCounter(const boost::filesystem::path& test_dir_in) : HttpFake(test_dir_in, "hasupdates") {}
@@ -232,6 +234,10 @@ class HttpFakeEventCounter : public HttpFake {
 
   unsigned int events_seen{0};
 };
+
+std::mutex m;
+std::condition_variable cv;
+bool f{false};
 
 int num_events_FullWithUpdates = 0;
 std::future<void> future_FullWithUpdates{};
@@ -270,6 +276,11 @@ void process_events_FullWithUpdates(const std::shared_ptr<event::BaseEvent>& eve
       EXPECT_TRUE(downloads_complete->result.updates[0].filename() == "secondary_firmware.txt" ||
                   downloads_complete->result.updates[1].filename() == "secondary_firmware.txt");
       EXPECT_EQ(downloads_complete->result.status, result::DownloadStatus::kSuccess);
+      {
+        std::lock_guard<std::mutex> lk(m);
+        f = true;
+      }
+      cv.notify_all();
       break;
     }
     case 4: {
@@ -329,6 +340,7 @@ void process_events_FullWithUpdates(const std::shared_ptr<event::BaseEvent>& eve
   ++num_events_FullWithUpdates;
 }
 
+
 /*
  * Initialize -> UptaneCycle -> updates downloaded and installed for primary and
  * secondary.
@@ -344,6 +356,22 @@ TEST(Aktualizr, FullWithUpdates) {
   std::function<void(std::shared_ptr<event::BaseEvent> event)> f_cb = process_events_FullWithUpdates;
   boost::signals2::connection conn = aktualizr.SetSignalHandler(f_cb);
 
+  std::thread([&storage] {
+    std::unique_lock<std::mutex> lk(m);
+    cv.wait(lk, []{ return f; });
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 5000);
+    auto t = std::chrono::microseconds(dis(gen));
+    std::this_thread::sleep_for(t);
+    int n = 1000;
+    while (n--) {
+      storage->hasPendingInstall();
+    }
+    storage->hasPendingInstall();
+  }).detach();
+
+
   aktualizr.Initialize();
   aktualizr.UptaneCycle();
   std::future_status status = future_FullWithUpdates.wait_for(std::chrono::seconds(20));
@@ -353,6 +381,7 @@ TEST(Aktualizr, FullWithUpdates) {
   EXPECT_EQ(http->events_seen, 8);
 }
 
+#if 0
 class HttpFakePutCounter : public HttpFake {
  public:
   HttpFakePutCounter(const boost::filesystem::path& test_dir_in) : HttpFake(test_dir_in, "hasupdates") {}
@@ -1846,6 +1875,7 @@ TEST(Aktualizr, PauseResumeQueue) {
     FAIL() << "Timed out waiting for UpdateCheck event";
   }
 }
+#endif
 
 #ifndef __NO_MAIN__
 int main(int argc, char** argv) {
