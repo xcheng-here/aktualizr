@@ -314,11 +314,17 @@ void SotaUptaneClient::initialize() {
 }
 
 bool SotaUptaneClient::updateMeta() {
+  bool success = true;
   // Uptane step 1 (build the vehicle version manifest):
   if (!putManifestSimple()) {
-    return false;
+    LOG_ERROR << "Could not send manifest!";
+    success = false;
   }
-  return uptaneIteration();
+  if (!uptaneIteration()) {
+    LOG_ERROR << "Error updating Uptane metadata!";
+    success = false;
+  }
+  return success;
 }
 
 bool SotaUptaneClient::updateDirectorMeta() {
