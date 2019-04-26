@@ -62,7 +62,7 @@ coverage:
     paths:
       - build-coverage/coverage/
   script:
-    - aws s3 cp s3://ota-gitlab-ci/hereotaconnect_prod.zip /tmp/credentials.zip
+    - aws s3 cp s3://${GITLAB_S3_BUCKET}/hereotaconnect_prod.zip /tmp/credentials.zip
     - $CI_PROJECT_DIR/scripts/test.sh
 
 nop11:
@@ -137,16 +137,16 @@ xenial-pkg:
     - docker run --rm -v $TEST_INSTALL_DESTDIR:/persistent -v $CI_PROJECT_DIR/scripts/:/scripts/ -t $UBUNTU_XENIAL_PR_INSTALLIMAGE /scripts/test_install_garage_deploy.sh
     - docker run --rm -v $TEST_INSTALL_DESTDIR:/persistent -v $CI_PROJECT_DIR/scripts/:/scripts/ -t $UBUNTU_XENIAL_PR_INSTALLIMAGE bash -c "/scripts/test_install_aktualizr_and_update.sh && /scripts/test_aktualizr_repo.sh"
 
-pages:
-  stage: deploy
-  dependencies:
-    - coverage
-  script:
-    - mv build-coverage/coverage/ public/
-  artifacts:
-    paths:
-      - public
-    expire_in: 7 days
+      #pages:
+      #stage: deploy
+      #dependencies:
+      #- coverage
+      #script:
+      #- mv build-coverage/coverage/ public/
+      #artifacts:
+      #paths:
+      #- public
+      #expire_in: 7 days
   # would be nice to have on a per-PR basis: # https://gitlab.com/gitlab-org/gitlab-ce/issues/35141
-  only:
-    - master
+  #only:
+  # - master
