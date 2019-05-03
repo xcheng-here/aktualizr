@@ -1,9 +1,9 @@
 #include "provision.h"
 
+#include <primary/aktualizr.h>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <primary/aktualizr.h>
 
 #include "config/config.h"
 #include "context.h"
@@ -43,13 +43,12 @@ class ProvisionDeviceTask {
   std::unique_ptr<Aktualizr> aktualizr_ptr;
 
  public:
-  explicit ProvisionDeviceTask(const Config cfg)
-      : config { cfg }, aktualizr_ptr { std_::make_unique<Aktualizr>(config) } {
+  explicit ProvisionDeviceTask(const Config cfg) : config{cfg}, aktualizr_ptr{std_::make_unique<Aktualizr>(config)} {
     logger_set_threshold(boost::log::trivial::severity_level::trace);
   }
 
-  ProvisionDeviceTask(const ProvisionDeviceTask&) = delete;
-  ProvisionDeviceTask(ProvisionDeviceTask&&) = default;
+  ProvisionDeviceTask(const ProvisionDeviceTask &) = delete;
+  ProvisionDeviceTask(ProvisionDeviceTask &&) = default;
 
   void operator()() {
     try {
@@ -78,12 +77,12 @@ class ProvisionDeviceTaskStream {
     const path deviceBaseDir = mkDeviceBaseDir(deviceId, dstDir);
     const path deviceCfgPath = writeDeviceConfig(cfgTemplate, deviceBaseDir, deviceId);
     Config config = configure(deviceCfgPath, logLevel);
-    return ProvisionDeviceTask { config };
+    return ProvisionDeviceTask{config};
   }
 };
 
-void mkDevices(const path &dstDir, const path& bootstrapCredentials, const std::string& gw_uri, const size_t parallelism,
-               const unsigned int nr, const unsigned int rate) {
+void mkDevices(const path &dstDir, const path &bootstrapCredentials, const std::string &gw_uri,
+               const size_t parallelism, const unsigned int nr, const unsigned int rate) {
   const int severity = loggerGetSeverity();
   ptree cfgTemplate{};
   cfgTemplate.put_child("tls.server", ptree("\"https://" + gw_uri + "\""));

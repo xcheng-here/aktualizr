@@ -40,7 +40,8 @@ unsigned long pthreads_thread_id(void) {
 void openssl_callbacks_setup(void) {
   int i;
 
-  lock_cs = (pthread_mutex_t *)OPENSSL_malloc(static_cast<int>((unsigned long)CRYPTO_num_locks() * sizeof(pthread_mutex_t)));
+  lock_cs =
+      (pthread_mutex_t *)OPENSSL_malloc(static_cast<int>((unsigned long)CRYPTO_num_locks() * sizeof(pthread_mutex_t)));
   lock_count = (long *)OPENSSL_malloc(static_cast<int>((unsigned long)CRYPTO_num_locks() * sizeof(long)));
   if (!lock_cs || !lock_count) {
     /* Nothing we can do about this...void function! */

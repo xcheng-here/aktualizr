@@ -1,8 +1,8 @@
 #include "check.h"
 
+#include <primary/aktualizr.h>
 #include <random>
 #include <string>
-#include <primary/aktualizr.h>
 #include "utilities/utils.h"
 
 #include "context.h"
@@ -41,8 +41,7 @@ class CheckForUpdate {
   std::unique_ptr<Aktualizr> aktualizr_ptr;
 
  public:
-  CheckForUpdate(Config config_)
-      : config{config_}, aktualizr_ptr { std_::make_unique<Aktualizr>(config) } {
+  CheckForUpdate(Config config_) : config{config_}, aktualizr_ptr{std_::make_unique<Aktualizr>(config)} {
     try {
       aktualizr_ptr->Initialize();
     } catch (...) {
@@ -80,13 +79,14 @@ class CheckForUpdateTasks {
 
   CheckForUpdate nextTask() {
     auto srcConfig = configs[gen(rng)];
-    auto config { srcConfig };
+    auto config{srcConfig};
     config.storage.path = fs::temp_directory_path() / fs::unique_path();
     LOG_DEBUG << "Copy device " << srcConfig.storage.path << " into " << config.storage.path;
     fs::create_directory(config.storage.path);
     fs::permissions(config.storage.path, fs::remove_perms | fs::group_write | fs::others_write);
-    fs::copy_file(srcConfig.storage.sqldb_path.get(srcConfig.storage.path), config.storage.sqldb_path.get(config.storage.path));
-    return CheckForUpdate{ config };
+    fs::copy_file(srcConfig.storage.sqldb_path.get(srcConfig.storage.path),
+                  config.storage.sqldb_path.get(config.storage.path));
+    return CheckForUpdate{config};
   }
 };
 

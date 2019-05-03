@@ -705,7 +705,9 @@ void process_events_ProvisionOnServer(const std::shared_ptr<event::BaseEvent> &e
       EXPECT_EQ(event->variant, "SendDeviceDataComplete");
       break;
     }
-    default: { std::cout << "Got " << event->variant << "event\n"; }
+    default: {
+      std::cout << "Got " << event->variant << "event\n";
+    }
   }
   num_events_ProvisionOnServer++;
 }

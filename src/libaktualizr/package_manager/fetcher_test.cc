@@ -82,8 +82,7 @@ void test_pause(const Uptane::Target& target, PackageManager type = PackageManag
   std::thread([&target, &fetcher, &download_promise, &token, pacman, &keys]() {
     bool res = pacman->fetchTarget(target, fetcher, keys, progress_cb, &token);
     download_promise.set_value(res);
-  })
-      .detach();
+  }).detach();
 
   std::thread([&token, &pause_promise]() {
     std::unique_lock<std::mutex> lk(pause_m);
@@ -94,8 +93,7 @@ void test_pause(const Uptane::Target& target, PackageManager type = PackageManag
     EXPECT_EQ(token.setPause(false), true);
     EXPECT_EQ(token.setPause(false), false);
     pause_promise.set_value();
-  })
-      .detach();
+  }).detach();
 
   ASSERT_EQ(result.wait_for(std::chrono::seconds(download_timeout)), std::future_status::ready);
   ASSERT_EQ(pause_res.wait_for(std::chrono::seconds(0)), std::future_status::ready);
