@@ -13,16 +13,17 @@ branches:
     - /^\d\d\d\d\.\d+(-\w+)?$/
 env:
   matrix:
-    - DOCKERFILE=docker/Dockerfile.ubuntu.bionic SCRIPT=scripts/test.sh
+    - DOCKERTAG=ci-ubuntu-bionic DOCKERFILE=docker/Dockerfile.ubuntu.bionic SCRIPT=scripts/test.sh
       DARGS="-eTEST_CMAKE_BUILD_TYPE=Valgrind -eTEST_WITH_COVERAGE=1 -eTEST_WITH_P11=1 -eTEST_WITH_FAULT_INJECTION=1 -eTEST_TESTSUITE_EXCLUDE=credentials -eTEST_SOTA_PACKED_CREDENTIALS=dummy-credentials"
-    - DOCKERFILE=docker/Dockerfile.debian.testing SCRIPT=scripts/test.sh
+    - DOCKERTAG=ci-debian-testing DOCKERFILE=docker/Dockerfile.debian.testing SCRIPT=scripts/test.sh
       DARGS="-eTEST_CC=clang -eTEST_WITH_LOAD_TESTS=1 -eTEST_WITH_TESTSUITE=0 -eTEST_WITH_STATICTESTS=1"
-    - DEPLOY_SRC=1 DEPLOY_PKGS=1 RELEASE_NAME=ubuntu_18.04 DOCKERFILE=docker/Dockerfile.ubuntu.bionic INSTALL_DOCKERFILE=docker/Dockerfile-test-install.ubuntu.bionic SCRIPT=scripts/build_ubuntu.sh DARGS="-eTEST_INSTALL_RELEASE_NAME=-ubuntu_18.04"
-    - DEPLOY_PKGS=1 RELEASE_NAME=ubuntu_16.04 DOCKERFILE=docker/Dockerfile.ubuntu.xenial INSTALL_DOCKERFILE=docker/Dockerfile-test-install.ubuntu.xenial SCRIPT=scripts/build_ubuntu.sh DARGS="-eTEST_INSTALL_RELEASE_NAME=-ubuntu_16.04"
+    - DEPLOY_SRC=1 DEPLOY_PKGS=1 RELEASE_NAME=ubuntu_18.04 DOCKERTAG=ci-ubuntu-bionic DOCKERFILE=docker/Dockerfile.ubuntu.bionic INSTALL_DOCKERFILE=docker/Dockerfile-test-install.ubuntu.bionic SCRIPT=scripts/build_ubuntu.sh DARGS="-eTEST_INSTALL_RELEASE_NAME=-ubuntu_18.04"
+    - DEPLOY_PKGS=1 RELEASE_NAME=ubuntu_16.04 DOCKERTAG=ci-ubuntu-xenial DOCKERFILE=docker/Dockerfile.ubuntu.xenial INSTALL_DOCKERFILE=docker/Dockerfile-test-install.ubuntu.xenial SCRIPT=scripts/build_ubuntu.sh DARGS="-eTEST_INSTALL_RELEASE_NAME=-ubuntu_16.04"
 services:
 - docker
 script:
-- docker build -t advancedtelematic/aktualizr -f ${DOCKERFILE} .
+- docker pull advancedtelematic/aktualizr:$DOCKERTAG
+- docker build --pull --cache-from advancedtelematic/aktualizr:$DOCKERTAG -t advancedtelematic/aktualizr -f ${DOCKERFILE} .
 - ci_env=`bash <(curl -s https://codecov.io/env)`
 - docker run -v $TRAVIS_BUILD_DIR:/aktualizr -v /persistent:/persistent -w /aktualizr $ci_env $DARGS -it advancedtelematic/aktualizr ${SCRIPT}
 - if [[ $DEPLOY_PKGS = 1 ]]; then ./scripts/test_garage_deploy_deb.sh /persistent "${INSTALL_DOCKERFILE}"; fi
