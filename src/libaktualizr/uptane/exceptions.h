@@ -71,11 +71,10 @@ class InvalidMetadata : public Exception {
   ~InvalidMetadata() noexcept override = default;
 };
 
-// Currently unused.
 class TargetMismatch : public Exception {
  public:
-  explicit TargetMismatch(const std::string& reponame)
-      : Exception(reponame, "The target metadata in image and director do not match.") {}
+  explicit TargetMismatch(const std::string& targetname)
+      : Exception(targetname, "The target metadata in image and director do not match.") {}
   ~TargetMismatch() noexcept override = default;
 };
 
@@ -126,6 +125,13 @@ class DelegationMissing : public Exception {
   explicit DelegationMissing(const std::string& delegation_name)
       : Exception("images", "The delegated role " + delegation_name + " is missing.") {}
   ~DelegationMissing() noexcept override = default;
+};
+
+class InvalidTarget : public Exception {
+ public:
+  InvalidTarget(const std::string& reponame)
+      : Exception(reponame, "The target had a non-OSTree package that can not be installed on an OSTree system.") {}
+  ~InvalidTarget() noexcept override = default;
 };
 
 }  // namespace Uptane

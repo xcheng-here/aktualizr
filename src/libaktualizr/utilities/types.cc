@@ -50,9 +50,9 @@ Json::Value Package::toJson() {
 }
 
 Package Package::fromJson(const std::string &json_str) {
-  Json::Reader reader;
+  std::istringstream jsonss(json_str);
   Json::Value json;
-  reader.parse(json_str, json);
+  Json::parseFromStream(Json::CharReaderBuilder(), jsonss, &json, nullptr);
   Package package;
   package.name = json["name"].asString();
   package.version = json["version"].asString();
@@ -64,6 +64,7 @@ const std::map<data::ResultCode::Numeric, const char *> data::ResultCode::string
     {ResultCode::Numeric::kAlreadyProcessed, "ALREADY_PROCESSED"},
     {ResultCode::Numeric::kValidationFailed, "VALIDATION_FAILED"},
     {ResultCode::Numeric::kInstallFailed, "INSTALL_FAILED"},
+    {ResultCode::Numeric::kDownloadFailed, "DOWNLOAD_FAILED"},
     {ResultCode::Numeric::kInternalError, "INTERNAL_ERROR"},
     {ResultCode::Numeric::kGeneralError, "GENERAL_ERROR"},
     {ResultCode::Numeric::kNeedCompletion, "NEED_COMPLETION"},

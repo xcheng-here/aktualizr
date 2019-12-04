@@ -3,17 +3,7 @@
 #include <assert.h>
 #include <sstream>
 
-#include <openssl/crypto.h>
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/opensslv.h>
-#include <openssl/pem.h>
-#include <openssl/pkcs12.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include <openssl/ssl.h>
-
-#include "crypto/openssl_compat.h"
+#include "utilities/aktualizr_version.h"
 #include "utilities/utils.h"
 
 struct WriteStringArg {
@@ -45,7 +35,7 @@ static size_t writeString(void* contents, size_t size, size_t nmemb, void* userp
   return size * nmemb;
 }
 
-HttpClient::HttpClient() : user_agent(std::string("Aktualizr/") + AKTUALIZR_VERSION) {
+HttpClient::HttpClient(const std::vector<std::string>* extra_headers) {
   curl = curl_easy_init();
   if (curl == nullptr) {
     throw std::runtime_error("Could not initialize curl");
@@ -55,6 +45,7 @@ HttpClient::HttpClient() : user_agent(std::string("Aktualizr/") + AKTUALIZR_VERS
   curlEasySetoptWrapper(curl, CURLOPT_NOSIGNAL, 1L);
   curlEasySetoptWrapper(curl, CURLOPT_TIMEOUT, 60L);
   curlEasySetoptWrapper(curl, CURLOPT_CONNECTTIMEOUT, 60L);
+  curlEasySetoptWrapper(curl, CURLOPT_CAPATH, Utils::getCaPath());
 
   // let curl use our write function
   curlEasySetoptWrapper(curl, CURLOPT_WRITEFUNCTION, writeString);
@@ -64,8 +55,14 @@ HttpClient::HttpClient() : user_agent(std::string("Aktualizr/") + AKTUALIZR_VERS
 
   headers = curl_slist_append(headers, "Content-Type: application/json");
   headers = curl_slist_append(headers, "Accept: */*");
+
+  if (extra_headers != nullptr) {
+    for (const auto& header : *extra_headers) {
+      headers = curl_slist_append(headers, header.c_str());
+    }
+  }
   curlEasySetoptWrapper(curl, CURLOPT_HTTPHEADER, headers);
-  curlEasySetoptWrapper(curl, CURLOPT_USERAGENT, user_agent.c_str());
+  curlEasySetoptWrapper(curl, CURLOPT_USERAGENT, Utils::getUserAgent());
 }
 
 HttpClient::HttpClient(const HttpClient& curl_in) : pkcs11_key(curl_in.pkcs11_key), pkcs11_cert(curl_in.pkcs11_key) {
@@ -171,7 +168,7 @@ HttpResponse HttpClient::post(const std::string& url, const Json::Value& data) {
   CURL* curl_post = Utils::curlDupHandleWrapper(curl, pkcs11_key);
   curlEasySetoptWrapper(curl_post, CURLOPT_URL, url.c_str());
   curlEasySetoptWrapper(curl_post, CURLOPT_POST, 1);
-  std::string data_str = Json::FastWriter().write(data);
+  std::string data_str = Utils::jsonToCanonicalStr(data);
   curlEasySetoptWrapper(curl_post, CURLOPT_POSTFIELDS, data_str.c_str());
   LOG_TRACE << "post request body:" << data;
   auto result = perform(curl_post, RETRY_TIMES, HttpInterface::kPostRespLimit);
@@ -182,7 +179,7 @@ HttpResponse HttpClient::post(const std::string& url, const Json::Value& data) {
 HttpResponse HttpClient::put(const std::string& url, const Json::Value& data) {
   CURL* curl_put = Utils::curlDupHandleWrapper(curl, pkcs11_key);
   curlEasySetoptWrapper(curl_put, CURLOPT_URL, url.c_str());
-  std::string data_str = Json::FastWriter().write(data);
+  std::string data_str = Utils::jsonToCanonicalStr(data);
   curlEasySetoptWrapper(curl_put, CURLOPT_POSTFIELDS, data_str.c_str());
   curlEasySetoptWrapper(curl_put, CURLOPT_CUSTOMREQUEST, "PUT");
   LOG_TRACE << "put request body:" << data;
@@ -233,6 +230,7 @@ std::future<HttpResponse> HttpClient::downloadAsync(const std::string& url, curl
   curlEasySetoptWrapper(curl_download, CURLOPT_URL, url.c_str());
   curlEasySetoptWrapper(curl_download, CURLOPT_HTTPGET, 1L);
   curlEasySetoptWrapper(curl_download, CURLOPT_FOLLOWLOCATION, 1L);
+  curlEasySetoptWrapper(curl_download, CURLOPT_MAXREDIRS, 10L);
   curlEasySetoptWrapper(curl_download, CURLOPT_WRITEFUNCTION, write_cb);
   curlEasySetoptWrapper(curl_download, CURLOPT_WRITEDATA, userp);
   if (progress_cb != nullptr) {
@@ -258,6 +256,22 @@ std::future<HttpResponse> HttpClient::downloadAsync(const std::string& url, curl
       std::move(resp_promise))
       .detach();
   return resp_future;
+}
+
+bool HttpClient::updateHeader(const std::string& name, const std::string& value) {
+  curl_slist* item = headers;
+  std::string lookfor(name + ": ");
+
+  while (item != nullptr) {
+    if (strncmp(lookfor.c_str(), item->data, lookfor.length()) == 0) {
+      free(item->data);
+      lookfor += value;
+      item->data = strdup(lookfor.c_str());
+      return true;
+    }
+    item = item->next;
+  }
+  return false;
 }
 
 // vim: set tabstop=2 shiftwidth=2 expandtab:

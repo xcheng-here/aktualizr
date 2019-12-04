@@ -1,11 +1,10 @@
 #ifndef AKTUALIZR_H_
 #define AKTUALIZR_H_
 
-#include <atomic>
+#include <future>
 #include <memory>
 
 #include <boost/signals2.hpp>
-#include "gtest/gtest_prod.h"
 
 #include "config/config.h"
 #include "primary/events.h"
@@ -22,11 +21,11 @@ class Aktualizr {
  public:
   /** Aktualizr requires a configuration object. Examples can be found in the
    *  config directory. */
-  explicit Aktualizr(Config& config);
+  explicit Aktualizr(const Config& config);
   Aktualizr(const Aktualizr&) = delete;
   Aktualizr& operator=(const Aktualizr&) = delete;
 
-  /*
+  /**
    * Initialize aktualizr. Any secondaries should be added before making this
    * call. This will provision with the server if required. This must be called
    * before using any other aktualizr functions except AddSecondary.
@@ -40,6 +39,11 @@ class Aktualizr {
   std::future<void> RunForever();
 
   /**
+   * Shuts down currently running `RunForever()` method
+   */
+  void Shutdown();
+
+  /**
    * Check for campaigns.
    * Campaigns are a concept outside of Uptane, and allow for user approval of
    * updates before the contents of the update are known.
@@ -48,13 +52,16 @@ class Aktualizr {
   std::future<result::CampaignCheck> CampaignCheck();
 
   /**
-   * Accept a campaign for the current device.
-   * Campaigns are a concept outside of Uptane, and allow for user approval of
-   * updates before the contents of the update are known.
+   * Act on campaign: accept, decline or postpone.
+   * Accepted campaign will be removed from the campaign list but no guarantee
+   * is made for declined or postponed items. Applications are responsible for
+   * tracking their state but this method will notify the server for device
+   * state monitoring purposes.
    * @param campaign_id Campaign ID as provided by CampaignCheck.
+   * @param cmd action to apply on the campaign: accept, decline or postpone
    * @return Empty std::future object
    */
-  std::future<void> CampaignAccept(const std::string& campaign_id);
+  std::future<void> CampaignControl(const std::string& campaign_id, campaign::Cmd cmd);
 
   /**
    * Send local device data to the server.
@@ -80,12 +87,42 @@ class Aktualizr {
   std::future<result::Download> Download(const std::vector<Uptane::Target>& updates);
 
   /**
+   * Get log of installations. The log is indexed for every ECU and contains
+   * every change of versions ordered by time. It may contain duplicates in
+   * case of rollbacks.
+   * @return installation log
+   */
+  struct InstallationLogEntry {
+    Uptane::EcuSerial ecu;
+    std::vector<Uptane::Target> installs;
+  };
+  using InstallationLog = std::vector<InstallationLogEntry>;
+  InstallationLog GetInstallationLog();
+
+  /**
+   * Get list of targets currently in storage. This is intended to be used with
+   * DeleteStoredTarget and targets are not guaranteed to be verified and
+   * up-to-date with current metadata.
+   * @return std::vector of target objects
+   */
+  std::vector<Uptane::Target> GetStoredTargets();
+
+  /**
+   * Delete a stored target from storage. This only affects storage of the
+   * actual binary data and does not preclude a re-download if a target matches
+   * current metadata.
+   * @param target Target object matching the desired target in the storage
+   * @return true if successful
+   */
+  void DeleteStoredTarget(const Uptane::Target& target);
+
+  /**
    * Get target downloaded in Download call. Returned target is guaranteed to be verified and up-to-date
    * according to the Uptane metadata downloaded in CheckUpdates call.
    * @param target Target object matching the desired target in the storage.
    * @return Handle to the stored binary. nullptr if none is found.
    */
-  std::unique_ptr<StorageTargetRHandle> GetStoredTarget(const Uptane::Target& target);
+  std::unique_ptr<StorageTargetRHandle> OpenStoredTarget(const Uptane::Target& target);
 
   /**
    * Install targets.
@@ -153,45 +190,24 @@ class Aktualizr {
    * @param handler a function that can receive event objects.
    * @return a signal connection object, which can be disconnected if desired.
    */
-  boost::signals2::connection SetSignalHandler(std::function<void(std::shared_ptr<event::BaseEvent>)>& handler);
+  boost::signals2::connection SetSignalHandler(const std::function<void(std::shared_ptr<event::BaseEvent>)>& handler);
 
  private:
-  FRIEND_TEST(Aktualizr, FullNoUpdates);
-  FRIEND_TEST(Aktualizr, DeviceInstallationResult);
-  FRIEND_TEST(Aktualizr, FullWithUpdates);
-  FRIEND_TEST(Aktualizr, FullWithUpdatesNeedReboot);
-  FRIEND_TEST(Aktualizr, FinalizationFailure);
-  FRIEND_TEST(Aktualizr, InstallationFailure);
-  FRIEND_TEST(Aktualizr, AutoRebootAfterUpdate);
-  FRIEND_TEST(Aktualizr, FullMultipleSecondaries);
-  FRIEND_TEST(Aktualizr, CheckNoUpdates);
-  FRIEND_TEST(Aktualizr, DownloadWithUpdates);
-  FRIEND_TEST(Aktualizr, DownloadFailures);
-  FRIEND_TEST(Aktualizr, InstallWithUpdates);
-  FRIEND_TEST(Aktualizr, ReportDownloadProgress);
-  FRIEND_TEST(Aktualizr, CampaignCheckAndAccept);
-  FRIEND_TEST(Aktualizr, FullNoCorrelationId);
-  FRIEND_TEST(Aktualizr, ManifestCustom);
-  FRIEND_TEST(Aktualizr, APICheck);
-  FRIEND_TEST(Aktualizr, UpdateCheckCompleteError);
-  FRIEND_TEST(Aktualizr, PauseResumeQueue);
-  FRIEND_TEST(Aktualizr, AddSecondary);
-  FRIEND_TEST(Aktualizr, EmptyTargets);
-  FRIEND_TEST(Aktualizr, EmptyTargetsAfterInstall);
-  FRIEND_TEST(Aktualizr, FullOstreeUpdate);
-  FRIEND_TEST(Delegation, Basic);
-  FRIEND_TEST(Delegation, RevokeAfterCheckUpdates);
-  FRIEND_TEST(Delegation, RevokeAfterInstall);
-  FRIEND_TEST(Delegation, RevokeAfterDownload);
-  FRIEND_TEST(Delegation, IterateAll);
+  Config config_;
 
-  // This constructor is only used for tests
-  Aktualizr(Config& config, std::shared_ptr<INvStorage> storage_in, std::shared_ptr<HttpInterface> http_in);
-  static void systemSetup();
+ protected:
+  Aktualizr(Config config, std::shared_ptr<INvStorage> storage_in, std::shared_ptr<HttpInterface> http_in);
 
-  Config& config_;
-  std::shared_ptr<INvStorage> storage_;
   std::shared_ptr<SotaUptaneClient> uptane_client_;
+
+ private:
+  struct {
+    std::mutex m;
+    std::condition_variable cv;
+    bool flag = false;
+  } exit_cond_;
+
+  std::shared_ptr<INvStorage> storage_;
   std::shared_ptr<event::Channel> sig_;
   api::CommandQueue api_queue_;
 };

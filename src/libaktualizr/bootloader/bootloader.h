@@ -7,7 +7,7 @@
 
 class Bootloader {
  public:
-  Bootloader(const BootloaderConfig& config, INvStorage& storage);
+  Bootloader(BootloaderConfig config, INvStorage& storage);
   void setBootOK() const;
   void updateNotify() const;
 
@@ -25,10 +25,11 @@ class Bootloader {
   void reboot(bool fake_reboot = false);
 
  private:
-  const BootloaderConfig& config_;
+  const BootloaderConfig config_;
 
   INvStorage& storage_;
   boost::filesystem::path reboot_sentinel_;
+  std::string reboot_command_;
   bool reboot_detect_supported_{false};
 };
 

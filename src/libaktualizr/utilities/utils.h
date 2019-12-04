@@ -38,12 +38,11 @@ struct Utils {
   static sockaddr_storage ipGetSockaddr(int fd);
   static std::string ipDisplayName(const sockaddr_storage &saddr);
   static int ipPort(const sockaddr_storage &saddr);
-  static void clearUbootCounter();
-  static void setUbootUpgraded();
   static int shell(const std::string &command, std::string *output, bool include_stderr = false);
   static boost::filesystem::path absolutePath(const boost::filesystem::path &root, const boost::filesystem::path &file);
   static void setSocketPort(sockaddr_storage *addr, in_port_t port);
   static void createDirectories(const boost::filesystem::path &path, mode_t mode);
+  static bool createSecureDirectory(const boost::filesystem::path &path);
   static std::string urlEncode(const std::string &input);
   static CURL *curlDupHandleWrapper(CURL *curl_in, bool using_pkcs11);
   static std::vector<boost::filesystem::path> getDirEntriesByExt(const boost::filesystem::path &dir_path,
@@ -51,8 +50,16 @@ struct Utils {
   static void setStorageRootPath(const std::string &storage_root_path);
   static boost::filesystem::path getStorageRootPath();
 
+  static void setUserAgent(std::string user_agent);
+  static const char *getUserAgent();
+
+  static void setCaPath(boost::filesystem::path path);
+  static const char *getCaPath();
+
  private:
   static std::string storage_root_path_;
+  static std::string user_agent_;
+  static boost::filesystem::path ca_path_;
 };
 
 /**
@@ -143,17 +150,8 @@ class Socket {
 // wrapper for curl handles
 class CurlEasyWrapper {
  public:
-  CurlEasyWrapper() {
-    handle = curl_easy_init();
-    if (handle == nullptr) {
-      throw std::runtime_error("Could not initialize curl handle");
-    }
-  }
-  ~CurlEasyWrapper() {
-    if (handle != nullptr) {
-      curl_easy_cleanup(handle);
-    }
-  }
+  CurlEasyWrapper();
+  ~CurlEasyWrapper();
   CURL *get() { return handle; }
 
  private:

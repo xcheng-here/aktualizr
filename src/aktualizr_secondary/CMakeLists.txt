@@ -4,6 +4,7 @@ set(AKTUALIZR_SECONDARY_LIB_SRC
     aktualizr_secondary.cc
     aktualizr_secondary_config.cc
     aktualizr_secondary_common.cc
+    aktualizr_secondary_metadata.cc
     socket_server.cc
     )
 
@@ -16,13 +17,11 @@ add_library(aktualizr_secondary_static_lib STATIC
     $<TARGET_OBJECTS:utilities>
     $<TARGET_OBJECTS:storage>
     $<TARGET_OBJECTS:logging>
-    $<TARGET_OBJECTS:uptane>
-    $<TARGET_OBJECTS:socket_activation>)
+    $<TARGET_OBJECTS:uptane>)
 
 target_link_libraries(aktualizr_secondary_static_lib aktualizr-posix)
 
 target_include_directories(aktualizr_secondary_static_lib PUBLIC
-    $<TARGET_PROPERTY:socket_activation,INCLUDE_DIRECTORIES>
     $<TARGET_PROPERTY:asn1_lib,INCLUDE_DIRECTORIES>
     ${PROJECT_SOURCE_DIR}/src/libaktualizr-posix
     )
@@ -42,6 +41,7 @@ set(ALL_AKTUALIZR_SECONDARY_HEADERS
     aktualizr_secondary_interface.h
     aktualizr_secondary_config.h
     aktualizr_secondary_common.h
+    aktualizr_secondary_metadata.h
     socket_server.h
     )
 
@@ -53,6 +53,11 @@ list(INSERT TEST_LIBS 0 aktualizr_secondary_static_lib)
 add_aktualizr_test(NAME aktualizr_secondary_config
                    SOURCES aktualizr_secondary_config_test.cc PROJECT_WORKING_DIRECTORY)
 
+add_aktualizr_test(NAME aktualizr_secondary_uptane_verification
+                   SOURCES uptane_verification_test.cc
+                   ARGS "$<TARGET_FILE:uptane-generator>"
+                   PROJECT_WORKING_DIRECTORY)
+
 add_aktualizr_test(NAME aktualizr_secondary_update
                    SOURCES update_test.cc
                    ARGS ${PROJECT_BINARY_DIR}/ostree_repo PROJECT_WORKING_DIRECTORY)
@@ -60,8 +65,10 @@ add_aktualizr_test(NAME aktualizr_secondary_update
 if(BUILD_OSTREE)
     add_aktualizr_test(NAME aktualizr_secondary_uptane
                        SOURCES uptane_test.cc
+                       LIBRARIES uptane_generator_lib
                        LIBRARIES aktualizr-posix
                        ARGS ${PROJECT_BINARY_DIR}/ostree_repo PROJECT_WORKING_DIRECTORY)
+    target_link_libraries(t_aktualizr_secondary_uptane virtual_secondary)
 else(BUILD_OSTREE)
     list(APPEND TEST_SOURCES uptane_test.cc)
 endif(BUILD_OSTREE)
@@ -132,7 +139,7 @@ set_tests_properties(aktualizr_secondary_help_with_other_options
 
 aktualizr_source_file_checks(${AKTUALIZR_SECONDARY_SRC}
                              ${AKTUALIZR_SECONDARY_LIB_SRC}
-                             ${ALL_AKTUALIZR_SECONDARY_HEADERS}                             
+                             ${ALL_AKTUALIZR_SECONDARY_HEADERS}
                              ${TEST_SOURCES})
 
 # vim: set tabstop=4 shiftwidth=4 expandtab:

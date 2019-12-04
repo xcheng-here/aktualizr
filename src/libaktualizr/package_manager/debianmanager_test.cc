@@ -17,11 +17,12 @@ TEST(PackageManagerFactory, Debian_Install_Good) {
 
   std::shared_ptr<INvStorage> storage = INvStorage::newStorage(config.storage);
   std::shared_ptr<PackageManagerInterface> pacman =
-      PackageManagerFactory::makePackageManager(config.pacman, storage, nullptr, nullptr);
+      PackageManagerFactory::makePackageManager(config.pacman, config.bootloader, storage, nullptr);
   EXPECT_TRUE(pacman);
   Json::Value target_json;
   target_json["hashes"]["sha256"] = "hash";
   target_json["length"] = 2;
+  target_json["custom"]["ecuIdentifiers"]["primary_serial"]["hardwareId"] = "primary_hwid";
   Uptane::Target target("good.deb", target_json);
 
   storage->storeEcuSerials({{Uptane::EcuSerial("primary_serial"), Uptane::HardwareIdentifier("primary_hwid")}});
@@ -36,7 +37,7 @@ TEST(PackageManagerFactory, Debian_Install_Good) {
   fhandle->wcommit();
 
   EXPECT_EQ(pacman->install(target).result_code.num_code, data::ResultCode::Numeric::kOk);
-  EXPECT_EQ(pacman->getCurrent(), target);
+  EXPECT_TRUE(pacman->getCurrent().MatchTarget(target));
 }
 
 TEST(PackageManagerFactory, Debian_Install_Bad) {
@@ -46,11 +47,12 @@ TEST(PackageManagerFactory, Debian_Install_Bad) {
   config.storage.path = dir.Path();
   std::shared_ptr<INvStorage> storage = INvStorage::newStorage(config.storage);
   std::shared_ptr<PackageManagerInterface> pacman =
-      PackageManagerFactory::makePackageManager(config.pacman, storage, nullptr, nullptr);
+      PackageManagerFactory::makePackageManager(config.pacman, config.bootloader, storage, nullptr);
   EXPECT_TRUE(pacman);
   Json::Value target_json;
   target_json["hashes"]["sha256"] = "hash";
   target_json["length"] = 2;
+  target_json["custom"]["ecuIdentifiers"]["primary_serial"]["hardwareId"] = "primary_hwid";
   Uptane::Target target("bad.deb", target_json);
 
   std::unique_ptr<StorageTargetWHandle> fhandle = storage->allocateTargetFile(false, target);

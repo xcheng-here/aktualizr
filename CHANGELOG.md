@@ -6,6 +6,151 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 
 ## [??? (unreleased)]
 
+
+## [2019.10] - 2019-11-15
+
+### Added
+
+- Option to send Android repo manifest via garage-push: [PR](https://github.com/advancedtelematic/aktualizr/pull/1440)
+- Expanded [C API](https://github.com/advancedtelematic/aktualizr/blob/master/include/libaktualizr-c.h): [PR #1387](https://github.com/advancedtelematic/aktualizr/pull/1387) and [PR #1429](https://github.com/advancedtelematic/aktualizr/pull/1429)
+
+### Changed
+
+- Hardware information is only sent if it has changed: [PR](https://github.com/advancedtelematic/aktualizr/pull/1434)
+- Builds without OSTree now default to using the binary package manager: [PR](https://github.com/advancedtelematic/aktualizr/pull/1432)
+- New endpoint for reporting hardware information: [PR](https://github.com/advancedtelematic/aktualizr/pull/1421)
+
+### Removed
+
+- libsystemd dependency and socket activation support: [PR](https://github.com/advancedtelematic/aktualizr/pull/1437)
+
+### Fixed
+
+- Enforce a limit of 10 HTTP redirects: [PR](https://github.com/advancedtelematic/aktualizr/pull/1420)
+- Reject malformed root.json: [PR](https://github.com/advancedtelematic/aktualizr/pull/1417)
+- Fall back on full file download if byte range requests are not supported: [PR](https://github.com/advancedtelematic/aktualizr/pull/1416)
+
+
+## [2019.9] - 2019-10-16
+
+### Added
+
+- Handle POSIX signals: [PR](https://github.com/advancedtelematic/aktualizr/pull/1384)
+- Store target custom metadata when installing: [PR](https://github.com/advancedtelematic/aktualizr/pull/1370)
+
+### Fixed
+
+- Incorrect installation status reported if installation interrupted: [PR](https://github.com/advancedtelematic/aktualizr/pull/1402)
+- Binary updates of secondaries from an OSTree primary is again possible: [PR](https://github.com/advancedtelematic/aktualizr/pull/1395)
+- Applications built from release tarballs now report a valid version: [PR](https://github.com/advancedtelematic/aktualizr/pull/1415)
+
+
+## [2019.8] - 2019-09-12
+
+### Fixed
+
+- garage-deploy logic with checking for keys and verifying successful push: [PR](https://github.com/advancedtelematic/aktualizr/pull/1347)
+
+
+## [2019.7] - 2019-09-10
+
+### Added
+
+- `GetInstallationLog` API method: [PR](https://github.com/advancedtelematic/aktualizr/pull/1318)
+- The aktualizr daemon will now automatically remove old downloaded targets to free up disk space: [PR](https://github.com/advancedtelematic/aktualizr/pull/1318)
+- CA path is now always supplied to curl and can be overwritten: [PR](https://github.com/advancedtelematic/aktualizr/pull/1294)
+
+### Changed
+
+- garage-push and garage-deploy can now stream OSTree objects to [S3 via Treehub](https://github.com/advancedtelematic/treehub/pull/70) (instead of getting copied): [PR](https://github.com/advancedtelematic/aktualizr/pull/1305)
+
+### Removed
+
+- hmi-stub (replaced by [libaktualizr-demo-app](https://github.com/advancedtelematic/libaktualizr-demo-app)): [PR](https://github.com/advancedtelematic/aktualizr/pull/1310)
+
+### Fixed
+
+- Uptane metadata is now rechecked (offline) before downloading and installing: [PR](https://github.com/advancedtelematic/aktualizr/pull/1296)
+- Downloaded target hashes are rechecked before installation: [PR](https://github.com/advancedtelematic/aktualizr/pull/1296)
+- Failed downloads are now reported to the backend in the installation report: [PR](https://github.com/advancedtelematic/aktualizr/pull/1301)
+- Binary targets for an OSTree-based primary are now rejected immediately: [PR](https://github.com/advancedtelematic/aktualizr/pull/1282)
+
+
+## [2019.6] - 2019-08-21
+
+### Added
+
+- garage-sign metadata expiration parameters: [PR](https://github.com/advancedtelematic/ota-tuf/pull/237)
+- aktualizr-info --wait-until-provisioned flag: [PR](https://github.com/advancedtelematic/aktualizr/pull/1253)
+- Target object equality requires that hardware IDs match: [PR](https://github.com/advancedtelematic/aktualizr/pull/1258)
+- aktualizr-repo image command now requires a hardware ID: [PR](https://github.com/advancedtelematic/aktualizr/pull/1258)
+- `GetStoredTargets` and `DeleteStoredTarget` aktualizr API methods: [PR](https://github.com/advancedtelematic/aktualizr/pull/1290)
+- [aktualizr-get](https://github.com/advancedtelematic/aktualizr/blob/master/src/aktualizr_get/main.cc) debugging tool: [PR](https://github.com/advancedtelematic/aktualizr/pull/1276)
+- Automatic reboot command is now customizable: [PR](https://github.com/advancedtelematic/aktualizr/pull/1274)
+- Basic [C API](https://github.com/advancedtelematic/aktualizr/blob/master/include/libaktualizr-c.h): [PR](https://github.com/advancedtelematic/aktualizr/pull/1263)
+- Ability to pass custom headers in HTTP requests: [PR](https://github.com/advancedtelematic/aktualizr/pull/1251)
+- Mutual TLS support in garage tools: [PR #1243](https://github.com/advancedtelematic/aktualizr/pull/1243) and [PR #1288](https://github.com/advancedtelematic/aktualizr/pull/1288)
+
+### Changed
+
+- Renamed `GetStoredTarget` to `OpenStoredTarget` in aktualizr API: [PR](https://github.com/advancedtelematic/aktualizr/pull/1290)
+- Renamed aktualizr-repo to uptane-generator: [PR](https://github.com/advancedtelematic/aktualizr/pull/1279)
+- [Documentation](https://github.com/advancedtelematic/aktualizr/blob/master/docs/README.adoc) substantially restructed: [PR](https://github.com/advancedtelematic/aktualizr/pull/1293)
+- Target matching between the Director and Image repositories is now done as early as possible during the check for updates: [PR](https://github.com/advancedtelematic/aktualizr/pull/1271)
+- Target matching requires the hardware IDs to match: [PR](https://github.com/advancedtelematic/aktualizr/pull/1258)
+- Custom URL logic now prefers the Director and if it is empty, only then checks the Image repository value: [PR](https://github.com/advancedtelematic/aktualizr/pull/1267)
+
+
+## [2019.5] - 2019-07-12
+
+### Added
+
+- TLS support by aktualizr-lite: [PR](https://github.com/advancedtelematic/aktualizr/pull/1237)
+- automatic garage-check usage at the end of garage-push/deploy: [PR](https://github.com/advancedtelematic/aktualizr/pull/1244)
+- ccache support: [PR] (https://github.com/advancedtelematic/aktualizr/pull/1248, https://github.com/advancedtelematic/aktualizr/pull/1249)
+- doc on Primary and Secondary bitbaking for RPi: [PR](https://github.com/advancedtelematic/aktualizr/pull/1238)
+
+### Changed
+
+- Stripping of executables in release mode: [PR](https://github.com/advancedtelematic/aktualizr/pull/1234)
+- VirtualSecondary configuration: [PR](https://github.com/advancedtelematic/aktualizr/pull/1246)
+
+### Removed
+
+- Jenkins pipeline and a few references: [PR](https://github.com/advancedtelematic/aktualizr/pull/1236)
+- Test repo meta: [PR](https://github.com/advancedtelematic/aktualizr/pull/1239)
+- SecondaryFactory and VirtualSecondary out of libaktualizr: [PR](https://github.com/advancedtelematic/aktualizr/pull/1241)
+- Fallback on clang-{tidy,format}: [PR](https://github.com/advancedtelematic/aktualizr/pull/1240)
+
+### Fixed
+
+- Logic of finding the latest version by aktualizr-lite: [PR](https://github.com/advancedtelematic/aktualizr/pull/1247)
+- Test regression in docker-app-mgr: [PR] (https://github.com/advancedtelematic/aktualizr/pull/1250)
+- Some more lintian fixes: [PR](https://github.com/advancedtelematic/aktualizr/pull/1242)
+
+
+## [2019.4] - 2019-06-14
+
+### Added
+
+- Campaigns can be declined and postponed via the API: [PR](https://github.com/advancedtelematic/aktualizr/pull/1225)
+- Warn when running two libaktualizr instances simultaneously: [PR #1217](https://github.com/advancedtelematic/aktualizr/pull/1217) and [PR #1229](https://github.com/advancedtelematic/aktualizr/pull/1229)
+- aktualizr-info can output the Snapshot and Timestamp metadata from the Images repository: [PR](https://github.com/advancedtelematic/aktualizr/pull/1207)
+- aktualizr-info can output the current and pending image versions for secondaries: [PR](https://github.com/advancedtelematic/aktualizr/pull/1201)
+- [Support for docker-app package management on top of OSTree](src/libaktualizr/package_manager/dockerappmanager.h): [PR](https://github.com/advancedtelematic/aktualizr/pull/1189)
+
+### Changed
+
+- [Provisioning methods have been renamed](https://github.com/advancedtelematic/aktualizr/blob/master/docs/client-provisioning-methods.adoc). "Autoprovisioning" or "automatic provisioning" is now known as "shared credential provisioning". "Implicit provisioning" is now known as "device credential provisioning". "HSM provisioning" was always a misnomer, so it is now refered to as "device credential provisioning with an HSM". [PR# 1208](https://github.com/advancedtelematic/aktualizr/pull/1208) and [PR #1220](https://github.com/advancedtelematic/aktualizr/pull/1220)
+- aktualizr-cert-provider is now included in the garage_deploy.deb releases: [PR](https://github.com/advancedtelematic/aktualizr/pull/1218)
+- aktualizr-info metadata and key output is now printed without additional text for easier machine parsing (and piping to jq): [PR](https://github.com/advancedtelematic/aktualizr/pull/1215)
+- The IP secondary implementation has been substantially refactored and improved with support for POSIX sockets and easier configuration: [PR #1183](https://github.com/advancedtelematic/aktualizr/pull/1183) and [PR #1198](https://github.com/advancedtelematic/aktualizr/pull/1198)
+
+### Removed
+
+- aktualizr-check-discovery (due to obsolescence): [PR](https://github.com/advancedtelematic/aktualizr/pull/1191)
+
+
 ## [2019.3] - 2019-04-29
 
 ### Added
@@ -35,6 +180,7 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 - Various OSTree-related memory leaks and suppressions: [PR #1114](https://github.com/advancedtelematic/aktualizr/pull/1114), [PR #1120](https://github.com/advancedtelematic/aktualizr/pull/1120), and [PR #1179](https://github.com/advancedtelematic/aktualizr/pull/1179)
 - Various spurious and/or confusing log messages, e.g.: [PR #1112](https://github.com/advancedtelematic/aktualizr/pull/1112), [PR #1137](https://github.com/advancedtelematic/aktualizr/pull/1137), and [PR #1180](https://github.com/advancedtelematic/aktualizr/pull/1180)
 
+
 ## [2019.2] - 2019-02-21
 
 ### Added
@@ -48,6 +194,7 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 - Image files are now stored on the filesystem instead of SQL. This was necessitated by blob size limits in SQLite. [PR](https://github.com/advancedtelematic/aktualizr/pull/1091)
 - The Pause and Resume can now be called at any time and will also pause the internal event queue. API calls during the pause period will be queued up and resumed in order at the end. [PR](https://github.com/advancedtelematic/aktualizr/pull/1075)
 - Boost libraries are now linked dynamically (as with all other dependencies): [PR](https://github.com/advancedtelematic/aktualizr/pull/1067)
+
 
 ## [2019.1] - 2019-01-10
 
@@ -74,6 +221,7 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 
 - Correctly download targets with characters disallowed in URI in their name: [PR](https://github.com/advancedtelematic/aktualizr/pull/996)
 
+
 ## [2018.13] - 2018-11-05
 
 ### Added
@@ -94,6 +242,7 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 
 - Now trim whitespaces in some of our configuration and provisioning files ([from meta-updater #420](https://github.com/advancedtelematic/meta-updater/issues/420))
 
+
 ## [2018.12] - 2018-10-10
 
 ### Changed
@@ -107,11 +256,13 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 - HSM provisioning should not import certificate and private key, they belong to HSM, not to storage
 - Make cert provider respect path to import directory
 
+
 ## [2018.11] - 2018-09-05
 
 ### Fixed
 
 - Really remove the local tuf repo before and after garage-sign.
+
 
 ## [2018.10] - 2018-09-04
 
@@ -123,11 +274,13 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 
 - Prevent re-use of existing tuf repos
 
+
 ## [2018.9] - 2018-08-30
 
 ### Fixed
 
 - Fixes to garage-deploy to improve reliability and logging
+
 
 ## [2018.8] - 2018-08-16
 
@@ -135,17 +288,20 @@ Our versioning scheme is `YEAR.N` where `N` is incremented whenever a new releas
 
 - Bug with path concatenation in garage-deploy
 
+
 ## [2018.7] - 2018-05-31
 
 ### Changed
 
 - garage-deploy package is now built against Ubuntu 16.04
 
+
 ## [2018.6] - 2018-05-28
 
 ### Fixed
 
 - Expiration in garage-sign
+
 
 ## [2018.5] - 2018-02-26
 

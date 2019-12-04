@@ -5,6 +5,7 @@
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
+#include "bootloader/bootloader_config.h"
 #include "crypto/keymanager_config.h"
 #include "crypto/p11_config.h"
 #include "logging/logging_config.h"
@@ -55,11 +56,13 @@ class AktualizrSecondaryConfig : public BaseConfig {
   // from primary config
   P11Config p11;
   PackageConfig pacman;
+  BootloaderConfig bootloader;
   StorageConfig storage;
 
  private:
   void updateFromCommandLine(const boost::program_options::variables_map& cmd);
   void updateFromPropertyTree(const boost::property_tree::ptree& pt) override;
 };
+std::ostream& operator<<(std::ostream& os, const AktualizrSecondaryConfig& cfg);
 
 #endif  // AKTUALIZR_SECONDARY_CONFIG_H_

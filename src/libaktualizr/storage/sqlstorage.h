@@ -66,8 +66,10 @@ class SQLStorage : public SQLStorageBase, public INvStorage {
   void clearNeedReboot() override;
   void saveInstalledVersion(const std::string& ecu_serial, const Uptane::Target& target,
                             InstalledVersionUpdateMode update_mode) override;
-  bool loadInstalledVersions(const std::string& ecu_serial, std::vector<Uptane::Target>* installed_versions,
-                             size_t* current_version, size_t* pending_version) override;
+  bool loadInstalledVersions(const std::string& ecu_serial, boost::optional<Uptane::Target>* current_version,
+                             boost::optional<Uptane::Target>* pending_version) override;
+  bool loadInstallationLog(const std::string& ecu_serial, std::vector<Uptane::Target>* log,
+                           bool only_installed) override;
   bool hasPendingInstall() override;
   void clearInstalledVersions() override;
 
@@ -78,16 +80,21 @@ class SQLStorage : public SQLStorageBase, public INvStorage {
                                      const std::string& correlation_id) override;
   bool loadDeviceInstallationResult(data::InstallationResult* result, std::string* raw_report,
                                     std::string* correlation_id) override;
+  void saveEcuReportCounter(const Uptane::EcuSerial& ecu_serial, int64_t counter) override;
+  bool loadEcuReportCounter(std::vector<std::pair<Uptane::EcuSerial, int64_t>>* results) override;
   void clearInstallationResults() override;
 
   std::unique_ptr<StorageTargetWHandle> allocateTargetFile(bool from_director, const Uptane::Target& target) override;
   std::unique_ptr<StorageTargetRHandle> openTargetFile(const Uptane::Target& target) override;
   boost::optional<std::pair<size_t, std::string>> checkTargetFile(const Uptane::Target& target) const override;
-  void removeTargetFile(const std::string& filename) override;
+  std::vector<Uptane::Target> getTargetFiles() override;
+  void removeTargetFile(const std::string& target_name) override;
   void cleanUp() override;
   StorageType type() override { return StorageType::kSqlite; };
 
  private:
+  boost::filesystem::path images_path_{sqldb_path_.parent_path() / "images"};
+
   void cleanMetaVersion(Uptane::RepositoryType repo, const Uptane::Role& role);
 };
 

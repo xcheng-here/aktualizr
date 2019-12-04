@@ -16,6 +16,7 @@
 #include "test_utils.h"
 #include "uptane/tuf.h"
 #include "uptane/uptanerepository.h"
+#include "uptane_test_common.h"
 #include "utilities/utils.h"
 
 namespace bpo = boost::program_options;
@@ -38,24 +39,8 @@ TEST(Uptane, RandomSerial) {
   conf_1.provision.primary_ecu_serial = "";
   conf_2.provision.primary_ecu_serial = "";
 
-  // Add a secondary to each config, again not specifying serials.
-  Uptane::SecondaryConfig ecu_config;
-  ecu_config.secondary_type = Uptane::SecondaryType::kVirtual;
-  ecu_config.partial_verifying = false;
-  ecu_config.full_client_dir = temp_dir1.Path() / "sec_1";
-  ecu_config.ecu_serial = "";
-  ecu_config.ecu_hardware_id = "secondary_hardware";
-  ecu_config.ecu_private_key = "sec.priv";
-  ecu_config.ecu_public_key = "sec.pub";
-  ecu_config.firmware_path = temp_dir1.Path() / "firmware.txt";
-  ecu_config.target_name_path = temp_dir1.Path() / "firmware_name.txt";
-  ecu_config.metadata_path = temp_dir1.Path() / "secondary_metadata";
-  conf_1.uptane.secondary_configs.push_back(ecu_config);
-  ecu_config.full_client_dir = temp_dir2.Path() / "sec_2";
-  ecu_config.firmware_path = temp_dir2.Path() / "firmware.txt";
-  ecu_config.target_name_path = temp_dir2.Path() / "firmware_name.txt";
-  ecu_config.metadata_path = temp_dir2.Path() / "secondary_metadata";
-  conf_2.uptane.secondary_configs.push_back(ecu_config);
+  UptaneTestCommon::addDefaultSecondary(conf_1, temp_dir1, "", "secondary_hardware", false);
+  UptaneTestCommon::addDefaultSecondary(conf_2, temp_dir2, "", "secondary_hardware", false);
 
   // Initialize.
   auto storage_1 = INvStorage::newStorage(conf_1.storage);
@@ -63,19 +48,19 @@ TEST(Uptane, RandomSerial) {
   auto http1 = std::make_shared<HttpFake>(temp_dir1.Path());
   auto http2 = std::make_shared<HttpFake>(temp_dir2.Path());
 
-  auto uptane_client1 = SotaUptaneClient::newTestClient(conf_1, storage_1, http1);
-  EXPECT_NO_THROW(uptane_client1->initialize());
+  auto uptane_client1 = std_::make_unique<UptaneTestCommon::TestUptaneClient>(conf_1, storage_1, http1);
+  ASSERT_NO_THROW(uptane_client1->initialize());
 
-  auto uptane_client2 = SotaUptaneClient::newTestClient(conf_2, storage_2, http2);
-  EXPECT_NO_THROW(uptane_client2->initialize());
+  auto uptane_client2 = std_::make_unique<UptaneTestCommon::TestUptaneClient>(conf_2, storage_2, http2);
+  ASSERT_NO_THROW(uptane_client2->initialize());
 
   // Verify that none of the serials match.
   EcuSerials ecu_serials_1;
   EcuSerials ecu_serials_2;
-  EXPECT_TRUE(storage_1->loadEcuSerials(&ecu_serials_1));
-  EXPECT_TRUE(storage_2->loadEcuSerials(&ecu_serials_2));
-  EXPECT_EQ(ecu_serials_1.size(), 2);
-  EXPECT_EQ(ecu_serials_2.size(), 2);
+  ASSERT_TRUE(storage_1->loadEcuSerials(&ecu_serials_1));
+  ASSERT_TRUE(storage_2->loadEcuSerials(&ecu_serials_2));
+  ASSERT_EQ(ecu_serials_1.size(), 2);
+  ASSERT_EQ(ecu_serials_2.size(), 2);
   EXPECT_FALSE(ecu_serials_1[0].first.ToString().empty());
   EXPECT_FALSE(ecu_serials_1[1].first.ToString().empty());
   EXPECT_FALSE(ecu_serials_2[0].first.ToString().empty());
@@ -97,31 +82,21 @@ TEST(Uptane, ReloadSerial) {
   EcuSerials ecu_serials_1;
   EcuSerials ecu_serials_2;
 
-  Uptane::SecondaryConfig ecu_config;
-  ecu_config.secondary_type = Uptane::SecondaryType::kVirtual;
-  ecu_config.partial_verifying = false;
-  ecu_config.full_client_dir = temp_dir.Path() / "sec";
-  ecu_config.ecu_serial = "";
-  ecu_config.ecu_hardware_id = "secondary_hardware";
-  ecu_config.ecu_private_key = "sec.priv";
-  ecu_config.ecu_public_key = "sec.pub";
-  ecu_config.firmware_path = temp_dir.Path() / "firmware.txt";
-  ecu_config.target_name_path = temp_dir.Path() / "firmware_name.txt";
-  ecu_config.metadata_path = temp_dir.Path() / "secondary_metadata";
-
   // Initialize. Should store new serials.
   {
     Config conf("tests/config/basic.toml");
     conf.storage.path = temp_dir.Path();
     conf.provision.primary_ecu_serial = "";
-    conf.uptane.secondary_configs.push_back(ecu_config);
 
     auto storage = INvStorage::newStorage(conf.storage);
     auto http = std::make_shared<HttpFake>(temp_dir.Path());
-    auto uptane_client = SotaUptaneClient::newTestClient(conf, storage, http);
-    EXPECT_NO_THROW(uptane_client->initialize());
-    EXPECT_TRUE(storage->loadEcuSerials(&ecu_serials_1));
-    EXPECT_EQ(ecu_serials_1.size(), 2);
+
+    UptaneTestCommon::addDefaultSecondary(conf, temp_dir, "", "secondary_hardware", false);
+    auto uptane_client = std_::make_unique<UptaneTestCommon::TestUptaneClient>(conf, storage, http);
+
+    ASSERT_NO_THROW(uptane_client->initialize());
+    ASSERT_TRUE(storage->loadEcuSerials(&ecu_serials_1));
+    ASSERT_EQ(ecu_serials_1.size(), 2);
     EXPECT_FALSE(ecu_serials_1[0].first.ToString().empty());
     EXPECT_FALSE(ecu_serials_1[1].first.ToString().empty());
   }
@@ -132,14 +107,15 @@ TEST(Uptane, ReloadSerial) {
     Config conf("tests/config/basic.toml");
     conf.storage.path = temp_dir.Path();
     conf.provision.primary_ecu_serial = "";
-    conf.uptane.secondary_configs.push_back(ecu_config);
 
     auto storage = INvStorage::newStorage(conf.storage);
     auto http = std::make_shared<HttpFake>(temp_dir.Path());
-    auto uptane_client = SotaUptaneClient::newTestClient(conf, storage, http);
-    EXPECT_NO_THROW(uptane_client->initialize());
-    EXPECT_TRUE(storage->loadEcuSerials(&ecu_serials_2));
-    EXPECT_EQ(ecu_serials_2.size(), 2);
+    UptaneTestCommon::addDefaultSecondary(conf, temp_dir, "", "secondary_hardware", false);
+    auto uptane_client = std_::make_unique<UptaneTestCommon::TestUptaneClient>(conf, storage, http);
+
+    ASSERT_NO_THROW(uptane_client->initialize());
+    ASSERT_TRUE(storage->loadEcuSerials(&ecu_serials_2));
+    ASSERT_EQ(ecu_serials_2.size(), 2);
     EXPECT_FALSE(ecu_serials_2[0].first.ToString().empty());
     EXPECT_FALSE(ecu_serials_2[1].first.ToString().empty());
   }

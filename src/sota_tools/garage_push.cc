@@ -4,11 +4,14 @@
 #include <boost/program_options.hpp>
 
 #include "accumulator.h"
+#include "authenticate.h"
 #include "deploy.h"
 #include "garage_common.h"
+#include "garage_tools_version.h"
 #include "logging/logging.h"
 #include "ostree_dir_repo.h"
 #include "ostree_repo.h"
+#include "utilities/xml2json.h"
 
 namespace po = boost::program_options;
 
@@ -20,6 +23,7 @@ int main(int argc, char **argv) {
   std::string ref;
   boost::filesystem::path credentials_path;
   std::string cacerts;
+  boost::filesystem::path manifest_path;
   int max_curl_requests;
   RunMode mode = RunMode::kDefault;
   po::options_description desc("garage-push command line options");
@@ -33,6 +37,7 @@ int main(int argc, char **argv) {
     ("ref,r", po::value<std::string>(&ref)->required(), "OSTree ref to push (or commit refhash)")
     ("credentials,j", po::value<boost::filesystem::path>(&credentials_path)->required(), "credentials (json or zip containing json)")
     ("cacert", po::value<std::string>(&cacerts), "override path to CA root certificates, in the same format as curl --cacert")
+    ("repo-manifest", po::value<boost::filesystem::path>(&manifest_path), "manifest describing repository branches used in the image, to be sent as attached metadata")
     ("jobs", po::value<int>(&max_curl_requests)->default_value(30), "maximum number of parallel requests")
     ("dry-run,n", "check arguments and authenticate but don't upload")
     ("walk-tree,w", "walk entire tree and upload all missing objects");
@@ -48,7 +53,7 @@ int main(int argc, char **argv) {
       return EXIT_SUCCESS;
     }
     if (vm.count("version") != 0) {
-      LOG_INFO << "Current garage-push version is: " << GARAGE_TOOLS_VERSION;
+      LOG_INFO << "Current garage-push version is: " << garage_tools_version();
       exit(EXIT_SUCCESS);
     }
     po::notify(vm);
@@ -75,6 +80,8 @@ int main(int argc, char **argv) {
   } else {
     assert(0);
   }
+
+  Utils::setUserAgent(std::string("garage-push/") + garage_tools_version());
 
   if (cacerts != "") {
     if (!boost::filesystem::exists(cacerts)) {
@@ -109,8 +116,6 @@ int main(int argc, char **argv) {
   try {
     std::unique_ptr<OSTreeHash> commit;
     bool is_ref = true;
-
-    ServerCredentials push_credentials(credentials_path);
     OSTreeRef ostree_ref = src_repo->GetRef(ref);
     if (ostree_ref.IsValid()) {
       commit = std_::make_unique<OSTreeHash>(ostree_ref.GetHash());
@@ -124,7 +129,13 @@ int main(int argc, char **argv) {
       is_ref = false;
     }
 
-    if (!UploadToTreehub(src_repo, push_credentials, *commit, cacerts, mode, max_curl_requests)) {
+    ServerCredentials push_credentials(credentials_path);
+    TreehubServer push_server;
+    if (authenticate(cacerts, push_credentials, push_server) != EXIT_SUCCESS) {
+      LOG_FATAL << "Authentication with push server failed";
+      return EXIT_FAILURE;
+    }
+    if (!UploadToTreehub(src_repo, push_server, *commit, mode, max_curl_requests)) {
       LOG_FATAL << "Upload to treehub failed";
       return EXIT_FAILURE;
     }
@@ -137,6 +148,35 @@ int main(int argc, char **argv) {
       if (!PushRootRef(push_credentials, ostree_ref, cacerts, mode)) {
         LOG_FATAL << "Error pushing root ref to treehub";
         return EXIT_FAILURE;
+      }
+    }
+
+    if (manifest_path != "") {
+      try {
+        std::string manifest_json_str;
+        std::ifstream ifs(manifest_path.string());
+        std::stringstream ss;
+        auto manifest_json = xml2json::xml2json(ifs);
+        ss << manifest_json;
+        manifest_json_str = ss.str();
+
+        LOG_INFO << "Sending manifest:\n" << manifest_json_str;
+        if (mode != RunMode::kDryRun) {
+          CURL *curl = curl_easy_init();
+          curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+          push_server.SetContentType("Content-Type: application/json");
+          push_server.InjectIntoCurl("manifests/" + commit->string(), curl);
+          curlEasySetoptWrapper(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+          curlEasySetoptWrapper(curl, CURLOPT_POSTFIELDS, manifest_json_str.c_str());
+          CURLcode rc = curl_easy_perform(curl);
+
+          if (rc != CURLE_OK) {
+            LOG_ERROR << "Error pushing repo manifest to Treehub";
+          }
+          curl_easy_cleanup(curl);
+        }
+      } catch (std::exception &e) {
+        LOG_ERROR << "Could not send repo manifest to Treehub";
       }
     }
   } catch (const BadCredentialsArchive &e) {

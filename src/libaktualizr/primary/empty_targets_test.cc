@@ -2,16 +2,13 @@
 
 #include <string>
 
-#include <boost/process.hpp>
-
 #include "httpfake.h"
 #include "primary/aktualizr.h"
 #include "test_utils.h"
 #include "uptane_test_common.h"
-
 #include "utilities/fault_injection.h"
 
-boost::filesystem::path aktualizr_repo_path;
+boost::filesystem::path uptane_generator_path;
 
 class HttpRejectEmptyCorrId : public HttpFake {
  public:
@@ -43,19 +40,17 @@ TEST(Aktualizr, EmptyTargets) {
   conf.pacman.fake_need_reboot = true;
   logger_set_threshold(boost::log::trivial::trace);
 
-  Process akt_repo(aktualizr_repo_path.string());
-  akt_repo.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
-  akt_repo.run({"image", "--path", meta_dir.PathString(), "--filename", "tests/test_data/firmware.txt", "--targetname",
-                "firmware.txt"});
-  akt_repo.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "firmware.txt", "--hwid", "primary_hw",
-                "--serial", "CA:FE:A6:D2:84:9D"});
-  akt_repo.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
-  // Work around inconsistent directory naming.
-  Utils::copyDir(meta_dir.Path() / "repo/image", meta_dir.Path() / "repo/repo");
+  Process uptane_gen(uptane_generator_path.string());
+  uptane_gen.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+  uptane_gen.run({"image", "--path", meta_dir.PathString(), "--filename", "tests/test_data/firmware.txt",
+                  "--targetname", "firmware.txt", "--hwid", "primary_hw"});
+  uptane_gen.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "firmware.txt", "--hwid", "primary_hw",
+                  "--serial", "CA:FE:A6:D2:84:9D"});
+  uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
 
   auto storage = INvStorage::newStorage(conf.storage);
   {
-    Aktualizr aktualizr(conf, storage, http);
+    UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
     aktualizr.Initialize();
 
     result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -64,8 +59,8 @@ TEST(Aktualizr, EmptyTargets) {
     result::Download download_result = aktualizr.Download(update_result.updates).get();
     EXPECT_EQ(download_result.status, result::DownloadStatus::kSuccess);
 
-    akt_repo.run({"emptytargets", "--path", meta_dir.PathString()});
-    akt_repo.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+    uptane_gen.run({"emptytargets", "--path", meta_dir.PathString()});
+    uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
 
     result::UpdateCheck update_result2 = aktualizr.CheckUpdates().get();
     EXPECT_EQ(update_result2.status, result::UpdateStatus::kUpdatesAvailable);
@@ -75,10 +70,10 @@ TEST(Aktualizr, EmptyTargets) {
     EXPECT_EQ(install_result.ecu_reports[0].install_res.result_code.num_code,
               data::ResultCode::Numeric::kNeedCompletion);
 
-    aktualizr.uptane_client_->package_manager_->completeInstall();
+    aktualizr.uptane_client()->package_manager_->completeInstall();
   }
   {
-    Aktualizr aktualizr(conf, storage, http);
+    UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
     aktualizr.Initialize();
 
     const Json::Value manifest = http->last_manifest["signed"];
@@ -99,7 +94,54 @@ TEST(Aktualizr, EmptyTargets) {
 
 #ifdef FIU_ENABLE
 
-/* Check that Aktualizr switches back to empty targets after completing an
+/* Check that Aktualizr switches back to empty targets after failing a
+ * download attempt (OTA-3169) */
+TEST(Aktualizr, EmptyTargetsAfterDownload) {
+  TemporaryDirectory temp_dir;
+  TemporaryDirectory meta_dir;
+  auto http = std::make_shared<HttpRejectEmptyCorrId>(temp_dir.Path(), meta_dir.Path() / "repo");
+  Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
+  logger_set_threshold(boost::log::trivial::trace);
+
+  Process uptane_gen(uptane_generator_path.string());
+  uptane_gen.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+  uptane_gen.run({"image", "--path", meta_dir.PathString(), "--filename", "tests/test_data/firmware.txt",
+                  "--targetname", "firmware.txt", "--hwid", "primary_hw"});
+  uptane_gen.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "firmware.txt", "--hwid", "primary_hw",
+                  "--serial", "CA:FE:A6:D2:84:9D"});
+  uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+
+  // failing download
+  fault_injection_init();
+  auto storage = INvStorage::newStorage(conf.storage);
+  {
+    UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
+    aktualizr.Initialize();
+
+    result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
+    EXPECT_EQ(update_result.status, result::UpdateStatus::kUpdatesAvailable);
+
+    fault_injection_enable("fake_package_download", 1, "", 0);
+    result::Download download_result = aktualizr.Download(update_result.updates).get();
+    EXPECT_EQ(download_result.status, result::DownloadStatus::kError);
+    fault_injection_disable("fake_package_download");
+  }
+
+  // Backend reacts to failure: no need to install the target anymore
+  uptane_gen.run({"emptytargets", "--path", meta_dir.PathString()});
+  uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+
+  // check that no update is available
+  {
+    UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
+    aktualizr.Initialize();
+
+    result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
+    EXPECT_EQ(update_result.status, result::UpdateStatus::kNoUpdatesAvailable);
+  }
+}
+
+/* Check that Aktualizr switches back to empty targets after failing an
  * installation attempt (OTA-2587) */
 TEST(Aktualizr, EmptyTargetsAfterInstall) {
   TemporaryDirectory temp_dir;
@@ -108,20 +150,19 @@ TEST(Aktualizr, EmptyTargetsAfterInstall) {
   Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
   logger_set_threshold(boost::log::trivial::trace);
 
-  Process akt_repo(aktualizr_repo_path.string());
-  akt_repo.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
-  akt_repo.run({"image", "--path", meta_dir.PathString(), "--filename", "tests/test_data/firmware.txt", "--targetname",
-                "firmware.txt"});
-  akt_repo.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "firmware.txt", "--hwid", "primary_hw",
-                "--serial", "CA:FE:A6:D2:84:9D"});
-  akt_repo.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
-  // Work around inconsistent directory naming.
-  Utils::copyDir(meta_dir.Path() / "repo/image", meta_dir.Path() / "repo/repo");
+  Process uptane_gen(uptane_generator_path.string());
+  uptane_gen.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+  uptane_gen.run({"image", "--path", meta_dir.PathString(), "--filename", "tests/test_data/firmware.txt",
+                  "--targetname", "firmware.txt", "--hwid", "primary_hw"});
+  uptane_gen.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "firmware.txt", "--hwid", "primary_hw",
+                  "--serial", "CA:FE:A6:D2:84:9D"});
+  uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
 
   // failing install
+  fault_injection_init();
   auto storage = INvStorage::newStorage(conf.storage);
   {
-    Aktualizr aktualizr(conf, storage, http);
+    UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
     aktualizr.Initialize();
 
     result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -130,10 +171,8 @@ TEST(Aktualizr, EmptyTargetsAfterInstall) {
     result::Download download_result = aktualizr.Download(update_result.updates).get();
     EXPECT_EQ(download_result.status, result::DownloadStatus::kSuccess);
 
-    update_result = aktualizr.CheckUpdates().get();
-    fiu_init(0);
     fault_injection_enable("fake_package_install", 1, "", 0);
-    result::Install install_result = aktualizr.Install(update_result.updates).get();
+    result::Install install_result = aktualizr.Install(download_result.updates).get();
     EXPECT_EQ(install_result.ecu_reports.size(), 1);
     EXPECT_EQ(install_result.ecu_reports[0].install_res.result_code.num_code,
               data::ResultCode::Numeric::kInstallFailed);
@@ -141,12 +180,12 @@ TEST(Aktualizr, EmptyTargetsAfterInstall) {
   }
 
   // Backend reacts to failure: no need to install the target anymore
-  akt_repo.run({"emptytargets", "--path", meta_dir.PathString()});
-  akt_repo.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+  uptane_gen.run({"emptytargets", "--path", meta_dir.PathString()});
+  uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
 
   // check that no update is available
   {
-    Aktualizr aktualizr(conf, storage, http);
+    UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
     aktualizr.Initialize();
 
     result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -160,10 +199,10 @@ TEST(Aktualizr, EmptyTargetsAfterInstall) {
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   if (argc != 2) {
-    std::cerr << "Error: " << argv[0] << " requires the path to the aktualizr-repo utility\n";
+    std::cerr << "Error: " << argv[0] << " requires the path to the uptane-generator utility\n";
     return EXIT_FAILURE;
   }
-  aktualizr_repo_path = argv[1];
+  uptane_generator_path = argv[1];
 
   logger_init();
   logger_set_threshold(boost::log::trivial::trace);

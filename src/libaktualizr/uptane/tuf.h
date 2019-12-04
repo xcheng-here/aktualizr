@@ -6,6 +6,7 @@
  */
 
 #include <functional>
+#include <map>
 #include <ostream>
 #include <set>
 #include <vector>
@@ -219,31 +220,36 @@ class Hash {
 
 std::ostream &operator<<(std::ostream &os, const Hash &h);
 
+using EcuMap = std::map<EcuSerial, HardwareIdentifier>;
+
 class Target {
  public:
   // From Uptane metadata
   Target(std::string filename, const Json::Value &content);
-  // Internal, does not have type or ecu types informations
-  Target(std::string filename, std::vector<Hash> hashes, uint64_t length, std::string correlation_id = "");
+  // Internal, does not have type. Only used for reading installation_versions
+  // list and by various tests.
+  Target(std::string filename, EcuMap ecus, std::vector<Hash> hashes, uint64_t length, std::string correlation_id = "");
 
   static Target Unknown();
 
-  const std::map<EcuSerial, HardwareIdentifier> &ecus() const { return ecus_; }
+  const EcuMap &ecus() const { return ecus_; }
   std::string filename() const { return filename_; }
   std::string sha256Hash() const;
   std::string sha512Hash() const;
   std::vector<Hash> hashes() const { return hashes_; };
   std::vector<HardwareIdentifier> hardwareIds() const { return hwids_; };
-  std::string custom_version() const { return custom_version_; }
+  std::string custom_version() const { return custom_["version"].asString(); }
+  Json::Value custom_data() const { return custom_; }
+  void updateCustom(Json::Value &custom) { custom_ = custom; };
   std::string correlation_id() const { return correlation_id_; };
   void setCorrelationId(std::string correlation_id) { correlation_id_ = std::move(correlation_id); };
   uint64_t length() const { return length_; }
   bool IsValid() const { return valid; }
   std::string uri() const { return uri_; };
+  void setUri(std::string uri) { uri_ = std::move(uri); };
+  bool MatchHash(const Hash &hash) const;
 
-  bool MatchWith(const Hash &hash) const;
-
-  bool IsForSecondary(const EcuSerial &ecuIdentifier) const {
+  bool IsForEcu(const EcuSerial &ecuIdentifier) const {
     return (std::find_if(ecus_.cbegin(), ecus_.cend(), [&ecuIdentifier](std::pair<EcuSerial, HardwareIdentifier> pair) {
               return pair.first == ecuIdentifier;
             }) != ecus_.cend());
@@ -257,32 +263,9 @@ class Target {
    */
   bool IsOstree() const;
 
-  bool operator==(const Target &t2) const {
-    // if (type_ != t2.type_) return false; // Director doesn't include targetFormat
-    if (filename_ != t2.filename_) {
-      return false;
-    }
-    if (length_ != t2.length_) {
-      return false;
-    }
-
-    // requirements:
-    // - all hashes of the same type should match
-    // - at least one pair of hashes should match
-    bool oneMatchingHash = false;
-    for (const Hash &hash : hashes_) {
-      for (const Hash &hash2 : t2.hashes_) {
-        if (hash.type() == hash2.type() && !(hash == hash2)) {
-          return false;
-        }
-        if (hash == hash2) {
-          oneMatchingHash = true;
-        }
-      }
-    }
-    return oneMatchingHash;
-  }
-
+  // Comparison is usually not meaningful. Use MatchTarget instead.
+  bool operator==(const Target &t2) = delete;
+  bool MatchTarget(const Target &t2) const;
   Json::Value toDebugJson() const;
   friend std::ostream &operator<<(std::ostream &os, const Target &t);
 
@@ -290,10 +273,10 @@ class Target {
   bool valid{true};
   std::string filename_;
   std::string type_;
-  std::map<EcuSerial, HardwareIdentifier> ecus_;
+  EcuMap ecus_;  // Director only
   std::vector<Hash> hashes_;
-  std::vector<HardwareIdentifier> hwids_;
-  std::string custom_version_;
+  std::vector<HardwareIdentifier> hwids_;  // Images repo only
+  Json::Value custom_;
   uint64_t length_{0};
   std::string correlation_id_;
   std::string uri_;
@@ -347,7 +330,8 @@ class MetaWithKeys : public BaseMeta {
   void ParseKeys(RepositoryType repo, const Json::Value &keys);
   // role is the name of a role described in this object's metadata.
   // meta_role is the name of this object's role.
-  void ParseRole(RepositoryType repo, const Json::ValueIterator &it, const Role &role, const std::string &meta_role);
+  void ParseRole(RepositoryType repo, const Json::ValueConstIterator &it, const Role &role,
+                 const std::string &meta_role);
 
   /**
    * Take a JSON blob that contains a signatures/signed component that is supposedly for a given role, and check that is
@@ -359,6 +343,7 @@ class MetaWithKeys : public BaseMeta {
    * * "expires" is in the past (vs 'now')
    * * The blob has valid signatures from enough keys to cross the threshold for this role
    * @param repo - Repository type (only used to improve the error messages)
+   * @param role - The Uptane role of the signed metadata object
    * @param signed_object
    * @return
    */
@@ -405,6 +390,7 @@ class Root : public MetaWithKeys {
    * * "expires" is in the past (vs 'now')
    * * The blob has valid signatures from enough keys to cross the threshold for this role
    * @param repo - Repository type (only used to improve the error messages)
+   * @param role - The Uptane role of the signed metadata object
    * @param signed_object
    * @return
    */
@@ -420,6 +406,18 @@ class Root : public MetaWithKeys {
   Policy policy_;
 };
 
+static bool MatchTargetVector(const std::vector<Uptane::Target> &v1, const std::vector<Uptane::Target> &v2) {
+  if (v1.size() != v2.size()) {
+    return false;
+  }
+  for (size_t i = 0; i < v1.size(); ++i) {
+    if (!v1[i].MatchTarget(v2[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // Also used for delegated targets.
 class Targets : public MetaWithKeys {
  public:
@@ -429,14 +427,26 @@ class Targets : public MetaWithKeys {
   ~Targets() override = default;
 
   bool operator==(const Targets &rhs) const {
-    return version_ == rhs.version() && expiry_ == rhs.expiry() && targets == rhs.targets;
+    return version_ == rhs.version() && expiry_ == rhs.expiry() && MatchTargetVector(targets, rhs.targets);
   }
+
   const std::string &correlation_id() const { return correlation_id_; }
+
   void clear() {
     targets.clear();
     delegated_role_names_.clear();
     paths_for_role_.clear();
     terminating_role_.clear();
+  }
+
+  std::vector<Uptane::Target> getTargets(const Uptane::EcuSerial &ecu_id) const {
+    std::vector<Uptane::Target> result;
+    for (auto it = targets.begin(); it != targets.end(); ++it) {
+      if (it->ecus().find(ecu_id) != it->ecus().end()) {
+        result.push_back(*it);
+      }
+    }
+    return result;
   }
 
   std::vector<Uptane::Target> targets;

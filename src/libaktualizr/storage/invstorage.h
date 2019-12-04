@@ -164,8 +164,10 @@ class INvStorage {
 
   virtual void saveInstalledVersion(const std::string& ecu_serial, const Uptane::Target& target,
                                     InstalledVersionUpdateMode update_mode) = 0;
-  virtual bool loadInstalledVersions(const std::string& ecu_serial, std::vector<Uptane::Target>* installed_versions,
-                                     size_t* current_version, size_t* pending_version) = 0;
+  virtual bool loadInstalledVersions(const std::string& ecu_serial, boost::optional<Uptane::Target>* current_version,
+                                     boost::optional<Uptane::Target>* pending_version) = 0;
+  virtual bool loadInstallationLog(const std::string& ecu_serial, std::vector<Uptane::Target>* log,
+                                   bool only_installed) = 0;
   virtual bool hasPendingInstall() = 0;
   virtual void clearInstalledVersions() = 0;
 
@@ -179,6 +181,9 @@ class INvStorage {
                                             std::string* correlation_id) = 0;
   virtual void clearInstallationResults() = 0;
 
+  virtual void saveEcuReportCounter(const Uptane::EcuSerial& ecu_serial, int64_t counter) = 0;
+  virtual bool loadEcuReportCounter(std::vector<std::pair<Uptane::EcuSerial, int64_t>>* results) = 0;
+
   virtual boost::optional<std::pair<size_t, std::string>> checkTargetFile(const Uptane::Target& target) const = 0;
 
   // Incremental file API
@@ -186,7 +191,8 @@ class INvStorage {
                                                                    const Uptane::Target& target) = 0;
 
   virtual std::unique_ptr<StorageTargetRHandle> openTargetFile(const Uptane::Target& target) = 0;
-  virtual void removeTargetFile(const std::string& filename) = 0;
+  virtual std::vector<Uptane::Target> getTargetFiles() = 0;
+  virtual void removeTargetFile(const std::string& target_name) = 0;
 
   virtual void cleanUp() = 0;
 
@@ -198,12 +204,15 @@ class INvStorage {
 
   // Not purely virtual
   void importData(const ImportConfig& import_config);
-  bool loadPrimaryInstalledVersions(std::vector<Uptane::Target>* installed_versions, size_t* current_version,
-                                    size_t* pending_version) {
-    return loadInstalledVersions("", installed_versions, current_version, pending_version);
+  bool loadPrimaryInstalledVersions(boost::optional<Uptane::Target>* current_version,
+                                    boost::optional<Uptane::Target>* pending_version) {
+    return loadInstalledVersions("", current_version, pending_version);
   }
   void savePrimaryInstalledVersion(const Uptane::Target& target, InstalledVersionUpdateMode update_mode) {
     return saveInstalledVersion("", target, update_mode);
+  }
+  bool loadPrimaryInstallationLog(std::vector<Uptane::Target>* log, bool only_installed) {
+    return loadInstallationLog("", log, only_installed);
   }
 
  private:

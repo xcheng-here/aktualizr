@@ -65,7 +65,7 @@ data::InstallationResult OstreeManager::pull(const boost::filesystem::path &sysr
                                              const std::string &ostree_server, const KeyManager &keys,
                                              const Uptane::Target &target, const api::FlowControlToken *token,
                                              OstreeProgressCb progress_cb) {
-  std::string refhash = target.sha256Hash();
+  const std::string refhash = target.sha256Hash();
   const char *const commit_ids[] = {refhash.c_str()};
   GError *error = nullptr;
   GVariantBuilder builder;
@@ -210,33 +210,80 @@ void OstreeManager::completeInstall() const {
 }
 
 data::InstallationResult OstreeManager::finalizeInstall(const Uptane::Target &target) const {
-  LOG_INFO << "Checking installation of new OStree sysroot";
-  Uptane::Target current = getCurrent();
+  LOG_INFO << "Checking installation of new OSTree sysroot";
+  const std::string current_hash = getCurrentHash();
 
-  if (current.sha256Hash() != target.sha256Hash()) {
-    LOG_ERROR << "Expected to boot on " << target.sha256Hash() << " but, " << current.sha256Hash()
-              << " found, the system might have experienced a rollback";
+  if (current_hash != target.sha256Hash()) {
+    LOG_ERROR << "Expected to boot " << target.sha256Hash() << " but found " << current_hash
+              << ". The system may have been rolled back.";
     return data::InstallationResult(data::ResultCode::Numeric::kInstallFailed, "Wrong version booted");
   }
 
   return data::InstallationResult(data::ResultCode::Numeric::kOk, "Successfully booted on new version");
 }
 
-OstreeManager::OstreeManager(PackageConfig pconfig, std::shared_ptr<INvStorage> storage,
-                             std::shared_ptr<Bootloader> bootloader, std::shared_ptr<HttpInterface> http)
-    : PackageManagerInterface(std::move(pconfig), std::move(storage), std::move(bootloader), std::move(http)) {
+OstreeManager::OstreeManager(PackageConfig pconfig, BootloaderConfig bconfig, std::shared_ptr<INvStorage> storage,
+                             std::shared_ptr<HttpInterface> http)
+    : PackageManagerInterface(std::move(pconfig), std::move(bconfig), std::move(storage), std::move(http)) {
   GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.sysroot);
   if (sysroot_smart == nullptr) {
     throw std::runtime_error("Could not find OSTree sysroot at: " + config.sysroot.string());
+  }
+
+  // consider boot successful as soon as we started, missing internet connection or connection to secondaries are not
+  // proper reasons to roll back
+  if (imageUpdated()) {
+    bootloader_->setBootOK();
   }
 }
 
 bool OstreeManager::fetchTarget(const Uptane::Target &target, Uptane::Fetcher &fetcher, const KeyManager &keys,
                                 FetcherProgressCb progress_cb, const api::FlowControlToken *token) {
   if (!target.IsOstree()) {
+    // The case when the ostree package manager is set as a package manager for aktualizr
+    // while the target is aimed for a secondary ECU that is configured with another/non-ostree package manager
     return PackageManagerInterface::fetchTarget(target, fetcher, keys, progress_cb, token);
   }
   return OstreeManager::pull(config.sysroot, config.ostree_server, keys, target, token, progress_cb).success;
+}
+
+TargetStatus OstreeManager::verifyTarget(const Uptane::Target &target) const {
+  if (!target.IsOstree()) {
+    // The case when the ostree package manager is set as a package manager for aktualizr
+    // while the target is aimed for a secondary ECU that is configured with another/non-ostree package manager
+    return PackageManagerInterface::verifyTarget(target);
+  }
+  return verifyTargetInternal(target);
+}
+
+TargetStatus OstreeManager::verifyTargetInternal(const Uptane::Target &target) const {
+  const std::string refhash = target.sha256Hash();
+  GError *error = nullptr;
+
+  GObjectUniquePtr<OstreeSysroot> sysroot = OstreeManager::LoadSysroot(config.sysroot);
+  GObjectUniquePtr<OstreeRepo> repo = LoadRepo(sysroot.get(), &error);
+  if (error != nullptr) {
+    LOG_ERROR << "Could not get OSTree repo";
+    g_error_free(error);
+    return TargetStatus::kNotFound;
+  }
+
+  GHashTable *ref_list = nullptr;
+  if (ostree_repo_list_commit_objects_starting_with(repo.get(), refhash.c_str(), &ref_list, nullptr, &error) != 0) {
+    guint length = g_hash_table_size(ref_list);
+    g_hash_table_destroy(ref_list);  // OSTree creates the table with destroy notifiers, so no memory leaks expected
+    // should never be greater than 1, but use >= for robustness
+    if (length >= 1) {
+      return TargetStatus::kGood;
+    }
+  }
+  if (error != nullptr) {
+    g_error_free(error);
+    error = nullptr;
+  }
+
+  LOG_ERROR << "Could not find OSTree commit";
+  return TargetStatus::kNotFound;
 }
 
 Json::Value OstreeManager::getInstalledPackages() const {
@@ -260,20 +307,39 @@ Json::Value OstreeManager::getInstalledPackages() const {
   return packages;
 }
 
-Uptane::Target OstreeManager::getCurrent() const {
+std::string OstreeManager::getCurrentHash() const {
   GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.sysroot);
   OstreeDeployment *booted_deployment = ostree_sysroot_get_booted_deployment(sysroot_smart.get());
   if (booted_deployment == nullptr) {
     throw std::runtime_error("Could not get booted deployment in " + config.sysroot.string());
   }
-  std::string current_hash = ostree_deployment_get_csum(booted_deployment);
+  return ostree_deployment_get_csum(booted_deployment);
+}
 
+Uptane::Target OstreeManager::getCurrent() const {
+  const std::string current_hash = getCurrentHash();
+  boost::optional<Uptane::Target> current_version;
+  // This may appear Primary-specific, but since Secondaries only know about
+  // themselves, this actually works just fine for them, too.
+  storage_->loadPrimaryInstalledVersions(&current_version, nullptr);
+
+  if (!!current_version && current_version->sha256Hash() == current_hash) {
+    return *current_version;
+  }
+
+  LOG_ERROR << "Current versions in storage and reported by ostree do not match";
+
+  // Look into installation log to find a possible candidate. Again, despite the
+  // name, this will work for Secondaries as well.
   std::vector<Uptane::Target> installed_versions;
-  storage_->loadPrimaryInstalledVersions(&installed_versions, nullptr, nullptr);
+  storage_->loadPrimaryInstallationLog(&installed_versions, false);
 
-  // Version should be in installed versions
-  std::vector<Uptane::Target>::iterator it;
-  for (it = installed_versions.begin(); it != installed_versions.end(); it++) {
+  // Version should be in installed versions. It's possible that multiple
+  // targets could have the same sha256Hash. In this case the safest assumption
+  // is that the most recent (the reverse of the vector) target is what we
+  // should return.
+  std::vector<Uptane::Target>::reverse_iterator it;
+  for (it = installed_versions.rbegin(); it != installed_versions.rend(); it++) {
     if (it->sha256Hash() == current_hash) {
       return *it;
     }

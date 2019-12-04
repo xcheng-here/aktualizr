@@ -1,15 +1,20 @@
 #!/usr/bin/python3
 
 import argparse
+import contextlib
+import multiprocessing
+import logging
+import os
 import sys
 import socket
+import socketserver
 
 from http.server import SimpleHTTPRequestHandler, HTTPServer
+from os import path
 from time import sleep
 
-file_path = None
-meta_path = None
-fail_injector = None
+
+logger = logging.getLogger("fake_test_server")
 
 
 class FailInjector:
@@ -38,14 +43,14 @@ class Handler(SimpleHTTPRequestHandler):
                 self.wfile.write(data)
 
     def serve_meta(self, uri):
-        if meta_path is None:
+        if self.server.meta_path is None:
             raise RuntimeError("Please supply a path for metadata")
-        self._serve_simple(meta_path + uri)
+        self._serve_simple(self.server.meta_path + uri)
 
     def serve_target(self, filename):
-        if file_path is None:
+        if self.server.target_path is None:
             raise RuntimeError("Please supply a path for targets")
-        self._serve_simple(file_path + filename)
+        self._serve_simple(self.server.target_path + filename)
 
     def do_GET(self):
         if self.path.startswith("/director/") and self.path.endswith(".json"):
@@ -57,7 +62,7 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             role = self.path[len("/repo/"):]
-            self.serve_meta('/repo/image/' + role)
+            self.serve_meta('/repo/repo/' + role)
         elif self.path.startswith("/repo/targets"):
             self.send_response(200)
             self.end_headers()
@@ -109,21 +114,30 @@ class Handler(SimpleHTTPRequestHandler):
             for i in range(5):
                 self.wfile.write(b'aa')
                 sleep(1)
+        elif self.path == '/campaigner/campaigns':
+            self.send_response(200)
+            self.end_headers()
+            self.serve_meta("/campaigns.json")
+        elif self.path == '/user_agent':
+            user_agent = self.headers.get('user-agent')
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(user_agent.encode())
         else:
-            if fail_injector is not None and fail_injector.fail(self):
+            if self.server.fail_injector is not None and self.server.fail_injector.fail(self):
                 return
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'{"path": "%b"}' % bytes(self.path, "utf8"))
 
     def do_POST(self):
-        if fail_injector is not None and fail_injector.fail(self):
+        if self.server.fail_injector is not None and self.server.fail_injector.fail(self):
             return
 
         if self.path == '/devices':
             self.send_response(200)
             self.end_headers()
-            with open('tests/test_data/cred.p12', 'rb') as source:
+            with open(path.join(self.server.srcdir, 'tests/test_data/cred.p12'), 'rb') as source:
                 while True:
                     data = source.read(1024)
                     if not data:
@@ -137,6 +151,9 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         elif self.path == "/director/manifest":
+            content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
+            post_data = self.rfile.read(content_length)  # <--- Gets the data itself
+            print(post_data)  # <-- Print post data
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b"{}")
@@ -161,29 +178,68 @@ class Handler(SimpleHTTPRequestHandler):
         self.do_POST()
 
 
-class ReUseHTTPServer(HTTPServer):
+class FakeTestServer(socketserver.ThreadingMixIn, HTTPServer):
+    def __init__(self, addr, meta_path, target_path, srcdir=None, fail_injector=None):
+        super(HTTPServer, self).__init__(server_address=addr, RequestHandlerClass=Handler)
+        self.meta_path = meta_path
+        if target_path is not None:
+            self.target_path = target_path
+        elif meta_path is not None:
+            self.target_path = path.join(meta_path, 'repo/repo/targets')
+        else:
+            self.target_path = None
+        self.fail_injector = fail_injector
+        self.srcdir = srcdir if srcdir is not None else os.getcwd()
+
     def server_bind(self):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         HTTPServer.server_bind(self)
 
 
-def main():
-    global file_path, meta_path, fail_injector
+class FakeTestServerBackground:
 
+    def __init__(self, meta_path, target_path=None, srcdir=None, port=0):
+        if srcdir is None:
+            srcdir = os.getcwd()
+        self._httpd = FakeTestServer(addr=('', port), meta_path=meta_path,
+                                     target_path=target_path, srcdir=srcdir)
+        self._server_process = self.__class__.Process(target=self._httpd.serve_forever)
+        self.base_url = 'http://localhost:{}'.format(self.port)
+
+    class Process(multiprocessing.Process):
+        def run(self):
+            with open(os.devnull, 'w') as devnull_fd:
+                with contextlib.redirect_stdout(devnull_fd),\
+                        contextlib.redirect_stderr(devnull_fd):
+                    super(multiprocessing.Process, self).run()
+
+    @property
+    def port(self):
+        return self._httpd.server_port
+
+    def __enter__(self):
+        self._server_process.start()
+        logger.debug("Uptane server running and listening: {}".format(self.port))
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._server_process.terminate()
+        self._server_process.join(timeout=10)
+        logger.debug("Uptane server has been stopped")
+
+
+def main():
     parser = argparse.ArgumentParser(description='Run a fake OTA backend')
     parser.add_argument('port', type=int, help='server port')
     parser.add_argument('-t', '--targets', help='targets directory', default=None)
     parser.add_argument('-m', '--meta', help='meta directory', default=None)
     parser.add_argument('-f', '--fail', help='enable intermittent failure', action='store_true')
+    parser.add_argument('-s', '--srcdir', help='path to the aktualizr source directory')
     args = parser.parse_args()
 
-    server_address = ('', args.port)
-    file_path = args.targets
-    meta_path = args.meta
-    if args.fail:
-        fail_injector = FailInjector()
-
-    httpd = ReUseHTTPServer(server_address, Handler)
+    httpd = FakeTestServer(('', args.port), meta_path=args.meta,
+                           target_path=args.targets, srcdir=args.srcdir,
+                           fail_injector=FailInjector() if args.fail else None)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

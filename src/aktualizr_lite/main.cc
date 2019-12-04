@@ -1,52 +1,73 @@
 #include <unistd.h>
 #include <iostream>
 
-#include <openssl/ssl.h>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
 #include "config/config.h"
-#include "package_manager/ostreemanager.h"
-#include "primary/sotauptaneclient.h"
+#include "helpers.h"
+
+#include "utilities/aktualizr_version.h"
 
 namespace bpo = boost::program_options;
 
-static int status_main(Config &config, const bpo::variables_map &unused) {
+static void log_info_target(const std::string &prefix, const Config &config, const Uptane::Target &t) {
+  auto name = t.filename();
+  if (t.custom_version().length() > 0) {
+    name = t.custom_version();
+  }
+  LOG_INFO << prefix + name << "\tsha256:" << t.sha256Hash();
+  if (config.pacman.type == PackageManager::kOstreeDockerApp) {
+    bool shown = false;
+    auto apps = t.custom_data()["docker_apps"];
+    for (Json::ValueIterator i = apps.begin(); i != apps.end(); ++i) {
+      if (!shown) {
+        shown = true;
+        LOG_INFO << "\tDocker Apps:";
+      }
+      if ((*i).isObject() && (*i).isMember("filename")) {
+        LOG_INFO << "\t\t" << i.key().asString() << " -> " << (*i)["filename"].asString();
+      } else {
+        LOG_ERROR << "\t\tInvalid custom data for docker-app: " << i.key().asString();
+      }
+    }
+  }
+}
+
+static int status_main(LiteClient &client, const bpo::variables_map &unused) {
   (void)unused;
-  GObjectUniquePtr<OstreeSysroot> sysroot_smart = OstreeManager::LoadSysroot(config.pacman.sysroot);
-  OstreeDeployment *deployment = ostree_sysroot_get_booted_deployment(sysroot_smart.get());
-  if (deployment == nullptr) {
+  auto target = client.primary->getCurrent();
+
+  if (target.MatchTarget(Uptane::Target::Unknown())) {
     LOG_INFO << "No active deployment found";
   } else {
-    LOG_INFO << "Active image is: " << ostree_deployment_get_csum(deployment);
+    auto name = target.filename();
+    if (target.custom_version().length() > 0) {
+      name = target.custom_version();
+    }
+    log_info_target("Active image is: ", client.config, target);
   }
   return 0;
 }
 
-static int list_main(Config &config, const bpo::variables_map &unused) {
+static int list_main(LiteClient &client, const bpo::variables_map &unused) {
   (void)unused;
-  auto storage = INvStorage::newStorage(config.storage);
-  auto client = SotaUptaneClient::newDefaultClient(config, storage);
-  Uptane::HardwareIdentifier hwid(config.provision.primary_ecu_hardware_id);
+  Uptane::HardwareIdentifier hwid(client.config.provision.primary_ecu_hardware_id);
 
   LOG_INFO << "Refreshing target metadata";
-  if (!client->updateImagesMeta()) {
+  if (!client.primary->updateImagesMeta()) {
     LOG_WARNING << "Unable to update latest metadata, using local copy";
-    if (!client->checkImagesMetaOffline()) {
+    if (!client.primary->checkImagesMetaOffline()) {
       LOG_ERROR << "Unable to use local copy of TUF data";
       return 1;
     }
   }
 
-  LOG_INFO << "Updates for available to " << hwid << ":";
-  for (auto &t : client->allTargets()) {
+  LOG_INFO << "Updates available to " << hwid << ":";
+  for (auto &t : client.primary->allTargets()) {
     for (auto const &it : t.hardwareIds()) {
       if (it == hwid) {
-        auto name = t.filename();
-        if (t.custom_version().length() > 0) {
-          name = t.custom_version();
-        }
-        LOG_INFO << name << "\tsha256:" << t.sha256Hash();
+        log_info_target("", client.config, t);
         break;
       }
     }
@@ -64,43 +85,45 @@ static std::unique_ptr<Uptane::Target> find_target(const std::shared_ptr<SotaUpt
       throw std::runtime_error("Unable to find update");
     }
   }
+
+  bool find_latest = (version == "latest");
+  std::unique_ptr<Uptane::Target> latest = nullptr;
   for (auto &t : client->allTargets()) {
     for (auto const &it : t.hardwareIds()) {
       if (it == hwid) {
-        if (version == "latest" || version == t.filename() || version == t.custom_version()) {
+        if (find_latest) {
+          if (latest == nullptr || Version(latest->custom_version()) < Version(t.custom_version())) {
+            latest = std_::make_unique<Uptane::Target>(t);
+          }
+        } else if (version == t.filename() || version == t.custom_version()) {
           return std_::make_unique<Uptane::Target>(t);
         }
       }
     }
   }
+  if (find_latest && latest != nullptr) {
+    return latest;
+  }
   throw std::runtime_error("Unable to find update");
 }
 
-static int update_main(Config &config, const bpo::variables_map &variables_map) {
-  auto storage = INvStorage::newStorage(config.storage);
-  auto client = SotaUptaneClient::newDefaultClient(config, storage);
-  Uptane::HardwareIdentifier hwid(config.provision.primary_ecu_hardware_id);
-
-  std::string version("latest");
-  if (variables_map.count("update-name") > 0) {
-    version = variables_map["update-name"].as<std::string>();
-  }
-  LOG_INFO << "Finding " << version << " to update to...";
-  auto target = find_target(client, hwid, version);
-  LOG_INFO << "Updating to: " << *target;
-
-  std::vector<Uptane::Target> targets{*target};
-  auto result = client->downloadImages(targets);
-  if (result.status != result::DownloadStatus::kSuccess &&
-      result.status != result::DownloadStatus::kNothingToDownload) {
-    LOG_ERROR << "Unable to download update: " + result.message;
+static int do_update(LiteClient &client, Uptane::Target &target) {
+  if (!client.primary->downloadImage(target).first) {
     return 1;
   }
-  auto iresult = client->PackageInstall(*target);
+
+  if (client.primary->VerifyTarget(target) != TargetStatus::kGood) {
+    LOG_ERROR << "Downloaded target is invalid";
+    return 1;
+  }
+
+  auto iresult = client.primary->PackageInstall(target);
   if (iresult.result_code.num_code == data::ResultCode::Numeric::kNeedCompletion) {
     LOG_INFO << "Update complete. Please reboot the device to activate";
-  } else if (iresult.result_code.num_code != data::ResultCode::Numeric::kOk &&
-             iresult.result_code.num_code != data::ResultCode::Numeric::kNeedCompletion) {
+    client.storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kPending);
+  } else if (iresult.result_code.num_code == data::ResultCode::Numeric::kOk) {
+    client.storage->savePrimaryInstalledVersion(target, InstalledVersionUpdateMode::kCurrent);
+  } else {
     LOG_ERROR << "Unable to install update: " << iresult.description;
     return 1;
   }
@@ -108,9 +131,22 @@ static int update_main(Config &config, const bpo::variables_map &variables_map) 
   return 0;
 }
 
+static int update_main(LiteClient &client, const bpo::variables_map &variables_map) {
+  Uptane::HardwareIdentifier hwid(client.config.provision.primary_ecu_hardware_id);
+
+  std::string version("latest");
+  if (variables_map.count("update-name") > 0) {
+    version = variables_map["update-name"].as<std::string>();
+  }
+  LOG_INFO << "Finding " << version << " to update to...";
+  auto target = find_target(client.primary, hwid, version);
+  LOG_INFO << "Updating to: " << *target;
+  return do_update(client, *target);
+}
+
 struct SubCommand {
   const char *name;
-  int (*main)(Config &, const bpo::variables_map &);
+  int (*main)(LiteClient &, const bpo::variables_map &);
 };
 static SubCommand commands[] = {
     {"status", status_main},
@@ -124,7 +160,7 @@ void check_info_options(const bpo::options_description &description, const bpo::
     exit(EXIT_SUCCESS);
   }
   if (vm.count("version") != 0) {
-    std::cout << "Current aktualizr version is: " << AKTUALIZR_VERSION << "\n";
+    std::cout << "Current aktualizr version is: " << aktualizr_version() << "\n";
     exit(EXIT_SUCCESS);
   }
 }
@@ -206,15 +242,13 @@ int main(int argc, char *argv[]) {
 
     Config config(commandline_map);
     config.storage.uptane_metadata_path = BasedPath(config.storage.path / "metadata");
-    if (config.logger.loglevel <= boost::log::trivial::debug) {
-      SSL_load_error_strings();
-    }
     LOG_DEBUG << "Current directory: " << boost::filesystem::current_path().string();
 
     std::string cmd = commandline_map["command"].as<std::string>();
     for (size_t i = 0; i < sizeof(commands) / sizeof(SubCommand); i++) {
       if (cmd == commands[i].name) {
-        return commands[i].main(config, commandline_map);
+        LiteClient client(config);
+        return commands[i].main(client, commandline_map);
       }
     }
     throw bpo::invalid_option_value(cmd);

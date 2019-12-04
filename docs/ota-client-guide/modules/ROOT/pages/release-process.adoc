@@ -1,0 +1,146 @@
+= Release process
+:toc: macro
+:toc-title:
+:sectnums:
+
+ifdef::env-github[]
+
+[NOTE]
+====
+We recommend that you link:https://docs.ota.here.com/ota-client/latest/{docname}.html[view this article in our documentation portal]. Not all of our articles render correctly in GitHub.
+====
+endif::[]
+
+To create a new link:https://github.com/advancedtelematic/aktualizr/releases[release of aktualizr and garage-deploy], there are several discrete steps to follow:
+
+ifdef::env-github[]
+toc::[]
+endif::[]
+
+== Update the changelog and other docs
+
+This is normally a good time to update the link:https://github.com/advancedtelematic/aktualizr/blob/master/CHANGELOG.md[changelog]. Ideally, the changelog should be updated with the new release number before creating the release so that the packaged source code includes the correct information about the release. The easiest way to check the changelog is to review all PRs merged to master since the last release was made and to verify that any important changes that impact the user experience are reflected in the changelog.
+
+There are a few additional documents that should be updated to refer to the new release:
+
+* The link:https://github.com/advancedtelematic/aktualizr/blob/master/docs/README.adoc#reference-documentation[docs README] contains a table with links to the doxygen docs for each release.
+* Several pages contains references to the latest release of aktualizr and/or garage-deploy via a variable set in a https://github.com/advancedtelematic/aktualizr/blob/master/docs/ota-client-guide/modules/ROOT/pages/_partials/aktualizr-version.adoc[doc snippet] created for this purpose.
+
+This is also a good time to review the docs in general and to consider whether any changes in this release might have affected the docs.
+
+== Pull in any new changes from the current docs branch
+
+The docs published as https://docs.ota.here.com/ota-client/latest/index.html[latest] in the OTA Connect Developer Guide are built from the most recent release's docs branch (`\{version}-docs`). There will very likely be changes from there that have not been pulled into master yet. Open up a PR to merge the previous release's docs into master, resolving any merge conflicts as needed. Once that PR is merged, you can move on to the next step.
+
+== Create a new tag
+
+Releases are built automatically by gitlab from annotated tags of the form `major.minor`, where `major` and `minor` are numbers. We normally set `major` to the current year and `minor` to an incrementing number beginning at 1.
+
+To create a release, checkout the revision you want to bless, then:
+
+----
+git tag -as <tag>   # e.g. git tag -a 2018.4
+git push github <tag>
+----
+
+Gitlab will build this tag and automatically create a release for it on github.
+
+=== Updating an already-released tag
+
+Generally, you should not update a tag after it has already been pushed to github. This is asking for confusion and problems down the line. However, if something goes wrong in creating the release from the tag, you may need to do this anyway. Note that you will need to manually delete the release on github if it has been created already. (Otherwise, the release's files will not get updated.) You will then need to either retry the specific github-release step or re-trigger the entire pipeline (which can be done by re-pushing the tag to github).
+
+== Create a new docs branch
+
+Create (and push to github) a new branch with the commit you just tagged as the parent:
+
+----
+git checkout -b <tag>-docs # e.g. git checkout -b 2019.63-docs
+git push github <tag>-docs
+----
+
+== Update doxygen on github
+
+You will need to update the link:https://advancedtelematic.github.io/aktualizr/index.html[doxygen documentation] both for the new release and master.
+
+=== Add doxygen pages for the new release on github
+
+To add doxygen docs for a new tag, you will need to do something like the following:
+
+. If you haven't already, check out the <<3-create-a-new-tag,newly created tag>> (`git checkout 2018.63`, for example).
+. Create a clean build directory (to prevent using stale objects), then run CMake and doxygen again:
++
+----
+rm -rf build/*
+cd build
+cmake ..
+make doxygen
+----
++
+. Clone a second aktualizr repo and run `git checkout gh-pages`.
+. In the second repo, make a directory for the tag or commit you wish to add, i.e. `mkdir 2018.63`.
+. Copy the contents of `<build_dir>/docs/doxygen/html` into the directory you just created. (Something like `cp -a <build_dir>/docs/doxygen/html/* <second_repo>/2018.63`.)
+. In the second repo, run `git add 2018.63`, `git commit -as`, and `git push`.
+. Wait a minute or two for github to refresh and render the files.
+
+=== Update doxygen master
+
+This is also a good time to update the doxygen documentation for master on github (although it can also be done more often if desired). You will need to do something like the following:
+
+. Repeat steps 1 through 3 of the <<51-add-doxygen-pages-for-the-new-release-on-github,preceding section>> (as necessary).
+. In the second repo, clear out all the files in the root of the directory as well as the `search` subdirectory. Make sure to leave the release-specific subdirectories (such as `2018.12`) intact. (Run something like `git rm search/* *.css *.html *.js *.png *.map *.md5 *.png *.svg`).
+. Copy the contents of `<build_dir>/docs/doxygen/html` into the root of the second repo. (Something like `cp -a <build_dir>/docs/doxygen/html/* <second_repo>`.)
+. In the second repo, run `git add .`, `git commit -as`, and `git push`.
+. Wait a minute or two for github to refresh and render the files.
+
+== Update the description of the github release
+
+Once the release is ready on github, it should be edited to include a link to the changelog and doxygen documentation for that particular release. You can use a previous release as a model of how to format these links.
+
+== Update the Uptane fork of aktualizr
+
+Uptane has a fork of aktualizr in link:https://github.com/uptane/aktualizr[their namespace]. It should be updated with the same version of aktualizr used to make the new release.
+
+== Update the homebrew recipe for aktualizr
+
+The https://github.com/advancedtelematic/homebrew-otaconnect/blob/master/aktualizr.rb[homebrew aktualizr recipe] should be updated with the new release.
+
+There is a github CI job that will automatically update the recipe, build a bottle, and upload the bottle to the release page when a new release is created. The one thing it doesn't do is make the pull request to update the recipe in the tap.
+
+You'll find the new recipe attached to the CI run for the release--it should be the latest run on the https://github.com/advancedtelematic/aktualizr/actions[Actions tab]. You can download the file from there, and submit the changes as a pull request to the https://github.com/advancedtelematic/homebrew-otaconnect/[homebrew-otaconnect repo].
+
+=== Fallback: manually build a bottle and update the homebrew recipe
+
+If the CI job failed for some reason, you might need to manually create the new bottle and edit the recipe. Here are the steps to follow (you'll need a Mac with homebrew installed):
+
+. Edit the recipe on your local system with `brew edit aktualizr`, and replace the old version tag with the new one.
+. Build it, and then bottle it:
++
+----
+brew rm aktualizr && \
+brew install --build-bottle aktualizr && \
+brew bottle aktualizr
+----
++
+This will create a bottle file named `+aktualizr--VERSION.mojave.bottle.tar.gz+`, and output a block of Ruby code that looks something like this:
++
+----
+  bottle do
+    cellar :any
+    sha256 "391bc242685d86fd4fc69d90d98e10a464e6feebca943d3f48f848615c898085" => :mojave
+  end
+----
+. Rename the file, removing one of the dashes (i.e. `+mv aktualizr--2019.6.mojave.bottle.tar.gz aktualizr-2019.6.mojave.bottle.tar.gz+`). I don't know why the generated filename is always wrong, but it is.
+. Add the renamed bottle file as an artifact to the release on the https://github.com/advancedtelematic/aktualizr/releases[aktualizr releases page].
+. Replace the `bottle do` block in your local recipe with the generated block from step 2, and add the appropriate `root_url` directive.
+. Test the recipe locally, including installing from the bottle: `brew reinstall --force-bottle aktualizr`.
+. Open a PR on the https://github.com/advancedtelematic/homebrew-otaconnect[homebrew-otaconnect] repo to update the recipe with all your changes.
+
+== Verify the released Debian packages
+
+Newly created releases automatically trigger an OTF pipeline in gitlab. Currently, you still need to manually verify that the pipeline actually succeeded.
+
+== Update meta-updater
+
+The version of aktualizr used by link:https://github.com/advancedtelematic/meta-updater/[meta-updater] should be updated to match the new release. First, open a PR against master that updates aktualizr to the same commit used in the newly released tag. This is also a good time to update the aktualizr recipe to pull the latest version of link:https://ats-tuf-cli-releases.s3-eu-central-1.amazonaws.com/index.html[garage-sign].
+
+Once that PR has passed oe-selftest, successfully passed review, and gotten merged, you should then backport that change, along with anything else relevant since the last backport was done, to the xref:yocto-release-branches.adoc[currently supported release branches]. Note that while master is allowed to use arbitrary recent version of aktualizr, the release branches should only use released versions of aktualizr.

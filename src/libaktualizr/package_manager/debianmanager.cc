@@ -1,37 +1,11 @@
 #include "package_manager/debianmanager.h"
 
-#define LIBDPKG_VOLATILE_API 1
-#include <dpkg/dpkg-db.h>
-#include <dpkg/dpkg.h>
-#include <dpkg/pkg-array.h>
-#include <dpkg/pkg-show.h>
 #include <stdio.h>
 #include <unistd.h>
 
 Json::Value DebianManager::getInstalledPackages() const {
-  Json::Value packages(Json::arrayValue);
-  struct pkg_array array {};
-  dpkg_program_init("a.out");
-  modstatdb_open(msdbrw_available_readonly);
-
-#ifdef LIBDPKG_V011903
-  pkg_array_init_from_hash(&array);
-#else
-  pkg_array_init_from_db(&array);
-#endif
-  pkg_array_sort(&array, pkg_sorter_by_nonambig_name_arch);
-  for (int i = 0; i < array.n_pkgs; ++i) {
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    struct pkginfo *pkg = array.pkgs[i];
-    if (pkg->status == PKG_STAT_INSTALLED) {
-      Json::Value package;
-      package["name"] = pkg_name(pkg, pnaw_nonambig);
-      package["version"] = versiondescribe(&pkg->installed.version, vdew_nonambig);
-      packages.append(package);
-    }
-  }
-  dpkg_program_done();
-  return packages;
+  // Currently not implemented
+  return Json::Value(Json::arrayValue);
 }
 
 data::InstallationResult DebianManager::install(const Uptane::Target &target) const {
@@ -57,12 +31,11 @@ data::InstallationResult DebianManager::install(const Uptane::Target &target) co
 }
 
 Uptane::Target DebianManager::getCurrent() const {
-  std::vector<Uptane::Target> installed_versions;
-  size_t current_k = SIZE_MAX;
-  storage_->loadPrimaryInstalledVersions(&installed_versions, &current_k, nullptr);
+  boost::optional<Uptane::Target> current_version;
+  storage_->loadPrimaryInstalledVersions(&current_version, nullptr);
 
-  if (current_k != SIZE_MAX) {
-    return installed_versions.at(current_k);
+  if (!!current_version) {
+    return *current_version;
   }
 
   return Uptane::Target::Unknown();

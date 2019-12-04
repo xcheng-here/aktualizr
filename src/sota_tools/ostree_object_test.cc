@@ -108,8 +108,6 @@ TEST(OstreeObject, UploadDryRun) {
   EXPECT_EQ(object->is_on_server_, PresenceOnServer::kObjectPresent);
   // This currently does not get reset.
   EXPECT_EQ(object->current_operation_, CurrentOp::kOstreeObjectPresenceCheck);
-  // This should not get allocated.
-  EXPECT_EQ(object->form_post_, nullptr);
 }
 
 /* Detect curl misconfiguration.
@@ -128,10 +126,6 @@ TEST(OstreeObject, UploadFail) {
   object->Upload(push_server, nullptr, RunMode::kDefault);
   EXPECT_EQ(object->is_on_server_, PresenceOnServer::kObjectStateUnknown);
   EXPECT_EQ(object->current_operation_, CurrentOp::kOstreeObjectUploading);
-  // This currently will get allocated and we need to free it.
-  EXPECT_NE(object->form_post_, nullptr);
-  curl_formfree(object->form_post_);
-  object->form_post_ = nullptr;
 }
 
 /* Upload missing OSTree objects to destination repository. */
@@ -153,7 +147,7 @@ TEST(OstreeObject, UploadSuccess) {
   push_server.root_url("https://localhost:" + dp);
 
   boost::filesystem::path filepath = (temp_dir.Path() / "auth.json").string();
-  boost::filesystem::path cert_path = "tests/fake_http_server/client.crt";
+  boost::filesystem::path cert_path = "tests/fake_http_server/server.crt";
   EXPECT_EQ(authenticate(cert_path.string(), ServerCredentials(filepath), push_server), EXIT_SUCCESS);
 
   OSTreeRepo::ptr src_repo = std::make_shared<OSTreeDirRepo>(repo_path);
@@ -182,10 +176,8 @@ TEST(OstreeObject, UploadSuccess) {
       EXPECT_GE(h->refcount_, 1);
       long rescode = 0;  // NOLINT(google-runtime-int)
       curl_easy_getinfo(h->curl_handle_, CURLINFO_RESPONSE_CODE, &rescode);
-      EXPECT_EQ(rescode, 200);
+      EXPECT_EQ(rescode, 204);
 
-      curl_formfree(h->form_post_);
-      h->form_post_ = nullptr;
       curl_multi_remove_handle(multi, h->curl_handle_);
       curl_easy_cleanup(h->curl_handle_);
       h->curl_handle_ = nullptr;

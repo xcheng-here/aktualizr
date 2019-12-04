@@ -1,5 +1,4 @@
-set(SOURCES packagemanagerconfig.cc
-            packagemanagerfactory.cc
+set(SOURCES packagemanagerfactory.cc
             packagemanagerfake.cc
             packagemanagerinterface.cc)
 
@@ -9,12 +8,15 @@ set(HEADERS packagemanagerconfig.h
             packagemanagerinterface.h)
 
 add_library(package_manager OBJECT ${SOURCES})
-aktualizr_source_file_checks(${SOURCES} ${HEADERS})
+aktualizr_source_file_checks(${SOURCES} packagemanagerconfig.cc ${HEADERS})
 
-add_aktualizr_test(NAME packagemanagerfake SOURCES packagemanagerfake_test.cc)
+target_sources(config PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/packagemanagerconfig.cc)
+
+add_aktualizr_test(NAME packagemanagerfake SOURCES packagemanagerfake_test.cc LIBRARIES PUBLIC uptane_generator_lib)
 
 # Debian backend
 if(BUILD_DEB)
+    set_property(SOURCE packagemanagerfactory.cc packagemanagerfactory_test.cc PROPERTY COMPILE_DEFINITIONS BUILD_DEB)
     target_sources(package_manager PRIVATE debianmanager.cc)
     add_executable(t_packagemanager_deb EXCLUDE_FROM_ALL debianmanager_test.cc)
     add_dependencies(build_tests t_packagemanager_deb)
@@ -36,14 +38,19 @@ if(BUILD_OSTREE)
                       ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
     add_dependencies(build_tests make_ostree_sysroot)
 
-    add_aktualizr_test(NAME ostree SOURCES ostreemanager_test.cc PROJECT_WORKING_DIRECTORY NO_VALGRIND
+    add_aktualizr_test(NAME ostreemanager SOURCES ostreemanager_test.cc PROJECT_WORKING_DIRECTORY
                        ARGS ${PROJECT_BINARY_DIR}/ostree_repo)
 
+    if(BUILD_DOCKERAPP)
+        target_sources(package_manager PRIVATE dockerappmanager.cc)
+        add_aktualizr_test(NAME dockerapp SOURCES dockerappmanager_test.cc PROJECT_WORKING_DIRECTORY
+                           ARGS ${PROJECT_BINARY_DIR}/ostree_repo "$<TARGET_FILE:uptane-generator>")
+    endif(BUILD_DOCKERAPP)
 endif(BUILD_OSTREE)
 
-add_aktualizr_test(NAME packagemanager_factory SOURCES packagemanagerfactory_test.cc NO_VALGRIND
+add_aktualizr_test(NAME packagemanager_factory SOURCES packagemanagerfactory_test.cc
                    ARGS ${PROJECT_BINARY_DIR}/ostree_repo)
-add_aktualizr_test(NAME fetcher SOURCES fetcher_test.cc ARGS PROJECT_WORKING_DIRECTORY)
+add_aktualizr_test(NAME fetcher SOURCES fetcher_test.cc ARGS PROJECT_WORKING_DIRECTORY LIBRARIES PUBLIC uptane_generator_lib)
 add_aktualizr_test(NAME fetcher_death SOURCES fetcher_death_test.cc NO_VALGRIND ARGS PROJECT_WORKING_DIRECTORY)
 
 aktualizr_source_file_checks(fetcher_death_test.cc fetcher_test.cc)
@@ -54,6 +61,7 @@ aktualizr_source_file_checks(ostreemanager.cc ostreereposync.cc
                              ostreemanager.h ostreereposync.h)
 
 aktualizr_source_file_checks(androidmanager.cc androidmanager.h)
+aktualizr_source_file_checks(dockerappmanager.cc dockerappmanager.h dockerappmanager_test.cc)
 
 if(ANDROID)
     target_sources(package_manager PRIVATE androidmanager.cc)

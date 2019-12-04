@@ -3,7 +3,6 @@
 set -euo pipefail
 
 GITREPO_ROOT="${1:-$(readlink -f "$(dirname "$0")/..")}"
-JENKINS_RUN=${JENKINS_RUN:-}
 TRAVIS_COMMIT=${TRAVIS_COMMIT:-}
 
 # Test options: test stages, additional checkers, compile options
@@ -12,18 +11,20 @@ TEST_WITH_STATICTESTS=${TEST_WITH_STATICTESTS:-0}
 TEST_WITH_BUILD=${TEST_WITH_BUILD:-1}
 TEST_WITH_INSTALL_DEB_PACKAGES=${TEST_WITH_INSTALL_DEB_PACKAGES:-0}
 TEST_WITH_TESTSUITE=${TEST_WITH_TESTSUITE:-1}
+TEST_WITH_DOCS=${TEST_WITH_DOCS:-0}
 
 TEST_WITH_COVERAGE=${TEST_WITH_COVERAGE:-0}
 TEST_WITH_SOTA_TOOLS=${TEST_WITH_SOTA_TOOLS:-1}
 TEST_WITH_P11=${TEST_WITH_P11:-0}
 TEST_WITH_OSTREE=${TEST_WITH_OSTREE:-1}
 TEST_WITH_DEB=${TEST_WITH_DEB:-1}
+TEST_WITH_DOCKERAPP=${TEST_WITH_DOCKERAPP:-0}
 TEST_WITH_ISOTP=${TEST_WITH_ISOTP:-1}
-TEST_WITH_PARTIAL=${TEST_WITH_PARTIAL:-1}
 TEST_WITH_FAULT_INJECTION=${TEST_WITH_FAULT_INJECTION:-0}
 TEST_WITH_LOAD_TESTS=${TEST_WITH_LOAD_TESTS:-0}
 
 TEST_CC=${TEST_CC:-gcc}
+TEST_CMAKE_GENERATOR=${TEST_CMAKE_GENERATOR:-Ninja}
 TEST_CMAKE_BUILD_TYPE=${TEST_CMAKE_BUILD_TYPE:-Valgrind}
 TEST_INSTALL_DESTDIR=${TEST_INSTALL_DESTDIR:-/persistent}
 TEST_INSTALL_RELEASE_NAME=${TEST_INSTALL_RELEASE_NAME:-}
@@ -38,6 +39,7 @@ TEST_PKCS11_ENGINE_PATH=${TEST_PKCS11_ENGINE_PATH:-/usr/lib/x86_64-linux-gnu/eng
 
 # Build CMake arguments
 CMAKE_ARGS=()
+CMAKE_ARGS+=("-G$TEST_CMAKE_GENERATOR")
 CMAKE_ARGS+=("-DCMAKE_BUILD_TYPE=${TEST_CMAKE_BUILD_TYPE}")
 if [[ $TEST_WITH_COVERAGE = 1 ]]; then CMAKE_ARGS+=("-DBUILD_WITH_CODE_COVERAGE=ON"); fi
 if [[ $TEST_WITH_SOTA_TOOLS = 1 ]]; then CMAKE_ARGS+=("-DBUILD_SOTA_TOOLS=ON"); fi
@@ -48,8 +50,8 @@ if [[ $TEST_WITH_P11 = 1 ]]; then
 fi
 if [[ $TEST_WITH_OSTREE = 1 ]]; then CMAKE_ARGS+=("-DBUILD_OSTREE=ON"); fi
 if [[ $TEST_WITH_DEB = 1 ]]; then CMAKE_ARGS+=("-DBUILD_DEB=ON"); fi
+if [[ $TEST_WITH_DOCKERAPP = 1 ]]; then CMAKE_ARGS+=("-DBUILD_DOCKERAPP=ON"); fi
 if [[ $TEST_WITH_ISOTP = 1 ]]; then CMAKE_ARGS+=("-DBUILD_ISOTP=ON"); fi
-if [[ $TEST_WITH_PARTIAL = 1 ]]; then CMAKE_ARGS+=("-DBUILD_PARTIAL=ON"); fi
 if [[ $TEST_WITH_FAULT_INJECTION = 1 ]]; then CMAKE_ARGS+=("-DFAULT_INJECTION=ON"); fi
 if [[ $TEST_WITH_LOAD_TESTS = 1 ]]; then CMAKE_ARGS+=("-DBUILD_LOAD_TESTS=ON"); fi
 if [[ -n $TEST_SOTA_PACKED_CREDENTIALS ]]; then
@@ -81,9 +83,23 @@ add_fatal_failure() {
     FAILURES+=("$1")
     collect_failures
 }
-run_make() {
-    CTEST_OUTPUT_ON_FAILURE=1 CTEST_PARALLEL_LEVEL="${TEST_PARALLEL_LEVEL}" make "-j${TEST_PARALLEL_LEVEL}" "$@"
-}
+run_make() (
+    set +x
+    local target=${1:-}
+    shift 1
+    if [ -n "$target" ]; then
+        target=(--target "$target")
+    else
+        target=()
+    fi
+    (
+        set +u  # needed for bash < 4.4
+        set -x
+        export CTEST_OUTPUT_ON_FAILURE=1
+        export CTEST_PARALLEL_LEVEL="${TEST_PARALLEL_LEVEL}"
+        cmake --build . "${target[@]}" -- -j"${TEST_PARALLEL_LEVEL}" "$@"
+    )
+)
 
 # Test stages
 mkdir -p "${TEST_BUILD_DIR}"
@@ -123,8 +139,8 @@ if [[ $TEST_WITH_STATICTESTS = 1 ]]; then
     echo ">> Running static checks"
     if [[ $TEST_DRYRUN != 1 ]]; then
         set -x
-        run_make -k check-format || add_failure "formatting"
-        run_make -k clang-tidy || add_failure "static checks"
+        run_make check-format -k 0 || add_failure "formatting"
+        run_make clang-tidy -k 0 || add_failure "static checks"
         set +x
     fi
 fi
@@ -164,7 +180,7 @@ if [[ $TEST_WITH_TESTSUITE = 1 ]]; then
             run_make coverage || add_failure "testsuite with coverage"
 
             if [[ -n $TRAVIS_COMMIT ]]; then
-                bash <(curl -s https://codecov.io/bash) -R "${GITREPO_ROOT}" -s . > /dev/null
+                bash <(curl -s https://codecov.io/bash) -f '!*/#usr*' -f '!*/^#third_party*' -R "${GITREPO_ROOT}" -s . > /dev/null
             else
                 echo "Not inside Travis, skipping codecov.io upload"
             fi
@@ -178,6 +194,15 @@ if [[ $TEST_WITH_TESTSUITE = 1 ]]; then
             set +x
         fi
     fi
+fi
+
+if [[ $TEST_WITH_DOCS = 1 ]]; then
+    echo ">> Running make docs"
+    if [[ $TEST_DRYRUN != 1 ]]; then
+        set -x
+        run_make docs || add_failure "make docs"
+        set +x
+   fi
 fi
 
 collect_failures

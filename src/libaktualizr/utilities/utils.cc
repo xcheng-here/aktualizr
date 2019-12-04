@@ -30,6 +30,7 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include "aktualizr_version.h"
 #include "logging/logging.h"
 
 const char *adverbs[] = {
@@ -228,7 +229,7 @@ std::string Utils::extractField(const std::string &in, unsigned int field_id) {
       empty = false;
     }
     if (empty) {
-      throw std::runtime_error("No such field " + std::to_string(field_id));
+      throw std::runtime_error(std::string("No such field ").append(std::to_string(field_id)));
     }
     for (; it != in.end() && (isspace(*it) != 0); it++) {
       ;
@@ -242,9 +243,9 @@ std::string Utils::extractField(const std::string &in, unsigned int field_id) {
 }
 
 Json::Value Utils::parseJSON(const std::string &json_str) {
-  Json::Reader reader;
+  std::istringstream strs(json_str);
   Json::Value json_value;
-  reader.parse(json_str, json_value);
+  parseFromStream(Json::CharReaderBuilder(), strs, &json_value, nullptr);
   return json_value;
 }
 
@@ -348,7 +349,14 @@ std::string Utils::jsonToStr(const Json::Value &json) {
   return ss.str();
 }
 
-std::string Utils::jsonToCanonicalStr(const Json::Value &json) { return Json::FastWriter().write(json); }
+std::string Utils::jsonToCanonicalStr(const Json::Value &json) {
+  static Json::StreamWriterBuilder wbuilder = []() {
+    Json::StreamWriterBuilder w;
+    wbuilder["indentation"] = "";
+    return w;
+  }();
+  return Json::writeString(wbuilder, json);
+}
 
 Json::Value Utils::getHardwareInfo() {
   std::string result;
@@ -367,10 +375,10 @@ Json::Value Utils::getNetworkInfo() {
   std::ifstream path_stream("/proc/net/route");
   std::string route_content((std::istreambuf_iterator<char>(path_stream)), std::istreambuf_iterator<char>());
 
-  struct {
-    std::string name;
-    std::string ip;
-    std::string mac;
+  struct Itf {
+    std::string name = std::string();
+    std::string ip = std::string();
+    std::string mac = std::string();
   } itf;
   std::istringstream route_stream(route_content);
   std::array<char, 200> line{};
@@ -670,9 +678,26 @@ void Utils::createDirectories(const boost::filesystem::path &path, mode_t mode) 
     Utils::createDirectories(parent, mode);
   }
   if (mkdir(path.c_str(), mode) == -1) {
-    throw std::runtime_error("could not create directory: " + path.native());
+    throw std::runtime_error(std::string("could not create directory: ").append(path.native()));
   }
   std::cout << "created: " << path.native() << "\n";
+}
+
+bool Utils::createSecureDirectory(const boost::filesystem::path &path) {
+  if (mkdir(path.c_str(), S_IRWXU) == 0) {
+    // directory created successfully
+    return true;
+  }
+
+  // mkdir failed, see if the directory already exists with correct permissions
+  struct stat st {};
+  int ret = stat(path.c_str(), &st);
+  // checks: - stat succeeded
+  //         - is a directory
+  //         - no read and write permissions for group and others
+  //         - owner is current user
+  return (ret >= 0 && ((st.st_mode & S_IFDIR) == S_IFDIR) && (st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == S_IRWXU &&
+          (st.st_uid == getuid()));
 }
 
 std::string Utils::urlEncode(const std::string &input) {
@@ -726,7 +751,7 @@ class SafeTempRoot {
     }
     boost::filesystem::path p = prefix / boost::filesystem::unique_path("aktualizr-%%%%-%%%%-%%%%-%%%%");
     if (mkdir(p.c_str(), S_IRWXU) == -1) {
-      throw std::runtime_error("could not create temporary directory root: " + p.native());
+      throw std::runtime_error(std::string("could not create temporary directory root: ").append(p.native()));
     }
 
     path = boost::filesystem::path(p);
@@ -748,8 +773,25 @@ void Utils::setStorageRootPath(const std::string &storage_root_path) { storage_r
 
 boost::filesystem::path Utils::getStorageRootPath() { return storage_root_path_; }
 
+void Utils::setUserAgent(std::string user_agent) { user_agent_ = std::move(user_agent); }
+
+const char *Utils::getUserAgent() {
+  if (user_agent_.empty()) {
+    user_agent_ = (std::string("Aktualizr/") + aktualizr_version());
+  }
+  return user_agent_.c_str();
+}
+
+std::string Utils::user_agent_;
+
+void Utils::setCaPath(boost::filesystem::path path) { ca_path_ = std::move(path); }
+
+const char *Utils::getCaPath() { return ca_path_.c_str(); }
+
+boost::filesystem::path Utils::ca_path_{"/etc/ssl/certs"};
+
 TemporaryFile::TemporaryFile(const std::string &hint)
-    : tmp_name_(SafeTempRoot::Get() / boost::filesystem::unique_path("%%%%-%%%%-" + hint)) {}
+    : tmp_name_(SafeTempRoot::Get() / boost::filesystem::unique_path(std::string("%%%%-%%%%-").append(hint))) {}
 
 TemporaryFile::~TemporaryFile() { boost::filesystem::remove(tmp_name_); }
 
@@ -772,7 +814,7 @@ boost::filesystem::path TemporaryFile::Path() const { return tmp_name_; }
 std::string TemporaryFile::PathString() const { return Path().string(); }
 
 TemporaryDirectory::TemporaryDirectory(const std::string &hint)
-    : tmp_name_(SafeTempRoot::Get() / boost::filesystem::unique_path("%%%%-%%%%-" + hint)) {
+    : tmp_name_(SafeTempRoot::Get() / boost::filesystem::unique_path(std::string("%%%%-%%%%-").append(hint))) {
   Utils::createDirectories(tmp_name_, S_IRWXU);
 }
 
@@ -839,4 +881,18 @@ int Socket::bind(in_port_t port, bool reuse) {
 
 int Socket::connect() {
   return ::connect(socket_fd_, reinterpret_cast<const struct sockaddr *>(&sock_address_), sizeof(sock_address_));
+}
+
+CurlEasyWrapper::CurlEasyWrapper() {
+  handle = curl_easy_init();
+  if (handle == nullptr) {
+    throw std::runtime_error("Could not initialize curl handle");
+  }
+  curlEasySetoptWrapper(handle, CURLOPT_USERAGENT, Utils::getUserAgent());
+}
+
+CurlEasyWrapper::~CurlEasyWrapper() {
+  if (handle != nullptr) {
+    curl_easy_cleanup(handle);
+  }
 }

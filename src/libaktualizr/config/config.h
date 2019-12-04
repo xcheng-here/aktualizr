@@ -16,11 +16,10 @@
 #include "package_manager/packagemanagerconfig.h"
 #include "storage/storage_config.h"
 #include "telemetry/telemetryconfig.h"
-#include "uptane/secondaryconfig.h"
 #include "utilities/config_utils.h"
 #include "utilities/types.h"
 
-enum class ProvisionMode { kAutomatic = 0, kImplicit };
+enum class ProvisionMode { kSharedCred = 0, kDeviceCred };
 
 // Try to keep the order of config options the same as in Config::writeToStream()
 // and Config::updateFromPropertyTree() in config.cc.
@@ -41,7 +40,7 @@ struct ProvisionConfig {
   std::string p12_password;
   std::string expiry_days{"36000"};
   boost::filesystem::path provision_path;
-  ProvisionMode mode{ProvisionMode::kAutomatic};
+  ProvisionMode mode{ProvisionMode::kSharedCred};
   std::string device_id;
   std::string primary_ecu_serial;
   std::string primary_ecu_hardware_id;
@@ -58,9 +57,7 @@ struct UptaneConfig {
   CryptoSource key_source{CryptoSource::kFile};
   KeyType key_type{KeyType::kRSA2048};
   bool force_install_completion{false};
-  boost::filesystem::path secondary_configs_dir;
   boost::filesystem::path secondary_config_file;
-  std::vector<Uptane::SecondaryConfig> secondary_configs{};
 
   void updateFromPropertyTree(const boost::property_tree::ptree& pt);
   void writeToStream(std::ostream& out_stream) const;
@@ -102,7 +99,6 @@ class Config : public BaseConfig {
  private:
   void updateFromPropertyTree(const boost::property_tree::ptree& pt) override;
   void updateFromCommandLine(const boost::program_options::variables_map& cmd);
-  void readSecondaryConfigs(const boost::filesystem::path& sconfigs_dir);
 
   std::vector<boost::filesystem::path> config_dirs_ = {"/usr/lib/sota/conf.d", "/etc/sota/conf.d/"};
   bool loglevel_from_cmdline{false};

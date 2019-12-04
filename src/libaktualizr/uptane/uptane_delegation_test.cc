@@ -11,11 +11,11 @@
 #include "primary/events.h"
 #include "uptane_test_common.h"
 
-boost::filesystem::path aktualizr_repo_path;
+boost::filesystem::path uptane_generator_path;
 
 void delegation_basic(const boost::filesystem::path& delegation_path, bool revoke) {
   std::string output;
-  std::string cmd = "tests/uptane_repo_generation/delegation_basic.sh " + aktualizr_repo_path.string() + " " +
+  std::string cmd = "tests/uptane_repo_generation/delegation_basic.sh " + uptane_generator_path.string() + " " +
                     delegation_path.string();
   if (revoke) {
     cmd += " revoke";
@@ -26,7 +26,7 @@ void delegation_basic(const boost::filesystem::path& delegation_path, bool revok
 
 void delegation_nested(const boost::filesystem::path& delegation_path, bool revoke) {
   std::string output;
-  std::string cmd = "tests/uptane_repo_generation/delegation_nested.sh " + aktualizr_repo_path.string() + " " +
+  std::string cmd = "tests/uptane_repo_generation/delegation_nested.sh " + uptane_generator_path.string() + " " +
                     delegation_path.string();
   if (revoke) {
     cmd += " revoke";
@@ -38,10 +38,7 @@ void delegation_nested(const boost::filesystem::path& delegation_path, bool revo
 class HttpFakeDelegation : public HttpFake {
  public:
   HttpFakeDelegation(const boost::filesystem::path& test_dir_in)
-      : HttpFake(test_dir_in, "", test_dir_in / "delegation_test/repo") {
-    // Work around inconsistent directory naming.
-    Utils::copyDir(test_dir_in / "delegation_test/repo/image", test_dir_in / "delegation_test/repo/repo");
-  }
+      : HttpFake(test_dir_in, "", test_dir_in / "delegation_test/repo") {}
 
   HttpResponse handle_event(const std::string& url, const Json::Value& data) override {
     (void)url;
@@ -71,7 +68,7 @@ TEST(Delegation, Basic) {
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
 
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
 
       aktualizr.Initialize();
       result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -99,7 +96,7 @@ TEST(Delegation, RevokeAfterCheckUpdates) {
       auto http = std::make_shared<HttpFakeDelegation>(temp_dir.Path());
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
       aktualizr.Initialize();
 
       result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -112,7 +109,7 @@ TEST(Delegation, RevokeAfterCheckUpdates) {
       auto http = std::make_shared<HttpFakeDelegation>(temp_dir.Path());
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
       aktualizr.Initialize();
 
       auto update_result = aktualizr.CheckUpdates().get();
@@ -139,7 +136,7 @@ TEST(Delegation, RevokeAfterDownload) {
       auto http = std::make_shared<HttpFakeDelegation>(temp_dir.Path());
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
       aktualizr.Initialize();
 
       result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -155,7 +152,7 @@ TEST(Delegation, RevokeAfterDownload) {
       auto http = std::make_shared<HttpFakeDelegation>(temp_dir.Path());
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
       aktualizr.Initialize();
 
       auto update_result = aktualizr.CheckUpdates().get();
@@ -182,7 +179,7 @@ TEST(Delegation, RevokeAfterInstall) {
       auto http = std::make_shared<HttpFakeDelegation>(temp_dir.Path());
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
       aktualizr.Initialize();
 
       result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -203,7 +200,7 @@ TEST(Delegation, RevokeAfterInstall) {
       auto http = std::make_shared<HttpFakeDelegation>(temp_dir.Path());
       Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
       auto storage = INvStorage::newStorage(conf.storage);
-      Aktualizr aktualizr(conf, storage, http);
+      UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
       aktualizr.Initialize();
 
       auto update_result = aktualizr.CheckUpdates().get();
@@ -222,7 +219,7 @@ TEST(Delegation, IterateAll) {
   Config conf = UptaneTestCommon::makeTestConfig(temp_dir, http->tls_server);
 
   auto storage = INvStorage::newStorage(conf.storage);
-  Aktualizr aktualizr(conf, storage, http);
+  UptaneTestCommon::TestAktualizr aktualizr(conf, storage, http);
 
   aktualizr.Initialize();
   result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
@@ -231,7 +228,7 @@ TEST(Delegation, IterateAll) {
   std::vector<std::string> expected_target_names = {"primary.txt", "abracadabra", "abc/secondary.txt", "abc/target0",
                                                     "abc/target1", "abc/target2", "bcd/target0",       "cde/target0",
                                                     "cde/target1", "def/target0"};
-  for (auto& target : aktualizr.uptane_client_->allTargets()) {
+  for (auto& target : aktualizr.uptane_client()->allTargets()) {
     EXPECT_EQ(target.filename(), expected_target_names[0]);
     expected_target_names.erase(expected_target_names.begin());
   }
@@ -243,10 +240,10 @@ TEST(Delegation, IterateAll) {
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   if (argc != 2) {
-    std::cerr << "Error: " << argv[0] << " requires the path to the aktualizr-repo utility\n";
+    std::cerr << "Error: " << argv[0] << " requires the path to the uptane-generator utility\n";
     return EXIT_FAILURE;
   }
-  aktualizr_repo_path = argv[1];
+  uptane_generator_path = argv[1];
 
   logger_init();
   logger_set_threshold(boost::log::trivial::trace);

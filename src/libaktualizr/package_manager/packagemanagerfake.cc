@@ -12,18 +12,17 @@ Json::Value PackageManagerFake::getInstalledPackages() const {
 }
 
 Uptane::Target PackageManagerFake::getCurrent() const {
-  std::vector<Uptane::Target> installed_versions;
-  size_t current_k = SIZE_MAX;
-  storage_->loadPrimaryInstalledVersions(&installed_versions, &current_k, nullptr);
+  boost::optional<Uptane::Target> current_version;
+  storage_->loadPrimaryInstalledVersions(&current_version, nullptr);
 
-  if (current_k != SIZE_MAX) {
-    return installed_versions.at(current_k);
+  if (!!current_version) {
+    return *current_version;
   }
 
   return Uptane::Target::Unknown();
 }
 
-data::InstallationResult PackageManagerFake::install(const Uptane::Target &target) const {
+data::InstallationResult PackageManagerFake::install(const Uptane::Target& target) const {
   (void)target;
 
   // fault injection: only enabled with FIU_ENABLE defined
@@ -52,20 +51,19 @@ void PackageManagerFake::completeInstall() const {
   bootloader_->reboot(true);
 }
 
-data::InstallationResult PackageManagerFake::finalizeInstall(const Uptane::Target &target) const {
-  std::vector<Uptane::Target> targets;
-  size_t pending_version = SIZE_MAX;
-  storage_->loadPrimaryInstalledVersions(&targets, nullptr, &pending_version);
+data::InstallationResult PackageManagerFake::finalizeInstall(const Uptane::Target& target) const {
+  boost::optional<Uptane::Target> pending_version;
+  storage_->loadPrimaryInstalledVersions(nullptr, &pending_version);
 
-  if (pending_version == SIZE_MAX) {
+  if (!pending_version) {
     throw std::runtime_error("No pending update, nothing to finalize");
   }
 
   data::InstallationResult install_res;
 
-  if (target == targets[pending_version]) {
+  if (target.MatchTarget(*pending_version)) {
     if (fiu_fail("fake_install_finalization_failure") != 0) {
-      std::string failure_cause = fault_injection_last_info();
+      const std::string failure_cause = fault_injection_last_info();
       if (failure_cause.empty()) {
         install_res = data::InstallationResult(data::ResultCode::Numeric::kInstallFailed, "");
       } else {
@@ -83,4 +81,23 @@ data::InstallationResult PackageManagerFake::finalizeInstall(const Uptane::Targe
   }
 
   return install_res;
+}
+
+bool PackageManagerFake::fetchTarget(const Uptane::Target& target, Uptane::Fetcher& fetcher, const KeyManager& keys,
+                                     FetcherProgressCb progress_cb, const api::FlowControlToken* token) {
+  // fault injection: only enabled with FIU_ENABLE defined. Note that all
+  // exceptions thrown in PackageManagerInterface::fetchTarget are caught by a
+  // try in the same function, so we can only emulate the warning and return
+  // value.
+  if (fiu_fail("fake_package_download") != 0) {
+    const std::string failure_cause = fault_injection_last_info();
+    if (!failure_cause.empty()) {
+      LOG_WARNING << "Error while downloading a target: " << failure_cause;
+    } else {
+      LOG_WARNING << "Error while downloading a target: forced failure";
+    }
+    return false;
+  }
+
+  return PackageManagerInterface::fetchTarget(target, fetcher, keys, progress_cb, token);
 }

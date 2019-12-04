@@ -27,7 +27,7 @@ class CurlGlobalInitWrapper {
 
 class HttpClient : public HttpInterface {
  public:
-  HttpClient();
+  HttpClient(const std::vector<std::string> *extra_headers = nullptr);
   HttpClient(const HttpClient & /*curl_in*/);
   ~HttpClient() override;
   HttpResponse get(const std::string &url, int64_t maxsize) override;
@@ -41,6 +41,7 @@ class HttpClient : public HttpInterface {
                                           CurlHandler *easyp) override;
   void setCerts(const std::string &ca, CryptoSource ca_source, const std::string &cert, CryptoSource cert_source,
                 const std::string &pkey, CryptoSource pkey_source) override;
+  bool updateHeader(const std::string &name, const std::string &value);
 
  private:
   FRIEND_TEST(GetTest, download_speed_limit);
@@ -57,7 +58,6 @@ class HttpClient : public HttpInterface {
   CURL *curl;
   curl_slist *headers;
   HttpResponse perform(CURL *curl_handler, int retry_times, int64_t size_limit);
-  std::string user_agent;
 
   static CURLcode sslCtxFunction(CURL *handle, void *sslctx, void *parm);
   std::unique_ptr<TemporaryFile> tls_ca_file;

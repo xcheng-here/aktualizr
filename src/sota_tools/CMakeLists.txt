@@ -1,7 +1,8 @@
-include_directories("${PROJECT_SOURCE_DIR}/src/libaktualizr/third_party/jsoncpp")
 set(SOTA_TOOLS_LIB_SRC
     authenticate.cc
+    check.cc
     deploy.cc
+    garage_tools_version.cc
     oauth2.cc
     ostree_dir_repo.cc
     ostree_hash.cc
@@ -15,6 +16,8 @@ set(SOTA_TOOLS_LIB_SRC
     treehub_server.cc)
 
 if (BUILD_SOTA_TOOLS)
+    set(GARAGE_TOOLS_VERSION "${AKTUALIZR_VERSION}")
+    set_property(SOURCE garage_tools_version.cc PROPERTY COMPILE_DEFINITIONS GARAGE_TOOLS_VERSION="${GARAGE_TOOLS_VERSION}")
     add_library(sota_tools_static_lib STATIC ${SOTA_TOOLS_LIB_SRC})
     target_include_directories(sota_tools_static_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} ${GLIB2_INCLUDE_DIRS})
 endif (BUILD_SOTA_TOOLS)
@@ -27,6 +30,7 @@ set(GARAGE_PUSH_SRCS
 set(SOTA_TOOLS_EXTERNAL_LIBS
     ${Boost_SYSTEM_LIBRARIES}
     ${Boost_LIBRARIES}
+    ${JSONCPP_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${LibArchive_LIBRARIES}
     ${CURL_LIBRARIES}
@@ -64,8 +68,6 @@ if (BUILD_SOTA_TOOLS)
     add_executable(garage-deploy ${GARAGE_DEPLOY_SRCS})
     target_link_libraries(garage-deploy sota_tools_static_lib aktualizr_static_lib ${SOTA_TOOLS_EXTERNAL_LIBS})
 
-    add_definitions(-DGARAGE_TOOLS_VERSION="${AKTUALIZR_VERSION}")
-
     add_dependencies(build_tests garage-deploy)
 
     install(TARGETS garage-deploy RUNTIME DESTINATION bin COMPONENT garage_deploy)
@@ -99,8 +101,10 @@ endif (BUILD_SOTA_TOOLS)
 set(ALL_SOTA_TOOLS_HEADERS
     accumulator.h
     authenticate.h
+    check.h
     deploy.h
     garage_common.h
+    garage_tools_version.h
     oauth2.h
     ostree_dir_repo.h
     ostree_hash.h
@@ -128,11 +132,17 @@ endif(NOT BUILD_SOTA_TOOLS)
 
 ##### tests
 if (BUILD_SOTA_TOOLS)
+    add_custom_target(sota_tools_cert_generation
+        COMMAND ${PROJECT_SOURCE_DIR}/tests/sota_tools/cert_generation/generate-zips.sh
+        ${PROJECT_BINARY_DIR}/sota_tools/certs)
+
     ### common tests
     add_aktualizr_test(NAME sota_tools_auth_test
                        SOURCES authenticate_test.cc
                        LIBRARIES sota_tools_static_lib aktualizr_static_lib
-                       PROJECT_WORKING_DIRECTORY NO_VALGRIND)
+                       PROJECT_WORKING_DIRECTORY
+                       ARGS ${PROJECT_BINARY_DIR}/sota_tools/certs)
+    add_dependencies(t_sota_tools_auth_test sota_tools_cert_generation)
 
     add_aktualizr_test(NAME ostree_hash
                        LIBRARIES sota_tools_static_lib
@@ -172,7 +182,7 @@ if (BUILD_SOTA_TOOLS)
     # Get targets.json from images repository.
     # Find specified OSTree ref in targets.json.
     add_test(NAME check_not_expired_targets
-        COMMAND ${PROJECT_SOURCE_DIR}/tests/run_expired_test.sh 2019-11-17T23:58:40Z ${CMAKE_BINARY_DIR}
+        COMMAND ${PROJECT_SOURCE_DIR}/tests/run_expired_test.sh 2031-11-17T23:58:40Z ${CMAKE_BINARY_DIR}
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
     # Verify that a commit exists in a remote repo.
@@ -307,7 +317,7 @@ if (BUILD_SOTA_TOOLS)
     add_test(NAME garage-deploy-online-signing
     COMMAND ${PROJECT_SOURCE_DIR}/tests/sota_tools/test-garage-deploy-online-signing $<TARGET_FILE:garage-deploy>
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-    set_tests_properties(garage-deploy-online-signing PROPERTIES PASS_REGULAR_EXPRESSION "Online signing with garage-deploy is currently unsupported")
+    set_tests_properties(garage-deploy-online-signing PROPERTIES PASS_REGULAR_EXPRESSION "Provided push credentials are missing required components to sign Targets metadata")
 
     # Abort if destination server is unavailable.
     add_test(NAME garage-deploy-upload-failed

@@ -41,7 +41,7 @@ This client is aligned with the https://uptane.github.io[Uptane] security framew
 To install the minimal requirements on Debian/Ubuntu, run this:
 
 ----
-sudo apt install asn1c build-essential cmake curl libarchive-dev libboost-dev libboost-filesystem-dev libboost-log-dev libboost-program-options-dev libcurl4-openssl-dev libpthread-stubs0-dev libsodium-dev libsqlite3-dev libssl-dev
+sudo apt install asn1c build-essential cmake curl libarchive-dev libboost-dev libboost-filesystem-dev libboost-log-dev libboost-program-options-dev libcurl4-openssl-dev libpthread-stubs0-dev libsodium-dev libsqlite3-dev libssl-dev python3
 ----
 
 The default versions packaged in recent Debian/Ubuntu releases are generally new enough to be compatible. If you are using older releases or a different variety of Linux, there are a few known minimum versions:
@@ -54,7 +54,7 @@ The default versions packaged in recent Debian/Ubuntu releases are generally new
 
 Additional packages are used for non-essential components:
 
-* To build the test suite, you will need `python3-dev python3-openssl python3-venv sqlite3 valgrind`.
+* To build the test suite, you will need `net-tools python3-dev python3-openssl python3-venv sqlite3 valgrind`.
 * To run the linting tools, you will need `clang clang-format-6.0 clang-tidy-6.0`.
 * To build additional documentation, you will need `doxygen graphviz`.
 * To build with code coverage, you will need `lcov`.
@@ -63,9 +63,7 @@ Some features also require additional packages:
 
 * For OSTree support, you will need `libostree-dev` (>= 2017.7).
 * For PKCS#11 support, you will need `libp11-2 libp11-dev`.
-* For systemd support for secondaries, you will need `libsystemd-dev`.
 * For fault injection, you will need `fiu-utils libfiu-dev`.
-* For Debian packagin support, you will need `libdpkg-dev`.
 
 ==== Mac support
 
@@ -148,7 +146,7 @@ Note that, by default, the compilation and tests run in sequence and the output 
 CTEST_OUTPUT_ON_FAILURE=1 CTEST_PARALLEL_LEVEL=8 make -j8 qa
 ----
 
-Some tests require additional setups, such as code coverage, HSM emulation or provisioning credentials (link:docs/credentials.adoc[credentials.adoc]). The exact reference about these steps is the link:scripts/test.sh[main test script] used for CI. It is parametrized by a list of environment variables and is used by our CI environments. To use it, run it in the project's root directory:
+Some tests require additional setups, such as code coverage, HSM emulation or provisioning credentials (link:docs/provisioning-methods-and-credentialszip.adoc[]). The exact reference about these steps is the link:scripts/test.sh[main test script] used for CI. It is parametrized by a list of environment variables and is used by our CI environments. To use it, run it in the project's root directory:
 
 ----
 ./scripts/test.sh
@@ -156,7 +154,7 @@ Some tests require additional setups, such as code coverage, HSM emulation or pr
 
 Note that it will run CMake itself in a dedicated build directory.
 
-To get a list of the common environment variables and their corresponding system requirements, have a look at the link:Jenkinsfile[Jenkins Pipelines definitions] and the project's link:docker/[Dockerfiles].
+To get a list of the common environment variables and their corresponding system requirements, have a look at the link:ci/gitlab/.gitlab-ci.yml[Gitlab CI configuration] and the project's link:docker/[Dockerfiles].
 
 
 === Tags
@@ -189,7 +187,7 @@ Inside the container, the test suite with coverage can be run with:
 TEST_WITH_COVERAGE=1 TEST_WITH_P11=1 TEST_WITH_STATICTESTS=1 ./scripts/test.sh
 ----
 
-(see the content of link:Jenkinsfile[] and link:scripts/test.sh[] for more testing options)
+(see the content of link:ci/gitlab/.gitlab-ci.yml[] and link:scripts/test.sh[] for more testing options)
 
 Alternatively, link:scripts/run_docker_test.sh[] can directly run the test script:
 
@@ -226,7 +224,7 @@ Some more detailed instructions on how to configure a fake device can be found o
 
 === Provisioning
 
-If you intend to use aktualizr to authenticate with a server, you will need some form of provisioning. Aktualizr currently supports two methods of provisioning: link:docs/automatic-provisioning.adoc[automatic] and link:docs/implicit-provisioning.adoc[implicit]. You can also implicitly provision link:docs/hsm-provisioning.adoc[by using an HSM]. You can learn more about the credentials files used to support provisioning in link:docs/credentials.adoc[].
+If you intend to use aktualizr to authenticate with a server, you will need some form of provisioning. Aktualizr currently supports provisioning with shared credentials or with device credentials. Device credential provisioning supports using an HSM to store private keys. The differences and details are explained in link:docs/client-provisioning-methods.adoc[] and link:docs/provision-with-device-credentials.adoc[]. You can learn more about the credentials files used to support provisioning in link:docs/provisioning-methods-and-credentialszip.adoc[].
 
 == Maintainers
 
@@ -242,7 +240,7 @@ A changelog can be found in link:CHANGELOG.md[].
 
 == License
 
-This code is licensed under the link:LICENSE[Mozilla Public License 2.0], a copy of which can be found in this repository. All code is copyright https://www.advancedtelematic.com[ATS Advanced Telematic Systems GmbH], 2016-2018.
+This code is licensed under the link:LICENSE[Mozilla Public License 2.0], a copy of which can be found in this repository. All code is copyright HERE Europe B.V., 2016-2019.
 
 We also require that contributors accept the terms of Linux Foundation's link:https://developercertificate.org/[Developer Certificate of Origin]:
 

@@ -53,18 +53,17 @@ config file example
 JsonConfigParser::JsonConfigParser(const boost::filesystem::path& config_file) {
   assert(boost::filesystem::exists(config_file));
   std::ifstream json_file_stream(config_file.string());
-  Json::Reader json_reader;
+  std::string errs;
 
-  if (!json_reader.parse(json_file_stream, root_, false)) {
-    throw std::invalid_argument("Failed to parse secondary config file: " + config_file.string() + ": " +
-                                json_reader.getFormattedErrorMessages());
+  if (!Json::parseFromStream(Json::CharReaderBuilder(), json_file_stream, &root_, &errs)) {
+    throw std::invalid_argument("Failed to parse secondary config file: " + config_file.string() + ": " + errs);
   }
 }
 
 SecondaryConfigParser::Configs JsonConfigParser::parse() {
   Configs res_sec_cfg;
 
-  for (Json::ValueIterator it = root_.begin(); it != root_.end(); ++it) {
+  for (auto it = root_.begin(); it != root_.end(); ++it) {
     std::string secondary_type = it.key().asString();
 
     if (sec_cfg_factory_registry_.find(secondary_type) == sec_cfg_factory_registry_.end()) {
@@ -89,10 +88,10 @@ static std::pair<std::string, uint16_t> getIPAndPort(const std::string& addr) {
   return std::make_pair(ip, port);
 }
 
-void JsonConfigParser::createIPSecondariesCfg(Configs& configs, Json::Value& json_ip_sec_cfg) {
+void JsonConfigParser::createIPSecondariesCfg(Configs& configs, const Json::Value& json_ip_sec_cfg) {
   auto resultant_cfg = std::make_shared<IPSecondariesConfig>(
       static_cast<uint16_t>(json_ip_sec_cfg[IPSecondariesConfig::PortField].asUInt()),
-      json_ip_sec_cfg[IPSecondariesConfig::TimeoutField].asUInt());
+      json_ip_sec_cfg[IPSecondariesConfig::TimeoutField].asInt());
   auto secondaries = json_ip_sec_cfg[IPSecondariesConfig::SecondariesField];
 
   LOG_INFO << "Found IP secondaries config: " << *resultant_cfg;
@@ -106,6 +105,13 @@ void JsonConfigParser::createIPSecondariesCfg(Configs& configs, Json::Value& jso
   }
 
   configs.push_back(resultant_cfg);
+}
+
+void JsonConfigParser::createVirtualSecondariesCfg(Configs& configs, const Json::Value& json_virtual_sec_cfg) {
+  for (const auto& json_config : json_virtual_sec_cfg) {
+    auto virtual_config = std::make_shared<VirtualSecondaryConfig>(json_config);
+    configs.push_back(virtual_config);
+  }
 }
 
 }  // namespace Primary

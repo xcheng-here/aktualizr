@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include <openssl/ssl.h>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -9,23 +8,26 @@
 #include "config/config.h"
 #include "logging/logging.h"
 #include "primary/aktualizr.h"
+#include "primary/aktualizr_helpers.h"
 #include "secondary.h"
+#include "utilities/aktualizr_version.h"
+#include "utilities/sig_handler.h"
 #include "utilities/utils.h"
 
 namespace bpo = boost::program_options;
 
-void check_info_options(const bpo::options_description &description, const bpo::variables_map &vm) {
+void checkInfoOptions(const bpo::options_description &description, const bpo::variables_map &vm) {
   if (vm.count("help") != 0) {
     std::cout << description << '\n';
     exit(EXIT_SUCCESS);
   }
   if (vm.count("version") != 0) {
-    std::cout << "Current aktualizr version is: " << AKTUALIZR_VERSION << "\n";
+    std::cout << "Current aktualizr version is: " << aktualizr_version() << "\n";
     exit(EXIT_SUCCESS);
   }
 }
 
-bpo::variables_map parse_options(int argc, char *argv[]) {
+bpo::variables_map parseOptions(int argc, char *argv[]) {
   bpo::options_description description("aktualizr command line options");
   // clang-format off
   // Try to keep these options in the same order as Config::updateFromCommandLine().
@@ -35,14 +37,13 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
       ("version,v", "Current aktualizr version")
       ("config,c", bpo::value<std::vector<boost::filesystem::path> >()->composing(), "configuration file or directory")
       ("loglevel", bpo::value<int>(), "set log level 0-5 (trace, debug, info, warning, error, fatal)")
-      ("run-mode", bpo::value<std::string>(), "run mode of aktualizr: full, once, campaign_check, campaign_accept, check, download, or install")
-      ("tls-server", bpo::value<std::string>(), "url, used for auto provisioning")
+      ("run-mode", bpo::value<std::string>(), "run mode of aktualizr: full, once, campaign_check, campaign_accept, campaign_decline, campaign_postpone, check, download, or install")
+      ("tls-server", bpo::value<std::string>(), "url of device gateway")
       ("repo-server", bpo::value<std::string>(), "url of the uptane repo repository")
       ("director-server", bpo::value<std::string>(), "url of the uptane director repository")
       ("ostree-server", bpo::value<std::string>(), "url of the ostree repository")
       ("primary-ecu-serial", bpo::value<std::string>(), "serial number of primary ecu")
       ("primary-ecu-hardware-id", bpo::value<std::string>(), "hardware ID of primary ecu")
-      ("secondary-configs-dir", bpo::value<boost::filesystem::path>(), "directory containing secondary ECU configuration files")
       ("secondary-config-file", bpo::value<boost::filesystem::path>(), "secondary ECUs configuration file")
       ("campaign-id", bpo::value<std::string>(), "id of the campaign to act on");
   // clang-format on
@@ -57,7 +58,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
     bpo::basic_parsed_options<char> parsed_options =
         bpo::command_line_parser(argc, argv).options(description).positional(pos).allow_unregistered().run();
     bpo::store(parsed_options, vm);
-    check_info_options(description, vm);
+    checkInfoOptions(description, vm);
     bpo::notify(vm);
     unregistered_options = bpo::collect_unrecognized(parsed_options.options, bpo::exclude_positional);
     if (vm.count("help") == 0 && !unregistered_options.empty()) {
@@ -69,7 +70,7 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
     std::cout << ex.what() << std::endl << description;
     exit(EXIT_FAILURE);
   } catch (const bpo::error &ex) {
-    check_info_options(description, vm);
+    checkInfoOptions(description, vm);
 
     // log boost error
     LOG_ERROR << "boost command line option error: " << ex.what();
@@ -86,8 +87,8 @@ bpo::variables_map parse_options(int argc, char *argv[]) {
   return vm;
 }
 
-void process_event(const std::shared_ptr<event::BaseEvent> &event) {
-  if (event->isTypeOf(event::DownloadProgressReport::TypeName)) {
+void processEvent(const std::shared_ptr<event::BaseEvent> &event) {
+  if (event->isTypeOf<event::DownloadProgressReport>()) {
     // Do nothing; libaktualizr already logs it.
   } else if (event->variant == "UpdateCheckComplete") {
     // Do nothing; libaktualizr already logs it.
@@ -100,9 +101,9 @@ int main(int argc, char *argv[]) {
   logger_init();
   logger_set_threshold(boost::log::trivial::info);
 
-  bpo::variables_map commandline_map = parse_options(argc, argv);
+  bpo::variables_map commandline_map = parseOptions(argc, argv);
 
-  LOG_INFO << "Aktualizr version " AKTUALIZR_VERSION " starting";
+  LOG_INFO << "Aktualizr version " << aktualizr_version() << " starting";
 
   int r = EXIT_FAILURE;
 
@@ -112,22 +113,33 @@ int main(int argc, char *argv[]) {
                      "should be run as root for proper functionality.\033[0m\n";
     }
     Config config(commandline_map);
-    if (config.logger.loglevel <= boost::log::trivial::debug) {
-      SSL_load_error_strings();
-    }
     LOG_DEBUG << "Current directory: " << boost::filesystem::current_path().string();
 
     Aktualizr aktualizr(config);
-    std::function<void(std::shared_ptr<event::BaseEvent> event)> f_cb = process_event;
+    std::function<void(std::shared_ptr<event::BaseEvent> event)> f_cb = processEvent;
     boost::signals2::scoped_connection conn;
 
     conn = aktualizr.SetSignalHandler(f_cb);
 
     if (!config.uptane.secondary_config_file.empty()) {
-      Primary::initSecondaries(aktualizr, config.uptane.secondary_config_file);
+      if (boost::filesystem::exists(config.uptane.secondary_config_file)) {
+        Primary::initSecondaries(aktualizr, config.uptane.secondary_config_file);
+      } else {
+        LOG_WARNING << "The specified secondary config file does not exist: " << config.uptane.secondary_config_file
+                    << "\nProceed further without secondary(ies)";
+      }
     }
 
     aktualizr.Initialize();
+
+    // handle unix signals
+    SigHandler::get().start([&aktualizr]() {
+      aktualizr.Abort();
+      aktualizr.Shutdown();
+    });
+    SigHandler::signal(SIGHUP);
+    SigHandler::signal(SIGINT);
+    SigHandler::signal(SIGTERM);
 
     std::string run_mode;
     if (commandline_map.count("run-mode") != 0) {
@@ -136,11 +148,12 @@ int main(int argc, char *argv[]) {
     // launch the first event
     if (run_mode == "campaign_check") {
       aktualizr.CampaignCheck().get();
-    } else if (run_mode == "campaign_accept") {
+    } else if (run_mode == "campaign_accept" || run_mode == "campaign_decline" || run_mode == "campaign_postpone") {
       if (commandline_map.count("campaign-id") == 0) {
-        throw std::runtime_error("Accepting a campaign requires a campaign ID");
+        throw std::runtime_error(run_mode + " requires a campaign ID");
       }
-      aktualizr.CampaignAccept(commandline_map["campaign-id"].as<std::string>()).get();
+      aktualizr.CampaignControl(commandline_map["campaign-id"].as<std::string>(), campaign::cmdFromName(run_mode))
+          .get();
     } else if (run_mode == "check") {
       aktualizr.SendDeviceData().get();
       aktualizr.CheckUpdates().get();
@@ -151,9 +164,19 @@ int main(int argc, char *argv[]) {
       result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
       aktualizr.Install(update_result.updates).get();
     } else if (run_mode == "once") {
+      aktualizr.SendDeviceData().get();
       aktualizr.UptaneCycle();
     } else {
-      aktualizr.RunForever().get();
+      boost::signals2::connection ac_conn =
+          aktualizr.SetSignalHandler(std::bind(targets_autoclean_cb, std::ref(aktualizr), std::placeholders::_1));
+
+      try {
+        aktualizr.RunForever().get();
+      } catch (const std::exception &ex) {
+        LOG_ERROR << ex.what();
+      }
+
+      LOG_DEBUG << "Aktualizr daemon exiting...";
     }
     r = EXIT_SUCCESS;
   } catch (const std::exception &ex) {

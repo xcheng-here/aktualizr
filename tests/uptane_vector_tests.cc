@@ -63,6 +63,8 @@ class VectorWrapper {
     } else if (!vector_["image_repo"]["update"]["is_success"].asBool()) {
       std::cout << "exception from image_repo: '" << vector_["image_repo"]["update"]["err"]
                 << " with message: " << vector_["image_repo"]["update"]["err_msg"] << "\n";
+    } else {
+      std::cout << "an exception while fetching targets metadata.\n";
     }
   }
 
@@ -95,11 +97,12 @@ TEST_P(UptaneVector, Test) {
 
   auto storage = INvStorage::newStorage(config.storage);
   Uptane::Manifest uptane_manifest{config, storage};
-  auto uptane_client = SotaUptaneClient::newDefaultClient(config, storage);
+  auto uptane_client = std_::make_unique<SotaUptaneClient>(config, storage);
   Uptane::EcuSerial ecu_serial(config.provision.primary_ecu_serial);
   Uptane::HardwareIdentifier hw_id(config.provision.primary_ecu_hardware_id);
   uptane_client->hw_ids.insert(std::make_pair(ecu_serial, hw_id));
-  Uptane::Target target("test_filename", {{Uptane::Hash::Type::kSha256, "sha256"}}, 1, "");
+  Uptane::EcuMap ecu_map{{ecu_serial, hw_id}};
+  Uptane::Target target("test_filename", ecu_map, {{Uptane::Hash::Type::kSha256, "sha256"}}, 1, "");
   storage->saveInstalledVersion(ecu_serial.ToString(), target, InstalledVersionUpdateMode::kCurrent);
 
   HttpClient http_client;
@@ -119,18 +122,23 @@ TEST_P(UptaneVector, Test) {
        * Check metadata from the director.
        * Identify targets for known ECUs.
        * Fetch metadata from the images repo.
-       * Check metadata from the images repo. */
-      if (!uptane_client->uptaneIteration()) {
+       * Check metadata from the images repo.
+       *
+       * It would be simpler to just call fetchMeta() here, but that calls
+       * putManifestSimple(), which will fail here. */
+      if (!uptane_client->uptaneIteration(nullptr, nullptr)) {
         ASSERT_TRUE(should_fail) << "uptaneIteration unexpectedly failed.";
         throw uptane_client->getLastException();
       }
-      std::vector<Uptane::Target> updates;
-      ASSERT_TRUE(uptane_client->uptaneOfflineIteration(&updates, nullptr))
-          << "uptaneOfflineIteration unexpectedly failed.";
-      if (updates.size()) {
+      result::UpdateCheck updates = uptane_client->checkUpdates();
+      if (updates.status == result::UpdateStatus::kError) {
+        ASSERT_TRUE(should_fail) << "checkUpdates unexpectedly failed.";
+        throw uptane_client->getLastException();
+      }
+      if (updates.ecus_count > 0) {
         /* Download a binary package.
          * Verify a binary package. */
-        result::Download result = uptane_client->downloadImages(updates);
+        result::Download result = uptane_client->downloadImages(updates.updates);
         if (result.status != result::DownloadStatus::kSuccess) {
           ASSERT_TRUE(should_fail) << "downloadImages unexpectedly failed.";
           throw uptane_client->getLastException();

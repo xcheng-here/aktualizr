@@ -16,7 +16,7 @@
 #include "storage/sqlstorage.h"
 #include "test_utils.h"
 
-boost::filesystem::path aktualizr_repo_path;
+boost::filesystem::path uptane_generator_path;
 static std::string server = "http://127.0.0.1:";
 static std::string treehub_server = "http://127.0.0.1:";
 static boost::filesystem::path sysroot;
@@ -28,7 +28,7 @@ static struct {
 static std::string new_rev;
 
 #include <ostree.h>
-extern "C" OstreeDeployment *ostree_sysroot_get_booted_deployment_mock(OstreeSysroot *self) {
+extern "C" OstreeDeployment *ostree_sysroot_get_booted_deployment(OstreeSysroot *self) {
   (void)self;
   static GObjectUniquePtr<OstreeDeployment> dep;
 
@@ -59,15 +59,19 @@ TEST(Aktualizr, FullOstreeUpdate) {
   LOG_INFO << "conf: " << conf;
 
   {
-    Aktualizr aktualizr(conf);
-
+    UptaneTestCommon::TestAktualizr aktualizr(conf);
     aktualizr.Initialize();
 
     result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
     ASSERT_EQ(update_result.status, result::UpdateStatus::kUpdatesAvailable);
+    // Verify the target has not yet been downloaded.
+    EXPECT_EQ(aktualizr.uptane_client()->package_manager_->verifyTarget(update_result.updates[0]),
+              TargetStatus::kNotFound);
 
     result::Download download_result = aktualizr.Download(update_result.updates).get();
     EXPECT_EQ(download_result.status, result::DownloadStatus::kSuccess);
+    // Verify the target has been downloaded.
+    EXPECT_EQ(aktualizr.uptane_client()->package_manager_->verifyTarget(update_result.updates[0]), TargetStatus::kGood);
 
     result::Install install_result = aktualizr.Install(update_result.updates).get();
     EXPECT_EQ(install_result.ecu_reports.size(), 1);
@@ -81,16 +85,25 @@ TEST(Aktualizr, FullOstreeUpdate) {
   boost::filesystem::remove(conf.bootloader.reboot_sentinel_dir / conf.bootloader.reboot_sentinel_name);
 
   {
-    Aktualizr aktualizr(conf);
-
+    UptaneTestCommon::TestAktualizr aktualizr(conf);
     aktualizr.Initialize();
 
     result::UpdateCheck update_result = aktualizr.CheckUpdates().get();
     ASSERT_EQ(update_result.status, result::UpdateStatus::kNoUpdatesAvailable);
 
     // check new version
-    const auto target = aktualizr.uptane_client_->package_manager_->getCurrent();
+    const auto target = aktualizr.uptane_client()->package_manager_->getCurrent();
     EXPECT_EQ(target.sha256Hash(), new_rev);
+    // TODO: verify the target. It doesn't work because
+    // ostree_repo_list_commit_objects_starting_with() doesn't find the commit.
+    // The already mocked functions are not enough to do this; it seems the
+    // commit is not written with the correct hash. See OTA-3659.
+
+    // Verify a bogus target is not present.
+    Uptane::EcuMap primary_ecu{{Uptane::EcuSerial(conf.provision.primary_ecu_serial),
+                                Uptane::HardwareIdentifier(conf.provision.primary_ecu_hardware_id)}};
+    Uptane::Target target_bad("some-pkg", primary_ecu, {Uptane::Hash(Uptane::Hash::Type::kSha256, "hash-bad")}, 4, "");
+    EXPECT_EQ(aktualizr.uptane_client()->package_manager_->verifyTarget(target_bad), TargetStatus::kNotFound);
   }
 }
 
@@ -101,11 +114,11 @@ int main(int argc, char **argv) {
   logger_init();
 
   if (argc != 3) {
-    std::cerr << "Error: " << argv[0] << " requires the path to the aktualizr-repo utility "
-              << "and an OStree sysroot\n";
+    std::cerr << "Error: " << argv[0] << " requires the path to the uptane-generator utility "
+              << "and an OSTree sysroot\n";
     return EXIT_FAILURE;
   }
-  aktualizr_repo_path = argv[1];
+  uptane_generator_path = argv[1];
 
   Process ostree("ostree");
 
@@ -147,16 +160,14 @@ int main(int argc, char **argv) {
   boost::trim_if(new_rev, boost::is_any_of(" \t\r\n"));
   LOG_INFO << "DEST: " << new_rev;
 
-  Process akt_repo(aktualizr_repo_path.string());
-  akt_repo.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
-  akt_repo.run({"image", "--path", meta_dir.PathString(), "--targetname", "update_1.0", "--targetsha256", new_rev,
-                "--targetlength", "0", "--targetformat", "OSTREE"});
-  akt_repo.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "update_1.0", "--hwid", "primary_hw",
-                "--serial", "CA:FE:A6:D2:84:9D"});
-  akt_repo.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
-  LOG_INFO << akt_repo.lastStdOut();
-  // Work around inconsistent directory naming.
-  Utils::copyDir(meta_dir.Path() / "repo/image", meta_dir.Path() / "repo/repo");
+  Process uptane_gen(uptane_generator_path.string());
+  uptane_gen.run({"generate", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+  uptane_gen.run({"image", "--path", meta_dir.PathString(), "--targetname", "update_1.0", "--targetsha256", new_rev,
+                  "--targetlength", "0", "--targetformat", "OSTREE", "--hwid", "primary_hw"});
+  uptane_gen.run({"addtarget", "--path", meta_dir.PathString(), "--targetname", "update_1.0", "--hwid", "primary_hw",
+                  "--serial", "CA:FE:A6:D2:84:9D"});
+  uptane_gen.run({"signtargets", "--path", meta_dir.PathString(), "--correlationid", "abc123"});
+  LOG_INFO << uptane_gen.lastStdOut();
 
   return RUN_ALL_TESTS();
 }

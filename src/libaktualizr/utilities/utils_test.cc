@@ -46,6 +46,23 @@ TEST(Utils, PrettyNameOk) {
   EXPECT_FALSE(PrettyNameOk("foo-bar-123&"));
 }
 
+TEST(Utils, parseJSON) {
+  // this should not cause valgrind warnings
+  Utils::parseJSON("");
+}
+
+TEST(Utils, jsonToCanonicalStr) {
+  const std::string sample = " { \"b\": 0, \"a\": [1, 2, {}], \"0\": \"x\"}";
+  Json::Value parsed;
+
+  parsed = Utils::parseJSON(sample);
+  EXPECT_EQ(Utils::jsonToCanonicalStr(parsed), "{\"0\":\"x\",\"a\":[1,2,{}],\"b\":0}");
+
+  const std::string sample2 = "0";
+  parsed = Utils::parseJSON(sample2);
+  EXPECT_EQ(Utils::jsonToCanonicalStr(parsed), "0");
+}
+
 /* Read hardware info from the system. */
 TEST(Utils, getHardwareInfo) {
   Json::Value hwinfo = Utils::getHardwareInfo();
@@ -182,7 +199,7 @@ TEST(Utils, TemporaryDirectory) {
     EXPECT_TRUE(boost::filesystem::exists(p));               // The dir should exist
     EXPECT_NE(p.string().find("ahint"), std::string::npos);  // The hint is included in the filename
 
-    struct stat statbuf;
+    struct stat statbuf {};
     EXPECT_GE(stat(p.parent_path().c_str(), &statbuf), 0);
     EXPECT_EQ(statbuf.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO), S_IRWXU);
   }
@@ -203,7 +220,7 @@ TEST(Utils, TemporaryFile) {
     EXPECT_TRUE(boost::filesystem::exists(p));               // The file should exist here
     EXPECT_NE(p.string().find("ahint"), std::string::npos);  // The hint is included in the filename
 
-    struct stat statbuf;
+    struct stat statbuf {};
     EXPECT_GE(stat(p.parent_path().c_str(), &statbuf), 0);
     EXPECT_EQ(statbuf.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO), S_IRWXU);
   }
@@ -298,7 +315,7 @@ TEST(Utils, ipUtils) {
   EXPECT_NE(fd, -1);
   SocketHandle hdl(new int(fd));
 
-  sockaddr_in6 sa;
+  sockaddr_in6 sa{};
 
   memset(&sa, 0, sizeof(sa));
   sa.sin6_family = AF_INET6;
@@ -312,7 +329,7 @@ TEST(Utils, ipUtils) {
 
   EXPECT_NE(bind(*hdl, reinterpret_cast<const sockaddr *>(&sa), sizeof(sa)), -1);
 
-  sockaddr_storage ss;
+  sockaddr_storage ss{};
   EXPECT_NO_THROW(ss = Utils::ipGetSockaddr(*hdl));
 
   EXPECT_NE(Utils::ipDisplayName(ss), "unknown");
@@ -326,6 +343,19 @@ TEST(Utils, shell) {
 
   statuscode = Utils::shell("ls /nonexistentdir123", &out);
   EXPECT_NE(statuscode, 0);
+}
+
+TEST(Utils, createSecureDirectory) {
+  TemporaryDirectory temp_dir;
+
+  EXPECT_TRUE(Utils::createSecureDirectory(temp_dir / "sec"));
+  EXPECT_TRUE(boost::filesystem::is_directory(temp_dir / "sec"));
+  // check that it succeeds the second time
+  EXPECT_TRUE(Utils::createSecureDirectory(temp_dir / "sec"));
+
+  // regular directory is insecure
+  boost::filesystem::create_directory(temp_dir / "unsec");
+  EXPECT_FALSE(Utils::createSecureDirectory(temp_dir / "unsec"));
 }
 
 TEST(Utils, urlencode) { EXPECT_EQ(Utils::urlEncode("test! test@ test#"), "test%21%20test%40%20test%23"); }

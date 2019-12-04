@@ -54,10 +54,14 @@ void ReportQueue::flushQueue() {
 
   if (!report_array.empty()) {
     HttpResponse response = http->post(config.tls.server + "/events", report_array);
+
     // 404 implies the server does not support this feature. Nothing we can
     // do, just move along.
-    if (response.isOk() || response.http_status_code == 404) {
+    if (response.http_status_code == 404) {
       LOG_TRACE << "Server does not support event reports. Clearing report queue.";
+    }
+
+    if (response.isOk() || response.http_status_code == 404) {
       report_array.clear();
     }
   }
@@ -83,6 +87,15 @@ Json::Value ReportEvent::toJson() {
 }
 
 CampaignAcceptedReport::CampaignAcceptedReport(const std::string& campaign_id) : ReportEvent("campaign_accepted", 0) {
+  custom["campaignId"] = campaign_id;
+}
+
+CampaignDeclinedReport::CampaignDeclinedReport(const std::string& campaign_id) : ReportEvent("campaign_declined", 0) {
+  custom["campaignId"] = campaign_id;
+}
+
+CampaignPostponedReport::CampaignPostponedReport(const std::string& campaign_id)
+    : ReportEvent("campaign_postponed", 0) {
   custom["campaignId"] = campaign_id;
 }
 

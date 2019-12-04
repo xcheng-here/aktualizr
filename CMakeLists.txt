@@ -12,12 +12,6 @@ if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
 endif(NOT CMAKE_BUILD_TYPE)
 
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    set(BUILD_SYSTEMD_DEFAULT ON)
-else()
-    set(BUILD_SYSTEMD_DEFAULT OFF)
-endif()
-
 if(CMAKE_BUILD_TYPE MATCHES "Valgrind")
     set(TESTSUITE_VALGRIND_DEFAULT ON)
 else()
@@ -29,15 +23,15 @@ option(PEDANTIC_WARNINGS "Compile with pedantic warnings" OFF)
 option(BUILD_WITH_CODE_COVERAGE "Enable gcov code coverage" OFF)
 option(BUILD_OSTREE "Set to ON to compile with ostree support" OFF)
 option(BUILD_DEB "Set to ON to compile with debian packages support" OFF)
+option(BUILD_DOCKERAPP "Set to ON to compile with package manager support of docker-app" OFF)
 option(BUILD_P11 "Support for key storage in a HSM via PKCS#11" OFF)
 option(BUILD_SOTA_TOOLS "Set to ON to build SOTA tools" OFF)
-option(BUILD_PARTIAL "Set to ON to compile with partial secondaries support" OFF)
 option(BUILD_ISOTP "Set to ON to compile with ISO/TP protocol support" OFF)
-option(BUILD_SYSTEMD "Set to ON to compile with systemd additional support" ${BUILD_SYSTEMD_DEFAULT})
 option(BUILD_LOAD_TESTS "Set to ON to build load tests" OFF)
 option(FAULT_INJECTION "Set to ON to enable fault injection" OFF)
 option(INSTALL_LIB "Set to ON to install library and headers" OFF)
 option(TESTSUITE_VALGRIND "Set to ON to make tests to run under valgrind (default when CMAKE_BUILD_TYPE=Valgrind)" ${TESTSUITE_VALGRIND_DEFAULT})
+option(CCACHE "Set to ON to use ccache if available" ON)
 
 set(SOTA_PACKED_CREDENTIALS "" CACHE STRING "Credentials.zip for tests involving the server")
 
@@ -56,6 +50,13 @@ configure_file(CTestCustom.cmake CTestCustom.cmake)
 unset(AKTUALIZR_CHECKED_SRCS CACHE)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+if (CCACHE)
+    find_program(CCACHE_PROGRAM ccache)
+    if (CCACHE_PROGRAM)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+    endif (CCACHE_PROGRAM)
+endif (CCACHE)
 
 # find all required libraries
 set(BOOST_COMPONENTS log_setup log system filesystem program_options)
@@ -81,7 +82,6 @@ if(EXISTS /usr/local/opt/libarchive)
   list(APPEND CMAKE_PREFIX_PATH /usr/local/opt/libarchive)
 endif()
 
-find_package(PkgConfig REQUIRED)
 find_package(Boost 1.57.0 COMPONENTS ${BOOST_COMPONENTS} REQUIRED)
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
@@ -94,16 +94,20 @@ find_package(Asn1c REQUIRED)
 find_package(ZLIB)
 
 if(NOT AKTUALIZR_VERSION)
-    if(GIT_EXECUTABLE)
-        execute_process(COMMAND sh -c "${GIT_EXECUTABLE} -C ${PROJECT_SOURCE_DIR} describe | tr -d '\n'" OUTPUT_VARIABLE AKTUALIZR_VERSION)
-        message(STATUS "Setting version to ${AKTUALIZR_VERSION}")
-    else(GIT_EXECUTABLE)
-        message(WARNING "Version is not set and git is not available, set version to an arbitrary string")
-        set(AKTUALIZR_VERSION "0.0-dev")
-    endif(GIT_EXECUTABLE)
+    if (EXISTS ${PROJECT_SOURCE_DIR}/VERSION)
+        file(READ ${PROJECT_SOURCE_DIR}/VERSION AKTUALIZR_VERSION)
+        string(STRIP "${AKTUALIZR_VERSION}" AKTUALIZR_VERSION)
+    elseif (GIT_EXECUTABLE)
+        execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/get_version.sh ${GIT_EXECUTABLE} ${PROJECT_SOURCE_DIR} OUTPUT_VARIABLE AKTUALIZR_VERSION RESULT_VARIABLE RES)
+        if (NOT RES EQUAL 0)
+            message(FATAL_ERROR "Could not get current version from git")
+        endif ()
+    endif ()
+    if (NOT AKTUALIZR_VERSION)
+        message(FATAL_ERROR "Version was not detected properly, verify that you have either a git checkout or a VERSION file present in aktualizr's main directory")
+    endif ()
+    message(STATUS "Setting version to ${AKTUALIZR_VERSION}")
 endif(NOT AKTUALIZR_VERSION)
-
-add_definitions(-DAKTUALIZR_VERSION="${AKTUALIZR_VERSION}")
 
 if(BUILD_OSTREE)
     find_package(OSTree REQUIRED)
@@ -112,15 +116,9 @@ else(BUILD_OSTREE)
     unset(LIBOSTREE_LIBRARIES CACHE)
 endif(BUILD_OSTREE)
 
-if(BUILD_DEB)
-    pkg_check_modules(LIBDPKG REQUIRED libdpkg)
-    if (${LIBDPKG_VERSION} VERSION_GREATER "1.19.3")
-        add_definitions(-DLIBDPKG_V011903)
-    endif()
-    add_definitions(-DBUILD_DEB)
-else(BUILD_DEB)
-    unset(LIBDPKG_LIBRARIES CACHE)
-endif(BUILD_DEB)
+if(BUILD_DOCKERAPP)
+    add_definitions(-DBUILD_DOCKERAPP)
+endif(BUILD_DOCKERAPP)
 
 if(BUILD_P11)
     find_package(LibP11 REQUIRED)
@@ -142,13 +140,6 @@ if(BUILD_ISOTP)
     add_definitions(-DISOTP_SECONDARY_ENABLED)
 endif(BUILD_ISOTP)
 
-if(BUILD_SYSTEMD)
-    find_package(Systemd REQUIRED)
-    add_definitions(-DBUILD_SYSTEMD)
-else(BUILD_SYSTEMD)
-    unset(SYSTEMD_LIBRARY CACHE)
-endif(BUILD_SYSTEMD)
-
 if(FAULT_INJECTION)
     find_package(Libfiu REQUIRED)
     add_definitions(-DFIU_ENABLE)
@@ -156,8 +147,9 @@ if(FAULT_INJECTION)
     install(PROGRAMS scripts/fiu DESTINATION bin COMPONENT aktualizr)
 endif(FAULT_INJECTION)
 
-# set symbols used when compiling
+# flags for different build types
 set(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
+set(CMAKE_C_FLAGS_DEBUG "-Og -g")
 
 SET(CMAKE_CXX_FLAGS_VALGRIND "-O1 -g")
 SET(CMAKE_C_FLAGS_VALGRIND "-O1 -g")
@@ -229,8 +221,8 @@ endif()
 add_custom_target(build_tests)
 
 # clang-check and clang-format
-find_program(CLANG_FORMAT NAMES clang-format-6.0 clang-format)
-find_program(CLANG_TIDY NAMES clang-tidy-6.0 clang-tidy)
+find_program(CLANG_FORMAT NAMES clang-format-6.0)
+find_program(CLANG_TIDY NAMES clang-tidy-6.0)
 
 if(CLANG_FORMAT)
     function(aktualizr_clang_format)
@@ -247,14 +239,13 @@ if(CLANG_FORMAT)
             string(REPLACE "/" "_" TARGETNAME_CI "aktualizr_ci_clang_format-${SUBDIR}-${FILE}")
 
             add_custom_target(${TARGETNAME_CI}
-                COMMAND ${PROJECT_SOURCE_DIR}/scripts/check-formatting.sh ${CLANG_FORMAT} ${FILE}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                VERBATIM)
+                COMMAND ${CLANG_FORMAT} -style=file ${FILE} | diff -u ${FILE} - || { echo 'Found unformatted code! Run make format'\; false\; }
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
             add_dependencies(check-format ${TARGETNAME_CI})
         endforeach()
     endfunction()
 else()
-    message(WARNING "clang-format not found, skipping")
+    message(WARNING "clang-format-6.0 not found, skipping")
     function(aktualizr_clang_format)
     endfunction()
 endif()
@@ -280,7 +271,7 @@ if(CLANG_TIDY)
         endforeach()
     endfunction()
 else()
-    message(WARNING "clang-tidy not found, skipping")
+    message(WARNING "clang-tidy-6.0 not found, skipping")
     function(aktualizr_clang_tidy)
     endfunction()
 endif()
@@ -320,7 +311,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ############### BUILD RULES
 include_directories(${PROJECT_SOURCE_DIR}/src/libaktualizr)
 include_directories(${PROJECT_SOURCE_DIR}/third_party/googletest/googletest/include)
-include_directories(${PROJECT_SOURCE_DIR}/third_party/jsoncpp)
+include_directories(${JSONCPP_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${LIBOSTREE_INCLUDE_DIRS})
 include_directories(${SQLITE3_INCLUDE_DIRS})
@@ -330,12 +321,9 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${CURL_INCLUDE_DIR})
 include_directories(${LibArchive_INCLUDE_DIR})
 
-set_source_files_properties(third_party/jsoncpp/jsoncpp.cpp PROPERTIES COMPILE_FLAGS -w)
-add_library(jsoncpp OBJECT third_party/jsoncpp/jsoncpp.cpp)
-
 # General packaging configuration
 set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "anton.gerasimov@here.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Patrick Vacek <patrick.vacek@here.com>")
 set(CPACK_DEB_COMPONENT_INSTALL ON)
 set(CPACK_COMPONENTS_GROUPING ONE_PER_GROUP)
 set(CPACK_DEBIAN_PACKAGE_VERSION ${AKTUALIZR_VERSION})
@@ -352,10 +340,10 @@ endif(BUILD_SOTA_TOOLS)
 
 set(CPACK_DEBIAN_AKTUALIZR_PACKAGE_NAME "aktualizr")
 set(CPACK_DEBIAN_AKTUALIZR_FILE_NAME "aktualizr.deb")  # only available for CMake >= 3.6.0
-set(CPACK_COMPONENT_AKTUALIZR_DESCRIPTION "UPTANE-compliant embedded software update client")
+set(CPACK_COMPONENT_AKTUALIZR_DESCRIPTION "UPTANE-compliant embedded software update client\n Aktualizr communicates with OTA-Connect,\n reports device information, fetch and install package updates")
 set(CPACK_DEBIAN_AKTUALIZR_PACKAGE_DEPENDS "lshw")
 set(CPACK_DEBIAN_AKTUALIZR_PACKAGE_SHLIBDEPS ON)
-set(CPACK_DEBIAN_AKTUALIZR_PACKAGE_CONTROL_EXTRA "${PROJECT_SOURCE_DIR}/config/systemd/debian-control/preinst;${PROJECT_SOURCE_DIR}/config/systemd/debian-control/postinst;${PROJECT_SOURCE_DIR}/config/systemd/debian-control/prerm;")
+set(CPACK_DEBIAN_AKTUALIZR_PACKAGE_CONTROL_EXTRA "${PROJECT_SOURCE_DIR}/config/systemd/debian-control/postinst;${PROJECT_SOURCE_DIR}/config/systemd/debian-control/prerm;${PROJECT_SOURCE_DIR}/config/systemd/debian-control/postrm;")
 include(CPack)
 include(CPackComponent)
 
@@ -371,9 +359,7 @@ set (AKTUALIZR_EXTERNAL_LIBS
     ${SQLITE3_LIBRARIES}
     ${LibArchive_LIBRARIES}
     ${LIBP11_LIBRARIES}
-    ${LIBDPKG_LIBRARIES}
     ${GLIB2_LIBRARIES}
-    ${SYSTEMD_LIBRARY}
     ${ZLIB_LIBRARY})
 
 if(ANDROID)
@@ -390,13 +376,20 @@ if(BUILD_WITH_CODE_COVERAGE)
     set(COVERAGE_LCOV_EXCLUDES '/usr/include/*' ${CMAKE_BINARY_DIR}'*' ${CMAKE_SOURCE_DIR}'/third_party/*' ${CMAKE_SOURCE_DIR}'/tests/*' '*_test.cc')
     include(CodeCoverage)
     set(COVERAGE_COMPILER_FLAGS "--coverage -fprofile-arcs -ftest-coverage" CACHE INTERNAL "")
-    list(APPEND TEST_LIBS gcov)
 endif(BUILD_WITH_CODE_COVERAGE)
 
 include(CTest)
 ENABLE_TESTING()
 # It would be great to use GTEST_OUTPUT directly, but I couldn't get it to work.
 set(GOOGLE_TEST_OUTPUT --gtest_output=xml:${CMAKE_BINARY_DIR}/results/)
+
+# amalgamate jsoncpp source at compile time
+# note: jsoncpp has a CMake support that they intent to deprecate and is hard to
+# integrate with.
+execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/amalgamate-jsoncpp.sh ${CMAKE_CURRENT_SOURCE_DIR}/third_party/jsoncpp ${CMAKE_CURRENT_BINARY_DIR}/jsoncpp)
+include_directories(${PROJECT_BINARY_DIR}/jsoncpp)
+set_source_files_properties(${PROJECT_BINARY_DIR}/jsoncpp/jsoncpp.cc PROPERTIES COMPILE_FLAGS "-Wno-float-equal -Wno-switch-default -Wno-implicit-fallthrough")
+add_library(jsoncpp OBJECT ${PROJECT_BINARY_DIR}/jsoncpp/jsoncpp.cc)
 
 add_subdirectory("fuzz")
 add_subdirectory("config")
@@ -409,12 +402,9 @@ if (BUILD_LOAD_TESTS)
     add_definitions(-Wconversion)
 endif(BUILD_LOAD_TESTS)
 add_subdirectory("src")
-if(BUILD_PARTIAL)
-    add_subdirectory("partial")
-endif()
 add_subdirectory("tests" EXCLUDE_FROM_ALL)
 
-add_subdirectory("docs")
+add_subdirectory("docs/doxygen")
 
 # Check if some source files were not added sent to `aktualizr_source_file_checks`
 #

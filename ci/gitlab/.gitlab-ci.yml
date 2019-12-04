@@ -1,7 +1,11 @@
 stages:
   - docker
   - test
+  - pkg-test
+  - oe-checkout
+  - oe-test
   - deploy
+  - trigger
 
 variables:
   UBUNTU_BIONIC_MASTER_IMAGE: ${CI_REGISTRY_IMAGE}:ci-master-UBUNTU_BIONIC
@@ -15,14 +19,33 @@ variables:
   UBUNTU_BIONIC_PR_INSTALLIMAGE: ${CI_REGISTRY_IMAGE}:ci-install-${CI_COMMIT_REF_SLUG}-UBUNTU_BIONIC
   UBUNTU_XENIAL_PR_INSTALLIMAGE: ${CI_REGISTRY_IMAGE}:ci-install-${CI_COMMIT_REF_SLUG}-UBUNTU_XENIAL
 
+  CCACHE_DIR: $CI_PROJECT_DIR/ccache
+
   GIT_SUBMODULE_STRATEGY: recursive
 
-# Build the Docker image that will be used in subsequent CI/CD stages
+  # bitbake variables
+  BITBAKE_IMAGE: ${METAUPDATER_REGISTRY_IMAGE}:ci-master-bitbake
+  BITBAKE_CHECKOUT_IMAGE: ${METAUPDATER_REGISTRY_IMAGE}:ci-master-checkout
+
+include:
+  - project: 'olp/edge/ota/connect/client/meta-updater'
+    ref: 'master'
+    file: 'scripts/ci/gitlab/docker.yml'
+  - project: 'olp/edge/ota/connect/client/meta-updater'
+    ref: 'master'
+    file: 'scripts/ci/gitlab/checkout.yml'
+  - project: 'olp/edge/ota/connect/client/meta-updater'
+    ref: 'master'
+    file: 'scripts/ci/gitlab/tests.yml'
+
 Docker Setup:
-  image: docker:latest
+  image: docker:18
   stage: docker
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
   services:
-    - docker:dind
+    - docker:18-dind
   before_script:
     - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
   script:
@@ -54,26 +77,41 @@ coverage:
     TEST_CMAKE_BUILD_TYPE: 'Valgrind'
     TEST_WITH_COVERAGE: '1'
     TEST_WITH_P11: '1'
+    TEST_WITH_DOCKERAPP: '1'
     TEST_WITH_FAULT_INJECTION: '1'
-    TEST_SOTA_PACKED_CREDENTIALS: '/tmp/credentials.zip'
+    TEST_SOTA_PACKED_CREDENTIALS: "$CI_PROJECT_DIR/credentials.zip"
   image: "$UBUNTU_BIONIC_PR_IMAGE"
   stage: test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - ccache/
   artifacts:
     paths:
       - build-coverage/coverage/
   script:
-    - aws s3 cp s3://ota-gitlab-ci/hereotaconnect_prod.zip /tmp/credentials.zip
-    - $CI_PROJECT_DIR/scripts/test.sh
+    - aws s3 cp s3://ota-gitlab-ci/hereotaconnect_prod.zip $CI_PROJECT_DIR/credentials.zip
+    - ./scripts/test.sh
 
 nop11:
   variables:
     TEST_BUILD_DIR: 'build-nop11'
-    TEST_CMAKE_BUILD_TYPE: 'Valgrind'
-    TEST_TESTSUITE_ONLY: 'crypto'
+    TEST_CMAKE_BUILD_TYPE: 'Debug'
+    TEST_WITH_TESTSUITE: '0'
   image: "$UBUNTU_BIONIC_PR_IMAGE"
   stage: test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - ccache/
   script:
-    - $CI_PROJECT_DIR/scripts/test.sh
+    - ./scripts/test.sh
 
 debian-build+static:
   variables:
@@ -85,57 +123,180 @@ debian-build+static:
     TEST_TESTSUITE_ONLY: 'crypto'
     TEST_WITH_STATICTESTS: '1'
     TEST_WITH_LOAD_TESTS: '1'
+    TEST_WITH_DOCS: '1'
   image: "$DEBIAN_TESTING_PR_IMAGE"
   stage: test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - ccache/
+  artifacts:
+    paths:
+      - build-debian-testing/docs/doxygen/
   script:
-    - $CI_PROJECT_DIR/scripts/test.sh
+    - ./scripts/test.sh
 
 bionic-pkg:
-  # Build and test aktualizr bionic package
   variables:
     TEST_BUILD_DIR: 'build-bionic'
     TEST_INSTALL_RELEASE_NAME: '-ubuntu_18.04'
     TEST_INSTALL_DESTDIR: "$CI_PROJECT_DIR/build-bionic/pkg"
 
-  image: docker:latest
-  services:
-    - docker:dind
+  image: "$UBUNTU_BIONIC_PR_IMAGE"
   stage: test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - ccache/
   artifacts:
     paths:
-      - build-bionic/pkg/*.deb
-  before_script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+      - build-bionic/pkg
   script:
     - mkdir -p $TEST_INSTALL_DESTDIR
-    # build package
-    - docker run -eTEST_BUILD_DIR=$TEST_BUILD_DIR -eTEST_INSTALL_RELEASE_NAME=$TEST_INSTALL_RELEASE_NAME -u $(id -u):$(id -g) -v $CI_PROJECT_DIR:$CI_PROJECT_DIR -v $TEST_INSTALL_DESTDIR:/persistent --rm $UBUNTU_BIONIC_PR_IMAGE $CI_PROJECT_DIR/scripts/build_ubuntu.sh
-    # run tests
-    - docker run --rm -v $TEST_INSTALL_DESTDIR:/persistent -v $CI_PROJECT_DIR/scripts/:/scripts/ -t $UBUNTU_BIONIC_PR_INSTALLIMAGE /scripts/test_install_garage_deploy.sh
+    - ./scripts/build_ubuntu.sh
 
 xenial-pkg:
-  # Build and test aktualizr xenial package
   variables:
     TEST_BUILD_DIR: 'build-xenial'
     TEST_INSTALL_RELEASE_NAME: '-ubuntu_16.04'
     TEST_INSTALL_DESTDIR: "$CI_PROJECT_DIR/build-xenial/pkg"
 
-  image: docker:latest
-  services:
-    - docker:dind
+  image: "$UBUNTU_XENIAL_PR_IMAGE"
   stage: test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  cache:
+    key: "$CI_JOB_NAME"
+    paths:
+      - ccache/
   artifacts:
     paths:
-      - build-xenial/pkg/*.deb
-  before_script:
-    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+      - build-xenial/pkg
   script:
     - mkdir -p $TEST_INSTALL_DESTDIR
-    # build package
-    - docker run -eTEST_BUILD_DIR="$TEST_BUILD_DIR" -eTEST_INSTALL_RELEASE_NAME="$TEST_INSTALL_RELEASE_NAME" -u $(id -u):$(id -g) -v $CI_PROJECT_DIR:$CI_PROJECT_DIR -v $TEST_INSTALL_DESTDIR:/persistent --rm $UBUNTU_XENIAL_PR_IMAGE $CI_PROJECT_DIR/scripts/build_ubuntu.sh
-    # run tests
-    - docker run --rm -v $TEST_INSTALL_DESTDIR:/persistent -v $CI_PROJECT_DIR/scripts/:/scripts/ -t $UBUNTU_XENIAL_PR_INSTALLIMAGE /scripts/test_install_garage_deploy.sh
-    - docker run --rm -v $TEST_INSTALL_DESTDIR:/persistent -v $CI_PROJECT_DIR/scripts/:/scripts/ -t $UBUNTU_XENIAL_PR_INSTALLIMAGE bash -c "/scripts/test_install_aktualizr_and_update.sh && /scripts/test_aktualizr_repo.sh"
+    - ./scripts/build_ubuntu.sh
+
+bionic-pkg-test:
+  variables:
+    TEST_INSTALL_DESTDIR: "$CI_PROJECT_DIR/build-bionic/pkg"
+
+  image: "$UBUNTU_BIONIC_PR_INSTALLIMAGE"
+  dependencies:
+    - bionic-pkg
+  stage: pkg-test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  script:
+    - ./scripts/test_install_garage_deploy.sh
+    - ./scripts/test_install_aktualizr.sh
+
+xenial-pkg-test:
+  variables:
+    TEST_INSTALL_DESTDIR: "$CI_PROJECT_DIR/build-xenial/pkg"
+
+  image: "$UBUNTU_XENIAL_PR_INSTALLIMAGE"
+  dependencies:
+    - xenial-pkg
+  stage: pkg-test
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  script:
+    - ./scripts/test_install_garage_deploy.sh
+    - ./scripts/test_install_aktualizr.sh
+
+# -- yocto tests
+
+OE Docker setup:
+  extends: .bb_docker_remote
+  stage: docker
+  only:
+    variables:
+      - $OE_PTEST
+      - $CI_COMMIT_REF_NAME == "master"
+      - $CI_COMMIT_REF_NAME =~ /^\d\d\d\d\.\d+(-\w+)?$/
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+
+
+OE Checkout:
+  extends: .bb_checkout
+  stage: oe-checkout
+  dependencies: []
+  only:
+    variables:
+      - $OE_PTEST
+      - $CI_COMMIT_REF_NAME == "master"
+      - $CI_COMMIT_REF_NAME =~ /^\d\d\d\d\.\d+(-\w+)?$/
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  variables:
+    MANIFEST: master
+
+Ptest qemux86_64:
+  extends: .oe-selftest
+  stage: oe-test
+  dependencies:
+    - OE Checkout
+  allow_failure: true
+  only:
+    variables:
+      - $OE_PTEST
+      - $CI_COMMIT_REF_NAME == "master"
+      - $CI_COMMIT_REF_NAME =~ /^\d\d\d\d\.\d+(-\w+)?$/
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  variables:
+    TEST_BUILD_DIR: 'build-ptest'
+    OE_SELFTESTS: 'updater_qemux86_64_ptest'
+    TEST_AKTUALIZR_REMOTE: '1'
+    # note: tag will take precedence if not empty
+    TEST_AKTUALIZR_TAG: $CI_COMMIT_TAG
+    TEST_AKTUALIZR_BRANCH: $CI_COMMIT_REF_NAME
+    TEST_AKTUALIZR_REV: $CI_COMMIT_SHA
+
+# -- create GitHub releases
+
+github-release:
+  image: "$UBUNTU_BIONIC_PR_IMAGE"
+  stage: deploy
+  dependencies:
+    - bionic-pkg
+    - xenial-pkg
+    - debian-build+static  # for doxygen
+  script:
+    # github release
+    - ./scripts/make_src_archive.sh ./aktualizr_src-$CI_COMMIT_TAG.tar.gz
+    - >-
+      ./scripts/publish_github_rls.py $CI_COMMIT_TAG
+      build-xenial/pkg/garage_deploy-ubuntu_16.04.deb
+      build-xenial/pkg/aktualizr-ubuntu_16.04.deb
+      build-bionic/pkg/garage_deploy-ubuntu_18.04.deb
+      build-bionic/pkg/aktualizr-ubuntu_18.04.deb
+      aktualizr_src-$CI_COMMIT_TAG.tar.gz
+    # github doxygen
+    - ./scripts/publish_github_docs.sh
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /^\d\d\d\d\.\d+(-\w+)?$/
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+  variables:
+    DOX_DOCS: 'build-debian-testing/docs/doxygen/html'
+    TEST_BUILD_DIR: 'build-gh-rls'
+
+# -- publish coverage results on gitlab pages
 
 pages:
   stage: deploy
@@ -150,3 +311,94 @@ pages:
   # would be nice to have on a per-PR basis: # https://gitlab.com/gitlab-org/gitlab-ce/issues/35141
   only:
     - master
+
+# -- veracode
+
+veracode-pkg:
+  # prepare build to be submitted for static code analysis
+  stage: test
+  only:
+    variables:
+      - $VERACODE_API_ID
+  variables:
+    TEST_BUILD_DIR: 'scan-build'
+    TEST_CMAKE_BUILD_TYPE: 'Debug'
+    TEST_WITH_TESTSUITE: '0'
+    TEST_WITH_SOTA_TOOLS: '0'
+    TEST_WITH_OSTREE: '0'
+    TEST_WITH_DEB: '0'
+    TEST_WITH_ISOTP: '0'
+  image: "$UBUNTU_BIONIC_PR_IMAGE"
+  script:
+    - ./scripts/test.sh
+    - tar -f scan.tar --append /tmp/aktualizr/usr/local/bin
+  artifacts:
+    paths:
+      - scan.tar
+
+trigger-veracode-scan:
+  stage: trigger
+  only:
+    variables:
+      - $VERACODE_API_ID
+  dependencies:
+    - veracode-pkg
+  allow_failure: true
+  image: openjdk:8
+  before_script:
+    # The latest wrapper version can be found in https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/
+    - wget -q -O veracode-wrapper.jar https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/${VERACODE_WRAPPER_VERSION}/vosp-api-wrappers-java-${VERACODE_WRAPPER_VERSION}.jar
+  script:
+    - java -jar veracode-wrapper.jar -vid ${VERACODE_API_ID} -vkey ${VERACODE_API_KEY}
+      -action UploadAndScan -appname "OTA Client" -createprofile true -autoscan true
+      -filepath scan.tar -version "job ${CI_JOB_ID} in pipeline ${CI_PIPELINE_ID} for ${CI_PROJECT_NAME} repo"
+
+# -- e2e
+
+app-docker-image:
+  image: docker:18
+  services:
+    - docker:18-dind
+  stage: deploy
+  only:
+    - master
+  dependencies: []
+  allow_failure: true
+  before_script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+  script:
+    - sed 's@$BUILDER@'$UBUNTU_BIONIC_MASTER_IMAGE'@' ./ci/gitlab/Dockerfile.aktualizr > ./ci/gitlab/Dockerfile
+    - docker build -t $CI_REGISTRY_IMAGE/app:ci-$CI_COMMIT_REF_SLUG -f ./ci/gitlab/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/app:ci-$CI_COMMIT_REF_SLUG
+
+trigger-e2e-pipeline:
+  stage: trigger
+  only:
+    - master
+  trigger: olp/edge/ota/testing/ota-plus-test-driver
+
+# -- otf
+
+trigger-otf-pipeline:
+  image: "$UBUNTU_BIONIC_PR_IMAGE"
+  stage: trigger
+  when: on_success
+  dependencies:
+    - github-release
+  script:
+    - curl -X POST -F "token=$CI_JOB_TOKEN" -F "ref=master" -F "variables[TEST_JOB_ONLY]=true" https://main.gitlab.in.here.com/api/v4/projects/163/trigger/pipeline
+  only:
+    variables:
+      - $CI_COMMIT_REF_NAME =~ /^\d\d\d\d\.\d+(-\w+)?$/
+  except:
+    - /^20\d\d\.\d\d?-docs$/
+    - /^docs\//
+  allow_failure: true
+
+trigger-docsite-build:
+  stage: trigger
+  only:
+    - /^20\d\d\.\d\d?-docs$/
+  trigger:
+    project: olp/edge/ota/documentation/ota-connect-docs
+    branch: master

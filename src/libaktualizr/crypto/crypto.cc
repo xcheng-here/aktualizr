@@ -95,7 +95,7 @@ Json::Value PublicKey::ToUptane() const {
 std::string PublicKey::KeyId() const {
   std::string key_content = value_;
   boost::algorithm::trim_right_if(key_content, boost::algorithm::is_any_of("\n"));
-  std::string keyid = boost::algorithm::hex(Crypto::sha256digest(Json::FastWriter().write(Json::Value(key_content))));
+  std::string keyid = boost::algorithm::hex(Crypto::sha256digest(Utils::jsonToCanonicalStr(Json::Value(key_content))));
   std::transform(keyid.begin(), keyid.end(), keyid.begin(), ::tolower);
   return keyid;
 }
@@ -226,6 +226,9 @@ bool Crypto::RSAPSSVerify(const std::string &public_key, const std::string &sign
   return status == 1;
 }
 bool Crypto::ED25519Verify(const std::string &public_key, const std::string &signature, const std::string &message) {
+  if (public_key.size() < crypto_sign_PUBLICKEYBYTES || signature.size() < crypto_sign_BYTES) {
+    return false;
+  }
   return crypto_sign_verify_detached(reinterpret_cast<const unsigned char *>(signature.c_str()),
                                      reinterpret_cast<const unsigned char *>(message.c_str()), message.size(),
                                      reinterpret_cast<const unsigned char *>(public_key.c_str())) == 0;

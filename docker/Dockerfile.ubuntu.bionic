@@ -5,12 +5,14 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # It is important to run these in the same RUN command, because otherwise
 # Docker layer caching breaks us
-RUN apt-get update && apt-get -y install \
+RUN apt-get update && apt-get -y install --no-install-suggests --no-install-recommends \
   apt-transport-https \
   autoconf \
   asn1c \
   automake \
+  awscli \
   bison \
+  ccache \
   clang-format-6.0 \
   cmake \
   curl \
@@ -19,6 +21,7 @@ RUN apt-get update && apt-get -y install \
   g++ \
   gcc \
   git \
+  jq \
   lcov \
   libarchive-dev \
   libboost-dev \
@@ -28,7 +31,6 @@ RUN apt-get update && apt-get -y install \
   libboost-test-dev \
   libboost-thread-dev \
   libcurl4-openssl-dev \
-  libdpkg-dev \
   libengine-pkcs11-openssl \
   libexpat1-dev \
   libffi-dev \
@@ -43,11 +45,12 @@ RUN apt-get update && apt-get -y install \
   libsodium-dev \
   libsqlite3-dev \
   libssl-dev \
-  libsystemd-dev \
   libtool \
   lshw \
   make \
+  ninja-build \
   opensc \
+  net-tools \
   pkg-config \
   psmisc \
   python3-dev \
@@ -68,8 +71,6 @@ RUN NOCONFIGURE=1 ./autogen.sh
 RUN ./configure CFLAGS='-Wno-error=missing-prototypes' --with-libarchive --disable-gtk-doc --disable-gtk-doc-html --disable-gtk-doc-pdf --disable-man --with-builtin-grub2-mkconfig --with-curl --without-soup --prefix=/usr
 RUN make VERBOSE=1 -j4
 RUN make install
-
-RUN pip3 install awscli
 
 RUN useradd testuser
 

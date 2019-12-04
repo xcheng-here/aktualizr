@@ -5,23 +5,26 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # It is important to run these in the same RUN command, because otherwise
 # Docker layer caching breaks us
-RUN apt-get update && apt-get -y install \
+RUN apt-get update && apt-get -y install --no-install-suggests --no-install-recommends \
   apt-transport-https \
   asn1c \
   autoconf \
   automake \
   bison \
+  ccache \
   clang-6.0 \
   clang-tidy-6.0 \
   clang-tools-6.0 \
   clang-format-6.0 \
   cmake \
   curl \
-  dpkg-dev \
+  doxygen \
   e2fslibs-dev \
   g++ \
   gcc \
   git \
+  graphviz \
+  jq \
   lcov \
   libarchive-dev \
   libboost-dev \
@@ -31,7 +34,6 @@ RUN apt-get update && apt-get -y install \
   libboost-test-dev \
   libboost-thread-dev \
   libcurl4-openssl-dev \
-  libdpkg-dev \
   libengine-pkcs11-openssl \
   libexpat1-dev \
   libfuse-dev \
@@ -43,10 +45,11 @@ RUN apt-get update && apt-get -y install \
   libsodium-dev \
   libsqlite3-dev \
   libssl-dev \
-  libsystemd-dev \
   libtool \
   lshw \
   make \
+  ninja-build \
+  net-tools \
   opensc \
   pkg-config \
   psmisc \
@@ -57,7 +60,8 @@ RUN apt-get update && apt-get -y install \
   softhsm2 \
   sqlite3 \
   valgrind \
-  wget
+  wget \
+  zip
 
 RUN ln -s clang-6.0 /usr/bin/clang && \
     ln -s clang++-6.0 /usr/bin/clang++

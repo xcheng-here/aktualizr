@@ -1,0 +1,87 @@
+= Manage metadata expiry dates
+ifdef::env-github[]
+
+[NOTE]
+====
+We recommend that you link:https://docs.ota.here.com/ota-client/latest/{docname}.html[view this article in our documentation portal]. Not all of our articles render correctly in GitHub.
+====
+endif::[]
+
+
+Once you xref:rotating-signing-keys.adoc[take the keys for signing metadata offline], you need to be aware of when this metadata expires. You need to refresh the expiry date before it is reached, otherwise you won't be able to push updates. You can also define your own expiry dates when you take your keys offline.
+
+The default expiry dates are as follows:
+
+* For `targets.json`, the expiry date is **31 days** from when the metadata was last updated.
+* For `root.json`, the expiry date is **365 days** from when the metadata was last updated.
+
+== Define your own expiry dates
+
+How you define the expiry dates depends on how you use OTA Connect:
+
+* If you're building disk images, you need to update your *build configuration*.
+* If you're using the standalone command-line tools such as xref:install-garage-sign-deploy.adoc[`garage-deploy`], you need to add extra *command-line arguments*.
+
+
+[{tabs}]
+====
+Build configuration::
++
+--
+include::partial$config-descriptions.adoc[tags=buildconfig-hint]
+
+.Build configuration parameters for metadata expiry
+[cols="2a,3a",options="header"]
+|====================
+|Configuration  | Description
+|
+`GARAGE_TARGET_EXPIRES` 
+| 
+include::partial$config-descriptions.adoc[tags=metadata-expires]
+----
+GARAGE_TARGET_EXPIRES = "2018-01-01T00:01:00Z"
+----
+
+|
+`GARAGE_TARGET_EXPIRE_AFTER`
+| 
+include::partial$config-descriptions.adoc[tags=metadata-expireafter]
+----
+GARAGE_TARGET_EXPIRE_AFTER = "1Y3M5D"
+----
+
+|====================
+
+
+
+--
+
+Command-line arguments::
++
+--
+When you're using the `garage-sign` command to take your keys offline, you can also sign your metadata with one of the following expiry arguments.
+
+.Command-line arguments for metadata expiry
+[cols="2a,4a",options="header"]
+|====================
+|Configuration  | Description
+|
+`--expires`
+| 
+include::partial$config-descriptions.adoc[tags=metadata-expires]
+
+----
+garage-sign targets sign --expires 2018-01-01T00:01:00Z  --repo myimagerepo --key-name mytargets
+----
+
+|
+`--expire-after`
+| 
+include::partial$config-descriptions.adoc[tags=metadata-expireafter]
+----
+garage-sign targets sign ----expire-after 1Y3M5D  --repo myimagerepo --key-name mytargets
+----
+|====================
+
+--
+====

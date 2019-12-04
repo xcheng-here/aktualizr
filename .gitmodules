@@ -10,6 +10,6 @@
 [submodule "third_party/googletest"]
 	path = third_party/googletest
 	url = https://github.com/google/googletest.git
-[submodule "partial/extern/RIOT"]
-	path = partial/extern/RIOT
-	url = https://github.com/OYTIS/RIOT.git
+[submodule "third_party/jsoncpp"]
+	path = third_party/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp

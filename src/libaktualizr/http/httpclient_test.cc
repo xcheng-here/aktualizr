@@ -30,6 +30,14 @@ TEST(GetTest, get_performed) {
   EXPECT_EQ(response["path"].asString(), path);
 }
 
+TEST(GetTestWithHeaders, get_performed) {
+  std::vector<std::string> headers = {"Authorization: Bearer token"};
+  HttpClient http(&headers);
+  std::string path = "/auth_call";
+  Json::Value response = http.get(server + path, HttpInterface::kNoLimit).getJson();
+  EXPECT_EQ(response["status"].asString(), "good");
+}
+
 /* Reject http GET responses that exceed size limit. */
 TEST(GetTest, download_size_limit) {
   HttpClient http;
@@ -70,6 +78,41 @@ TEST(PostTest, put_performed) {
 
   EXPECT_EQ(json["path"].asString(), path);
   EXPECT_EQ(json["data"]["key"].asString(), "val");
+}
+
+TEST(HttpClient, user_agent) {
+  {
+    // test the default, when setUserAgent hasn't been called yet
+    HttpClient http;
+
+    const auto resp = http.get(server + "/user_agent", HttpInterface::kNoLimit);
+    const auto app = resp.body.substr(0, resp.body.find('/'));
+    EXPECT_EQ(app, "Aktualizr");
+  }
+
+  Utils::setUserAgent("blah");
+
+  {
+    HttpClient http;
+
+    auto resp = http.get(server + "/user_agent", HttpInterface::kNoLimit);
+    EXPECT_EQ(resp.body, "blah");
+  }
+}
+
+TEST(Headers, update_header) {
+  std::vector<std::string> headers = {"Authorization: Bearer bad"};
+  HttpClient http(&headers);
+
+  ASSERT_FALSE(http.updateHeader("NOSUCHHEADER", "foo"));
+
+  std::string path = "/auth_call";
+  std::string body = http.get(server + path, HttpInterface::kNoLimit).body;
+  EXPECT_EQ(body, "{}");
+
+  ASSERT_TRUE(http.updateHeader("Authorization", "Bearer token"));
+  Json::Value response = http.get(server + path, HttpInterface::kNoLimit).getJson();
+  EXPECT_EQ(response["status"].asString(), "good");
 }
 
 // TODO: add tests for HttpClient::download

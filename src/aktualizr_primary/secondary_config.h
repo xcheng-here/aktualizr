@@ -5,17 +5,10 @@
 #include <boost/filesystem.hpp>
 #include <unordered_map>
 
+#include "primary/secondary_config.h"
+#include "virtualsecondary.h"
+
 namespace Primary {
-
-class SecondaryConfig {
- public:
-  SecondaryConfig(const char* type) : type_(type) {}
-  virtual const char* type() const { return type_; }
-  virtual ~SecondaryConfig() = default;
-
- private:
-  const char* const type_;
-};
 
 class IPSecondaryConfig {
  public:
@@ -40,17 +33,17 @@ class IPSecondariesConfig : public SecondaryConfig {
   static constexpr const char* const TimeoutField{"secondaries_wait_timeout"};
   static constexpr const char* const SecondariesField{"secondaries"};
 
-  IPSecondariesConfig(uint16_t wait_port, size_t wait_timeout)
-      : SecondaryConfig(Type), secondaries_wait_port{wait_port}, secondaries_wait_timeout{wait_timeout} {}
+  IPSecondariesConfig(const uint16_t wait_port, const int timeout_s)
+      : SecondaryConfig(Type), secondaries_wait_port{wait_port}, secondaries_timeout_s{timeout_s} {}
 
   friend std::ostream& operator<<(std::ostream& os, const IPSecondariesConfig& cfg) {
-    os << "(wait_port: " << cfg.secondaries_wait_port << " wait_timeout: " << cfg.secondaries_wait_timeout << ")";
+    os << "(wait_port: " << cfg.secondaries_wait_port << " timeout_s: " << cfg.secondaries_timeout_s << ")";
     return os;
   }
 
  public:
   const uint16_t secondaries_wait_port;
-  const size_t secondaries_wait_timeout;
+  const int secondaries_timeout_s;
   std::vector<IPSecondaryConfig> secondaries_cfg;
 };
 
@@ -72,14 +65,15 @@ class JsonConfigParser : public SecondaryConfigParser {
   Configs parse() override;
 
  private:
-  static void createIPSecondariesCfg(Configs& configs, Json::Value& json_ip_sec_cfg);
+  static void createIPSecondariesCfg(Configs& configs, const Json::Value& json_ip_sec_cfg);
+  static void createVirtualSecondariesCfg(Configs& configs, const Json::Value& json_virtual_sec_cfg);
   // add here a factory method for another type of secondary config
 
  private:
   using SecondaryConfigFactoryRegistry = std::unordered_map<std::string, std::function<void(Configs&, Json::Value&)>>;
 
   SecondaryConfigFactoryRegistry sec_cfg_factory_registry_ = {
-      {IPSecondariesConfig::Type, createIPSecondariesCfg}
+      {IPSecondariesConfig::Type, createIPSecondariesCfg}, {VirtualSecondaryConfig::Type, createVirtualSecondariesCfg}
       // add here factory method for another type of secondary config
   };
 

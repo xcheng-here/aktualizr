@@ -3,23 +3,25 @@ LABEL Description="Aktualizr testing dockerfile for Ubuntu Xenial with p11"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get -y install debian-archive-keyring
+RUN apt-get update && apt-get -y install --no-install-suggests --no-install-recommends debian-archive-keyring
 RUN echo "deb http://deb.debian.org/debian  stretch-backports main" > /etc/apt/sources.list.d/stretch-backports.list
 
 # It is important to run these in the same RUN command, because otherwise
 # Docker layer caching breaks us
-RUN apt-get update && apt-get -y install \
+RUN apt-get update && apt-get -y install --no-install-suggests --no-install-recommends \
   apt-transport-https \
   autoconf \
   asn1c \
   automake \
   bison \
+  ccache \
   cmake \
   curl \
   e2fslibs-dev \
   g++ \
   gcc \
   git \
+  jq \
   lcov \
   libarchive-dev \
   libboost-dev \
@@ -29,7 +31,6 @@ RUN apt-get update && apt-get -y install \
   libboost-test-dev \
   libboost-thread-dev \
   libcurl4-openssl-dev \
-  libdpkg-dev \
   libengine-pkcs11-openssl \
   libexpat1-dev \
   libffi-dev \
@@ -41,10 +42,11 @@ RUN apt-get update && apt-get -y install \
   libsodium-dev \
   libsqlite3-dev \
   libssl-dev \
-  libsystemd-dev \
   libtool \
   lshw \
   make \
+  ninja-build \
+  net-tools \
   opensc \
   pkg-config \
   psmisc \

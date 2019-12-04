@@ -23,13 +23,13 @@ These are the primary actions that a user of libaktualizr can perform through th
     - [x] Update is not in pending state anymore after successful finalization (aktualizr_test.cc)
     - [x] Update is not in pending state anymore after failed finalization (aktualizr_test.cc)
   - [x] Provision with the server
-    - [x] Automatically provision (OTA-983, uptane_init_test.cc, uptane_ci_test.cc, auto_prov_test.py)
+    - [x] Provision with shared credentials (OTA-983, uptane_init_test.cc, uptane_ci_test.cc, shared_cred_prov_test.py)
       - [x] Extract credentials from a provided archive (config_test.cc, utils_test.cc)
       - [x] Parse a p12 file containing TLS credentials (crypto_test.cc)
       - [x] aktualizr possesses all necessary credentials after provisioning (OTA-987, uptane_key_test.cc)
-    - [x] Implicitly provision (OTA-996, OTA-1210, config_test.cc, uptane_implicit_test.cc, uptane_test.cc, implicit_prov_test.py)
-      - [x] Fail if TLS credentials are unavailable (OTA-1209, uptane_implicit_test.cc)
-    - [x] Implicitly provision with keys accessed via PKCS#11 (hsm_prov_test.py)
+    - [x] Provision with device credentials (OTA-996, OTA-1210, config_test.cc, device_cred_prov_test.cc, uptane_test.cc, device_cred_prov_test.py)
+      - [x] Fail if TLS credentials are unavailable (OTA-1209, device_cred_prov_test.cc)
+    - [x] Provision with device credentials using keys accessed via PKCS#11 (device_cred_prov_hsm_test.py)
       - [x] Generate RSA keypairs via PKCS#11 (crypto_test.cc, keymanager_test.cc)
       - [x] Read a TLS certificate via PKCS#11 (crypto_test.cc)
       - [x] Sign and verify a file with RSA via PKCS#11 (crypto_test.cc, keymanager_test.cc)
@@ -72,6 +72,14 @@ These are the primary actions that a user of libaktualizr can perform through th
   - [x] Send campaign acceptance report
     - [x] Send an event report (see below)
   - [x] Send CampaignAcceptComplete event
+- [x] Decline a campaign
+  - [x] Send campaign decline report
+    - [x] Send an event report (see below)
+  - [x] Send CampaignDeclineComplete event
+- [x] Postpone a campaign
+  - [x] Send campaign postpone report
+    - [x] Send an event report (see below)
+  - [x] Send CampaignPostponeComplete event
 - [x] Fetch metadata from server
   - [x] Generate and send manifest (see below)
   - [x] Fetch metadata from the director (uptane_test.cc, uptane_vector_tests.cc)
@@ -125,6 +133,8 @@ These are the primary actions that a user of libaktualizr can perform through th
   - [x] Send AllDownloadsComplete event if there is nothing to download (aktualizr_test.cc)
   - [x] Send AllDownloadsComplete event if all downloads are unsuccessful (aktualizr_test.cc)
 - [x] Access downloaded binaries via API (aktualizr_test.cc)
+  - [x] List targets in storage via API (aktualizr_test.cc)
+  - [x] Remove targets in storage via API(aktualizr_test.cc)
 - [x] Install updates
   - [x] Send metadata to secondary ECUs (uptane_test.cc)
   - [x] Identify ECU for each target (uptane_test.cc, aktualizr_test.cc)
@@ -163,6 +173,7 @@ These are the primary actions that a user of libaktualizr can perform through th
   - [x] Store negative device installation result when an ECU installation failed (aktualizr_test.cc)
   - [x] Update is not in pending state anymore after failed installation (aktualizr_test.cc)
   - [x] Send AllInstallsComplete event after all installations are finished (aktualizr_test.cc)
+  - [x] Automatically remove old targets during installation cycles (aktualizr_test.cc)
 - [x] Send installation report
   - [x] Generate and send manifest (see below)
   - [x] Send PutManifestComplete event if send is successful (aktualizr_test.cc)
@@ -283,9 +294,9 @@ This is just the list of sequences currently covered. It is likely that there ar
 - [x] Initialize -> CheckUpdates -> Download -> updates downloaded but not installed (aktualizr_test.cc)
 - [x] Initialize -> Install -> nothing to install (aktualizr_test.cc)
 - [x] Initialize -> CheckUpdates -> Download -> Install -> updates installed (aktualizr_test.cc)
-- [x] Autoprovision with real server. Initialize -> CheckUpdates -> verify state with aktualizr-info (auto_prov_test.py)
-- [x] Implicitly provision with real server. Initialize -> verify not provisioned with aktualizr-info -> run aktualizr-cert-provider -> Initialize -> CheckUpdates -> verify state with aktualizr-info (implicit_prov_test.py)
-- [x] Implicitly provision with HSM with real server. Initialize -> verify not provisioned with aktualizr-info -> run aktualizr-cert-provider -> Initialize -> CheckUpdates -> verify state with aktualizr-info (hsm_prov_test.py)
+- [x] Provision with shared credentials with real server. Initialize -> CheckUpdates -> verify state with aktualizr-info (shared_cred_prov_test.py)
+- [x] Provision with device credentials with real server. Initialize -> verify not provisioned with aktualizr-info -> run aktualizr-cert-provider -> Initialize -> CheckUpdates -> verify state with aktualizr-info (device_cred_prov_test.py)
+- [x] Provision with device credentials with real server using an HSM. Initialize -> verify not provisioned with aktualizr-info -> run aktualizr-cert-provider -> Initialize -> CheckUpdates -> verify state with aktualizr-info (device_cred_prov_hsm_test.py)
 
 
 ## aktualizr tools
@@ -348,9 +359,9 @@ These tools all link with libaktualizr, although they do not necessary use the A
   - [x] Print snapshot (aktualizr_info_test.cc)
   - [x] Print timestamp (aktualizr_info_test.cc)
 
-### aktualizr-repo
+### uptane-generator
 
-`aktualizr-repo` is used in testing to simulate the generation of Uptane repositories.
+`uptane-generator` is used in testing to simulate the generation of Uptane repositories.
 
 - [x] Generate images and director repos (repo_test.cc)
 - [x] Add an image to the images repo (repo_test.cc)
@@ -365,12 +376,12 @@ These tools all link with libaktualizr, although they do not necessary use the A
 
 ### aktualizr-cert-provider
 
-`aktualizr-cert-provider` assists with generating credentials and uploading them to a device for implicit provisioning.
+`aktualizr-cert-provider` assists with generating credentials and uploading them to a device for device credential provisioning.
 
 - [x] Use file paths from config if provided (cert_provider_test.cc)
-- [x] Use autoprovisioning credentials if fleet CA and private key are not provided (cert_provider_autoprov_test.cc)
+- [x] Use shared provisioning credentials if fleet CA and private key are not provided (cert_provider_shared_cred_test.cc)
   - [x] Generate a random device ID (OTA-986, utils_test.cc, uptane_init_test.cc)
-  - [x] Automatically provision (cert_provider_autoprov_test.cc)
+  - [x] Provision with shared credentials (cert_provider_shared_cred_test.cc)
 - [x] Use fleet credentials if provided (cert_provider_test.cc)
   - [x] Abort if fleet CA is provided without fleet private key (cert_provider_test.cc)
   - [x] Abort if fleet private key is provided without fleet CA (cert_provider_test.cc)
@@ -390,12 +401,12 @@ These tools all link with libaktualizr, although they do not necessary use the A
   - [x] Serialize device certificate to a string (cert_provider_test.cc)
 - [ ] Read server root CA from credentials archive
   - [ ] Read server root CA from server_ca.pem if present (to support community edition use case)
-  - [x] Read server root CA from p12 (cert_provider_autoprov_test.cc)
+  - [x] Read server root CA from p12 (cert_provider_shared_cred_test.cc)
 - [x] Write credentials to a local directory if requested (cert_provider_test.cc)
   - [x] Provide device private key (cert_provider_test.cc)
   - [x] Provide device certificate (cert_provider_test.cc)
-  - [x] Provide root CA if requested (cert_provider_autoprov_test.cc)
-  - [x] Provide server URL if requested (cert_provider_autoprov_test.cc)
+  - [x] Provide root CA if requested (cert_provider_shared_cred_test.cc)
+  - [x] Provide server URL if requested (cert_provider_shared_cred_test.cc)
 - [ ] Copy credentials to a device with ssh
   - [ ] Create parent directories
   - [ ] Provide device private key
@@ -527,9 +538,9 @@ These tools also use libaktualizr, but only for common utility functions. They a
 - [x] Run garage-sign
 - [x] Build credentials into an image
 - [x] Run aktualizr-cert-provider
-- [x] Build an image with automatic provisioning that provisions successfully
-- [x] Build an image with implicit provisioning that provisions successfully
-- [x] Build an image with implicit provisioning using an HSM that provisions successfully
+- [x] Build an image with shared credential provisioning that provisions successfully
+- [x] Build an image with device credential provisioning that provisions successfully
+- [x] Build an image with device credential provisioning using an HSM that provisions successfully
 - [x] Build an image with manual control that provisions successfully
 - [x] Build an image for Raspberry Pi
 - [x] Build an image using grub as a bootloader that provisions successfully

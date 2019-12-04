@@ -1,15 +1,16 @@
+# config has to go first, as other libraries append sources to it
+add_subdirectory("config")
+
 add_subdirectory("utilities")
 add_subdirectory("bootloader")
 add_subdirectory("bootstrap")
 add_subdirectory("campaign")
-add_subdirectory("config")
 add_subdirectory("crypto")
 add_subdirectory("http")
 add_subdirectory("primary")
 add_subdirectory("uptane")
 add_subdirectory("logging")
 add_subdirectory("storage")
-add_subdirectory("socket_activation")
 add_subdirectory("package_manager")
 add_subdirectory("telemetry")
 
@@ -30,9 +31,7 @@ add_library(aktualizr_static_lib STATIC
     $<TARGET_OBJECTS:utilities>
     $<TARGET_OBJECTS:logging>
     $<TARGET_OBJECTS:storage>
-    $<TARGET_OBJECTS:uptane>
-    $<TARGET_OBJECTS:socket_activation>
-    $<TARGET_OBJECTS:telemetry>)
+    $<TARGET_OBJECTS:uptane>)
 
 if (BUILD_ISOTP)
     target_sources(aktualizr_static_lib PRIVATE $<TARGET_OBJECTS:isotp_conn>)

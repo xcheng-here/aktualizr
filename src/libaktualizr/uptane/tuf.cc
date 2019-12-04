@@ -118,25 +118,28 @@ std::vector<Uptane::Hash> Hash::decodeVector(std::string hashes_str) {
 
 Target::Target(std::string filename, const Json::Value &content) : filename_(std::move(filename)) {
   if (content.isMember("custom")) {
-    Json::Value custom = content["custom"];
+    custom_ = content["custom"];
 
-    Json::Value hwids = custom["hardwareIds"];
-    for (Json::ValueIterator i = hwids.begin(); i != hwids.end(); ++i) {
-      hwids_.emplace_back(HardwareIdentifier((*i).asString()));
+    // Images repo provides an array of hardware IDs.
+    if (custom_.isMember("hardwareIds")) {
+      Json::Value hwids = custom_["hardwareIds"];
+      for (auto i = hwids.begin(); i != hwids.end(); ++i) {
+        hwids_.emplace_back(HardwareIdentifier((*i).asString()));
+      }
     }
-    custom_version_ = custom["version"].asString();
 
-    Json::Value ecus = custom["ecuIdentifiers"];
-    for (Json::ValueIterator i = ecus.begin(); i != ecus.end(); ++i) {
+    // Director provides a map of ECU serials to hardware IDs.
+    Json::Value ecus = custom_["ecuIdentifiers"];
+    for (auto i = ecus.begin(); i != ecus.end(); ++i) {
       ecus_.insert({EcuSerial(i.key().asString()), HardwareIdentifier((*i)["hardwareId"].asString())});
     }
 
-    if (custom.isMember("targetFormat")) {
-      type_ = custom["targetFormat"].asString();
+    if (custom_.isMember("targetFormat")) {
+      type_ = custom_["targetFormat"].asString();
     }
 
-    if (custom.isMember("uri")) {
-      std::string custom_uri = custom["uri"].asString();
+    if (custom_.isMember("uri")) {
+      std::string custom_uri = custom_["uri"].asString();
       // Ignore this exact URL for backwards compatibility with old defaults that inserted it.
       if (custom_uri != "https://example.com/") {
         uri_ = std::move(custom_uri);
@@ -147,7 +150,7 @@ Target::Target(std::string filename, const Json::Value &content) : filename_(std
   length_ = content["length"].asUInt64();
 
   Json::Value hashes = content["hashes"];
-  for (Json::ValueIterator i = hashes.begin(); i != hashes.end(); ++i) {
+  for (auto i = hashes.begin(); i != hashes.end(); ++i) {
     Hash h(i.key().asString(), (*i).asString());
     if (h.HaveAlgorithm()) {
       hashes_.push_back(h);
@@ -157,8 +160,9 @@ Target::Target(std::string filename, const Json::Value &content) : filename_(std
   std::sort(hashes_.begin(), hashes_.end(), [](const Hash &l, const Hash &r) { return l.type() < r.type(); });
 }
 
-Target::Target(std::string filename, std::vector<Hash> hashes, uint64_t length, std::string correlation_id)
+Target::Target(std::string filename, EcuMap ecus, std::vector<Hash> hashes, uint64_t length, std::string correlation_id)
     : filename_(std::move(filename)),
+      ecus_(std::move(ecus)),
       hashes_(std::move(hashes)),
       length_(length),
       correlation_id_(std::move(correlation_id)) {
@@ -177,7 +181,7 @@ Target Target::Unknown() {
   return target;
 }
 
-bool Target::MatchWith(const Hash &hash) const {
+bool Target::MatchHash(const Hash &hash) const {
   return (std::find(hashes_.begin(), hashes_.end(), hash) != hashes_.end());
 }
 
@@ -210,15 +214,78 @@ bool Target::IsOstree() const {
   }
 }
 
+bool Target::MatchTarget(const Target &t2) const {
+  // type_ (targetFormat) is only provided by the Images repo.
+  // ecus_ is only provided by the Images repo.
+  // correlation_id_ is only provided by the Director.
+  // uri_ is not matched. If the Director provides it, we use that. If not, but
+  // the Image repository does, use that. Otherwise, leave it empty and use the
+  // default.
+  if (filename_ != t2.filename_) {
+    return false;
+  }
+  if (length_ != t2.length_) {
+    return false;
+  }
+
+  // If the HWID vector and ECU->HWID map match, we're good. Otherwise, assume
+  // we have a Target from the Director (ECU->HWID map populated, HWID vector
+  // empty) and a Target from the Images repo (HWID vector populated,
+  // ECU->HWID map empty). Figure out which Target has the map, and then for
+  // every item in the map, make sure it's in the other Target's HWID vector.
+  if (hwids_ != t2.hwids_ || ecus_ != t2.ecus_) {
+    std::shared_ptr<EcuMap> ecu_map;                               // Director
+    std::shared_ptr<std::vector<HardwareIdentifier>> hwid_vector;  // Image repo
+    if (!hwids_.empty() && ecus_.empty() && t2.hwids_.empty() && !t2.ecus_.empty()) {
+      ecu_map = std::make_shared<EcuMap>(t2.ecus_);
+      hwid_vector = std::make_shared<std::vector<HardwareIdentifier>>(hwids_);
+    } else if (!t2.hwids_.empty() && t2.ecus_.empty() && hwids_.empty() && !ecus_.empty()) {
+      ecu_map = std::make_shared<EcuMap>(ecus_);
+      hwid_vector = std::make_shared<std::vector<HardwareIdentifier>>(t2.hwids_);
+    } else {
+      return false;
+    }
+    for (auto map_it = ecu_map->cbegin(); map_it != ecu_map->cend(); ++map_it) {
+      auto vec_it = find(hwid_vector->cbegin(), hwid_vector->cend(), map_it->second);
+      if (vec_it == hwid_vector->end()) {
+        return false;
+      }
+    }
+  }
+
+  // requirements:
+  // - all hashes of the same type should match
+  // - at least one pair of hashes should match
+  bool oneMatchingHash = false;
+  for (const Hash &hash : hashes_) {
+    for (const Hash &hash2 : t2.hashes_) {
+      if (hash.type() == hash2.type() && !(hash == hash2)) {
+        return false;
+      }
+      if (hash == hash2) {
+        oneMatchingHash = true;
+      }
+    }
+  }
+  return oneMatchingHash;
+}
+
 Json::Value Target::toDebugJson() const {
   Json::Value res;
-  for (auto it = ecus_.begin(); it != ecus_.cend(); ++it) {
-    res["custom"]["ecuIdentifiers"][it->first.ToString()]["hardwareId"] = it->second.ToString();
+  for (const auto &ecu : ecus_) {
+    res["custom"]["ecuIdentifiers"][ecu.first.ToString()]["hardwareId"] = ecu.second.ToString();
+  }
+  if (!hwids_.empty()) {
+    Json::Value hwids;
+    for (Json::Value::ArrayIndex i = 0; i < hwids_.size(); ++i) {
+      hwids[i] = hwids_[i].ToString();
+    }
+    res["custom"]["hardwareIds"] = hwids;
   }
   res["custom"]["targetFormat"] = type_;
 
-  for (auto it = hashes_.cbegin(); it != hashes_.cend(); ++it) {
-    res["hashes"][it->TypeString()] = it->HashString();
+  for (const auto &hash : hashes_) {
+    res["hashes"][hash.TypeString()] = hash.HashString();
   }
   res["length"] = Json::Value(static_cast<Json::Value::Int64>(length_));
   return res;
@@ -227,15 +294,19 @@ Json::Value Target::toDebugJson() const {
 std::ostream &Uptane::operator<<(std::ostream &os, const Target &t) {
   os << "Target(" << t.filename_;
   os << " ecu_identifiers: (";
-
-  for (auto it = t.ecus_.begin(); it != t.ecus_.end(); ++it) {
-    os << it->first;
+  for (const auto &ecu : t.ecus_) {
+    os << ecu.first << " (hw_id: " << ecu.second << "), ";
+  }
+  os << ")"
+     << " hw_ids: (";
+  for (const auto &hwid : t.hwids_) {
+    os << hwid << ", ";
   }
   os << ")"
      << " length:" << t.length();
   os << " hashes: (";
-  for (auto it = t.hashes_.begin(); it != t.hashes_.end(); ++it) {
-    os << *it << ", ";
+  for (const auto &hash : t.hashes_) {
+    os << hash << ", ";
   }
   os << "))";
 
@@ -275,7 +346,7 @@ void Uptane::Targets::init(const Json::Value &json) {
   }
 
   const Json::Value target_list = json["signed"]["targets"];
-  for (Json::ValueIterator t_it = target_list.begin(); t_it != target_list.end(); t_it++) {
+  for (auto t_it = target_list.begin(); t_it != target_list.end(); t_it++) {
     Target t(t_it.key().asString(), *t_it);
     targets.push_back(t);
   }
@@ -285,7 +356,7 @@ void Uptane::Targets::init(const Json::Value &json) {
     ParseKeys(Uptane::RepositoryType::Image(), key_list);
 
     const Json::Value role_list = json["signed"]["delegations"]["roles"];
-    for (Json::ValueIterator it = role_list.begin(); it != role_list.end(); it++) {
+    for (auto it = role_list.begin(); it != role_list.end(); it++) {
       const std::string role_name = (*it)["name"].asString();
       const Role role = Role::Delegation(role_name);
       delegated_role_names_.push_back(role_name);
@@ -293,7 +364,7 @@ void Uptane::Targets::init(const Json::Value &json) {
 
       const Json::Value paths_list = (*it)["paths"];
       std::vector<std::string> paths;
-      for (Json::ValueIterator p_it = paths_list.begin(); p_it != paths_list.end(); p_it++) {
+      for (auto p_it = paths_list.begin(); p_it != paths_list.end(); p_it++) {
         paths.emplace_back((*p_it).asString());
       }
       paths_for_role_[role] = paths;
@@ -326,7 +397,7 @@ void Uptane::TimestampMeta::init(const Json::Value &json) {
     throw Uptane::InvalidMetadata("", "timestamp", "invalid timestamp.json");
   }
 
-  for (Json::ValueIterator it = hashes_list.begin(); it != hashes_list.end(); ++it) {
+  for (auto it = hashes_list.begin(); it != hashes_list.end(); ++it) {
     Hash h(it.key().asString(), (*it).asString());
     snapshot_hashes_.push_back(h);
   }
@@ -348,7 +419,7 @@ void Uptane::Snapshot::init(const Json::Value &json) {
     throw Uptane::InvalidMetadata("", "snapshot", "invalid snapshot.json");
   }
 
-  for (Json::ValueIterator it = meta_list.begin(); it != meta_list.end(); ++it) {
+  for (auto it = meta_list.begin(); it != meta_list.end(); ++it) {
     Json::Value hashes_list = (*it)["hashes"];
     Json::Value meta_size = (*it)["length"];
     Json::Value meta_version = (*it)["version"];
@@ -375,7 +446,7 @@ void Uptane::Snapshot::init(const Json::Value &json) {
       role_size_[role_object] = -1;
     }
     if (hashes_list.isObject()) {
-      for (Json::ValueIterator h_it = hashes_list.begin(); h_it != hashes_list.end(); ++h_it) {
+      for (auto h_it = hashes_list.begin(); h_it != hashes_list.end(); ++h_it) {
         Hash h(h_it.key().asString(), (*h_it).asString());
         role_hashes_[role_object].push_back(h);
       }

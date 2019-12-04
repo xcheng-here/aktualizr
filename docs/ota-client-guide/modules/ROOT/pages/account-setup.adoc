@@ -1,0 +1,19 @@
+= Set up multiple accounts
+ifdef::env-github[]
+
+[NOTE]
+====
+We recommend that you link:https://docs.ota.here.com/ota-client/latest/{docname}.html[view this article in our documentation portal]. Not all of our articles render correctly in GitHub.
+====
+endif::[]
+
+
+In OTA Connect, all devices and software belong to one *user* login. However, you don't want to mix up test software and production software by creating them all under the same user.
+
+In a proper production workflow, you'll need separate user logins to manage the different stages:
+
+. A developer user such as "\dev@acme.com".
+. A QA user such as "\qa@acme.com".
+. A production user such as "\prod@acme.com".
+
+These logins provide you with a convenient way of clearly separating your development, QA and production resources.
